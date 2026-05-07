@@ -61,11 +61,6 @@ export default async function HomePage() {
       {/* ───── Hero ───── */}
       <section className="px-6 sm:px-10 pt-16 sm:pt-24 pb-20 max-w-6xl w-full mx-auto">
         <div className="max-w-3xl flex flex-col gap-6">
-          <span className="inline-flex items-center gap-2 self-start px-3 py-1 rounded-full bg-accent-soft text-accent text-xs font-medium">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-            베타 운영 · 1년 무료
-          </span>
-
           <h1 className="font-display text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight">
             회의록 쓰다가 단어 막혔을 때,
             <br />
@@ -199,13 +194,8 @@ export default async function HomePage() {
               © 2026 hudtyping. 속기·회의록 작성을 위한 도구.
             </span>
           </div>
-          <div className="flex flex-col sm:items-end gap-2">
-            <a
-              href="mailto:phk901031@gmail.com"
-              className="hover:text-foreground transition"
-            >
-              phk901031@gmail.com
-            </a>
+          <div className="flex flex-col sm:items-end gap-3">
+            <KakaoContact />
             <div className="flex gap-3 text-xs flex-wrap sm:justify-end">
               <Link href="/help" className="hover:text-foreground transition">
                 사용 가이드
@@ -231,6 +221,26 @@ export default async function HomePage() {
 }
 
 // ─── 보조 컴포넌트 ──────────────────────────────────────────────────
+
+// 카카오톡 친구 추가 안내 — 카카오 브랜드 색상(#FEE500) + 말풍선
+function KakaoContact() {
+  return (
+    <div className="inline-flex items-center gap-2.5 rounded-full bg-[#FEE500] text-[#1a1a1a] px-4 py-2 text-sm font-medium shadow-sm">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path d="M12 3C6.48 3 2 6.58 2 11c0 2.85 1.86 5.36 4.66 6.78-.16.55-.6 2.1-.69 2.42-.11.4.15.4.31.29.13-.09 2.07-1.41 2.91-1.98.93.13 1.85.2 2.81.2 5.52 0 10-3.58 10-8S17.52 3 12 3z" />
+      </svg>
+      <span>
+        문의: <strong className="font-bold">papawheels</strong> 친구 추가
+      </span>
+    </div>
+  );
+}
 
 function Step({
   n,

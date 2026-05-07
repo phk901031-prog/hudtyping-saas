@@ -313,15 +313,10 @@ export default function HelpPage() {
 
         <section className="rounded-2xl border border-accent/30 bg-accent-soft p-5 mt-4">
           <h3 className="font-display text-lg mb-2">해결이 안 되면</h3>
-          <p className="text-sm">
-            <a
-              href="mailto:phk901031@gmail.com"
-              className="underline font-medium"
-            >
-              phk901031@gmail.com
-            </a>
-            로 어떤 화면에서 어떤 메시지가 나왔는지 (스크린샷 첨부 가능) 보내주세요.
-            보통 1~2일 안에 답해드려요.
+          <p className="text-sm leading-relaxed">
+            카카오톡 <strong>papawheels</strong>로 친구 추가 후 어떤 화면에서 어떤
+            메시지가 나왔는지 (스크린샷 첨부 가능) 보내주세요. 보통 1~2일 안에
+            답해드려요.
           </p>
         </section>
       </div>

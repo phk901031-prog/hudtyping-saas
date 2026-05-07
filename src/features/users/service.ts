@@ -36,9 +36,14 @@ export async function getOrCreateCurrentUser(): Promise<User | null> {
     throw new Error(`Clerk 사용자(${userId})에게 이메일이 없습니다.`);
   }
 
+  // 성명 정보 — 관리자가 가입자 식별에 사용.
+  // Clerk이 firstName/lastName을 받았으면 함께 저장 (필수 입력으로 설정 권장).
+  const firstName = clerkUser.firstName ?? null;
+  const lastName = clerkUser.lastName ?? null;
+
   const [created] = await db
     .insert(users)
-    .values({ clerkId: userId, email })
+    .values({ clerkId: userId, email, firstName, lastName })
     .onConflictDoNothing()
     .returning();
 

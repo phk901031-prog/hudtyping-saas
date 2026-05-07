@@ -98,14 +98,8 @@ export default function TermsPage() {
         <section>
           <h2 className="font-display text-xl mb-3">7. 문의</h2>
           <p>
-            문의는{" "}
-            <a
-              href="mailto:phk901031@gmail.com"
-              className="underline text-accent"
-            >
-              phk901031@gmail.com
-            </a>
-            로 보내주세요.
+            문의는 카카오톡 <strong>papawheels</strong> 친구 추가 후 메시지
+            주세요.
           </p>
         </section>
       </div>

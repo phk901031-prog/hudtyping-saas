@@ -87,14 +87,8 @@ export default function PrivacyPage() {
         <section>
           <h2 className="font-display text-xl mb-3">5. 문의</h2>
           <p>
-            개인정보 관련 문의는{" "}
-            <a
-              href="mailto:phk901031@gmail.com"
-              className="underline text-accent"
-            >
-              phk901031@gmail.com
-            </a>
-            로 보내주세요.
+            개인정보 관련 문의는 카카오톡 <strong>papawheels</strong> 친구 추가
+            후 메시지 주세요.
           </p>
         </section>
       </div>

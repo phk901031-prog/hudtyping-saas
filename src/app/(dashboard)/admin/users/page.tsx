@@ -86,7 +86,15 @@ export default async function AdminUsersPage({
               className="px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
             >
               <div className="flex flex-col gap-0.5 min-w-0">
-                <span className="font-medium truncate">{u.email}</span>
+                <span className="font-medium flex items-baseline gap-2 flex-wrap">
+                  {/* 성명 우선 표시. 없으면 이메일만. */}
+                  {(u.lastName || u.firstName) && (
+                    <span className="truncate">
+                      {[u.lastName, u.firstName].filter(Boolean).join(" ")}
+                    </span>
+                  )}
+                  <span className="text-xs text-zinc-500 truncate">{u.email}</span>
+                </span>
                 <span className="text-xs text-zinc-500 flex gap-2 items-center flex-wrap">
                   <StatusBadge status={u.status} />
                   <RoleBadge role={u.role} />

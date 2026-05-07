@@ -94,14 +94,8 @@ export default function InstallHelpPage() {
               요청
             </li>
             <li>
-              그래도 안 되면{" "}
-              <a
-                href="mailto:phk901031@gmail.com"
-                className="underline text-accent"
-              >
-                phk901031@gmail.com
-              </a>
-              으로 알려주세요. 안랩 등 백신사에 진단 오류 신고하고 며칠 안에
+              그래도 안 되면 카카오톡 <strong>papawheels</strong>로 친구 추가 후
+              알려주세요. 안랩 등 백신사에 진단 오류 신고하고 며칠 안에
               해제되도록 처리해 드릴게요.
             </li>
           </ul>

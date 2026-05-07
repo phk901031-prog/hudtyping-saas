@@ -37,6 +37,12 @@ export const users = pgTable("users", {
   // 이메일 (Clerk webhook으로 가입 시 받아와 저장). 중복 방지.
   email: text("email").notNull().unique(),
 
+  // 사용자 성명 (Clerk firstName/lastName).
+  // 관리자가 가입자 식별할 때 이메일만으로 부족할 수 있어 별도 보관.
+  // NULL 허용: 기존 가입자(이름 없이 가입)와 호환 + Clerk이 이름 정보 안 보낼 케이스 방어.
+  firstName: text("first_name"),
+  lastName: text("last_name"),
+
   // 승인 상태 — 기본값 'pending', 관리자가 'approved'로 바꿔야 워크스페이스 입장 가능.
   status: userStatusEnum("status").notNull().default("pending"),
 

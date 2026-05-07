@@ -16,11 +16,11 @@ export default async function DashboardPage() {
       <header className="absolute top-4 left-4 right-4 flex items-center justify-between">
         <Link
           href="/"
-          aria-label="hudtyping 홈"
-          className="inline-flex items-center gap-2 group"
+          aria-label="메인 화면으로"
+          className="inline-flex items-center gap-2 text-sm text-muted hover:text-foreground transition group"
         >
-          <span className="keycap w-8 h-8 text-sm">H</span>
-          <span className="font-display text-lg">hudtyping</span>
+          <span className="keycap w-7 h-7 text-xs">H</span>
+          <span className="font-medium">← 메인 화면</span>
         </Link>
         <UserButton />
       </header>

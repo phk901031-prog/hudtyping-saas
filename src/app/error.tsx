@@ -27,7 +27,8 @@ export default function ErrorPage({
         문제가 생겼어요
       </h1>
       <p className="text-muted leading-relaxed max-w-md">
-        잠시 후 다시 시도해주세요. 같은 문제가 반복되면 아래 메일로 알려주세요.
+        잠시 후 다시 시도해주세요. 같은 문제가 반복되면 카카오톡{" "}
+        <strong>papawheels</strong>로 알려주세요.
       </p>
       {error.digest && (
         <code className="text-xs text-muted bg-muted-bg px-3 py-1 rounded">
@@ -49,12 +50,6 @@ export default function ErrorPage({
           홈으로
         </Link>
       </div>
-      <a
-        href="mailto:phk901031@gmail.com"
-        className="text-xs text-muted underline mt-2"
-      >
-        phk901031@gmail.com
-      </a>
     </main>
   );
 }
