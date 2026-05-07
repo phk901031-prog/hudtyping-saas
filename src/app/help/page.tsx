@@ -60,6 +60,28 @@ export default function HelpPage() {
             중이라 관리자가 가입을 검토해요. 보통 1~24시간 안에 승인되고, 승인되면
             바로 서비스 이용 가능해요.
           </p>
+
+          {/* 빠른 승인 안내 — 카카오 노란색으로 강조 */}
+          <div className="rounded-2xl bg-[#FEE500] text-[#1a1a1a] p-5 flex items-start gap-3">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+              className="mt-0.5 shrink-0"
+            >
+              <path d="M12 3C6.48 3 2 6.58 2 11c0 2.85 1.86 5.36 4.66 6.78-.16.55-.6 2.1-.69 2.42-.11.4.15.4.31.29.13-.09 2.07-1.41 2.91-1.98.93.13 1.85.2 2.81.2 5.52 0 10-3.58 10-8S17.52 3 12 3z" />
+            </svg>
+            <div className="flex flex-col gap-1.5">
+              <strong className="font-bold">⚡ 빠른 승인을 원하시면</strong>
+              <p className="text-sm leading-relaxed">
+                카카오톡 <strong>papawheels</strong> 친구 추가 후 가입한
+                이메일을 알려주세요. 보통 몇 분 안에 승인해 드려요.
+              </p>
+            </div>
+          </div>
+
           <p className="text-sm text-muted">
             이미 가입했으면{" "}
             <Link href="/sign-in" className="underline">
@@ -311,12 +333,33 @@ export default function HelpPage() {
           </details>
         </section>
 
-        <section className="rounded-2xl border border-accent/30 bg-accent-soft p-5 mt-4">
-          <h3 className="font-display text-lg mb-2">해결이 안 되면</h3>
+        {/* 문의·건의 — 카카오톡 강조 박스 */}
+        <section className="rounded-2xl bg-[#FEE500] text-[#1a1a1a] p-6 mt-4 flex flex-col gap-3">
+          <div className="flex items-center gap-2">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M12 3C6.48 3 2 6.58 2 11c0 2.85 1.86 5.36 4.66 6.78-.16.55-.6 2.1-.69 2.42-.11.4.15.4.31.29.13-.09 2.07-1.41 2.91-1.98.93.13 1.85.2 2.81.2 5.52 0 10-3.58 10-8S17.52 3 12 3z" />
+            </svg>
+            <h3 className="font-display text-lg">문의·건의·빠른 응답</h3>
+          </div>
           <p className="text-sm leading-relaxed">
-            카카오톡 <strong>papawheels</strong>로 친구 추가 후 어떤 화면에서 어떤
-            메시지가 나왔는지 (스크린샷 첨부 가능) 보내주세요. 보통 1~2일 안에
-            답해드려요.
+            서비스 문의, 기능 건의, 버그 신고, 빠른 가입 승인 요청 등{" "}
+            <strong>모든 소통은 카카오톡 papawheels로</strong> 친구 추가 후
+            메시지 주세요.
+          </p>
+          <ul className="text-sm leading-relaxed list-disc pl-5 space-y-1">
+            <li>가입 후 빠른 승인이 필요할 때</li>
+            <li>백신 차단·설치 오류 등 트러블슈팅 (스크린샷 환영)</li>
+            <li>새 기능 제안이나 사용 중 불편한 점</li>
+            <li>월 검색 한도 조정 요청</li>
+          </ul>
+          <p className="text-xs opacity-80">
+            보통 몇 시간 ~ 1일 안에 답해드려요. 메일·전화는 받지 않아요.
           </p>
         </section>
       </div>
