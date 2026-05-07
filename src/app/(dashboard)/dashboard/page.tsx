@@ -13,7 +13,15 @@ export default async function DashboardPage() {
 
   return (
     <main className="flex flex-1 flex-col items-center justify-center px-6 py-16 gap-10 relative">
-      <header className="absolute top-4 right-4">
+      <header className="absolute top-4 left-4 right-4 flex items-center justify-between">
+        <Link
+          href="/"
+          aria-label="hudtyping 홈"
+          className="inline-flex items-center gap-2 group"
+        >
+          <span className="keycap w-8 h-8 text-sm">H</span>
+          <span className="font-display text-lg">hudtyping</span>
+        </Link>
         <UserButton />
       </header>
 
