@@ -112,15 +112,17 @@ export async function verifyApiKeyFromHeader(
   // 보안: 승인된 사용자만 통과
   if (user.status !== "approved") return null;
 
-  // last_used_at 갱신 (실패해도 인증 자체는 성공이므로 try/catch)
-  try {
-    await db
-      .update(apiKeys)
-      .set({ lastUsedAt: new Date() })
-      .where(eq(apiKeys.id, apiKey.id));
-  } catch (err) {
-    console.error("[api-keys] last_used_at 갱신 실패:", err);
-  }
+  // last_used_at 갱신은 fire-and-forget — await 안 해서 응답에 ~50ms 절약.
+  // 메타데이터 성격이라 어쩌다 한 번 누락돼도 critical 아님.
+  // (Vercel serverless에서 함수 종료 후 promise가 drop될 가능성은 있지만
+  //  보통 짧은 UPDATE는 무사히 실행됨.)
+  void db
+    .update(apiKeys)
+    .set({ lastUsedAt: new Date() })
+    .where(eq(apiKeys.id, apiKey.id))
+    .catch((err) => {
+      console.error("[api-keys] last_used_at 갱신 실패:", err);
+    });
 
   return user;
 }
