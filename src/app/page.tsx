@@ -102,7 +102,7 @@ export default async function HomePage() {
             )}
             <Link
               href="/help"
-              className="px-6 py-3 rounded-full text-sm font-medium text-muted hover:text-foreground hover:bg-muted-bg transition inline-flex items-center justify-center gap-1.5"
+              className="px-6 py-3 rounded-full border border-border text-sm font-medium hover:bg-muted-bg transition inline-flex items-center justify-center gap-1.5"
             >
               <span>📖</span>
               사용 가이드
