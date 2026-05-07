@@ -78,16 +78,13 @@ export default async function HomePage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 mt-4">
-            {/* 다운로드 — Phase 4-4 후 GitHub Releases URL 연결 예정 */}
-            <button
-              type="button"
-              disabled
-              title="곧 다운로드가 가능해져요"
-              className="px-6 py-3 rounded-full bg-accent text-white text-sm font-medium hover:bg-accent-hover transition disabled:opacity-60 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+            <a
+              href="https://github.com/phk901031-prog/hudtyping-saas/releases/latest/download/hudtyping-Setup-0.1.0.exe"
+              className="px-6 py-3 rounded-full bg-accent text-white text-sm font-medium hover:bg-accent-hover transition inline-flex items-center justify-center gap-2"
             >
               <span>⬇</span>
-              데스크톱 앱 다운로드 (곧 출시)
-            </button>
+              데스크톱 앱 다운로드
+            </a>
             {!isSignedIn ? (
               <Link
                 href="/sign-up"
@@ -106,7 +103,7 @@ export default async function HomePage() {
           </div>
 
           <p className="text-xs text-muted mt-2">
-            Windows 10·11 · 무료 · 별도 회원가입 + 관리자 승인 후 사용
+            Windows 10·11 · v0.1.0 (86MB) · 회원가입 + 관리자 승인 후 사용
           </p>
         </div>
       </section>
