@@ -74,7 +74,7 @@ export default async function HomePage() {
 
           <div className="flex flex-col sm:flex-row gap-3 mt-4">
             <a
-              href="https://github.com/phk901031-prog/hudtyping-saas/releases/latest/download/hudtyping-Setup-0.1.0.exe"
+              href="https://github.com/phk901031-prog/hudtyping-saas/releases/latest/download/hudtyping-Setup-0.2.0.exe"
               className="px-6 py-3 rounded-full bg-accent text-white text-sm font-medium hover:bg-accent-hover transition inline-flex items-center justify-center gap-2"
             >
               <span>⬇</span>
@@ -105,7 +105,7 @@ export default async function HomePage() {
           </div>
 
           <p className="text-xs text-muted mt-2">
-            Windows 10·11 · v0.1.0 (86MB) · 회원가입 + 관리자 승인 후 사용
+            Windows 10·11 · v0.2.0 (87MB) · 회원가입 + 관리자 승인 후 사용
           </p>
           <p className="text-xs text-muted">
             ⚠️ 안랩·알약 등 백신이 차단할 수 있어요 (서명 미인증 .exe).{" "}
