@@ -12,7 +12,12 @@ import type { NextRequest } from "next/server";
 import { after } from "next/server";
 import { searchWord, logSearch } from "@/features/search/service";
 import { authenticate } from "@/features/auth/service";
-import { checkQuota } from "@/features/quota/service";
+import { checkQuota, incrementQuotaUsage } from "@/features/quota/service";
+
+// Edge Runtime — cold start 거의 0 + 사용자 가까운 PoP에서 실행 (latency 단축).
+// 의존성: Drizzle + Neon HTTP + Upstash Redis + Clerk auth + Web Crypto (hashToken)
+//   — 모두 edge 호환.
+export const runtime = "edge";
 
 export async function GET(req: NextRequest) {
   const user = await authenticate(req);
@@ -48,8 +53,15 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  after(() => logSearch(user.clerkId, q, result.cache === "hit"));
-  // 응답에 quota 정보 포함 — 클라이언트가 남은 횟수 표시할 수 있게
+  // 백그라운드 작업: DB 로깅 + Redis quota 카운터 증가 (한도 캐시가 곧바로 반영되도록)
+  after(async () => {
+    await Promise.all([
+      logSearch(user.clerkId, q, result.cache === "hit"),
+      incrementQuotaUsage(user.clerkId),
+    ]);
+  });
+
+  // 응답에 quota 정보 포함 — 클라이언트가 남은 횟수 표시 가능
   return Response.json({
     ...result,
     quota: { ...quota, usage: quota.usage + 1 }, // 방금 한 검색 반영

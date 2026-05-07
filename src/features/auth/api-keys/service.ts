@@ -35,7 +35,7 @@ export async function createApiKey(clerkId: string, name: string) {
     throw new ApiKeyAlreadyExistsError();
   }
 
-  const { plain, prefix, hash } = generateApiKey();
+  const { plain, prefix, hash } = await generateApiKey();
   const [created] = await db
     .insert(apiKeys)
     .values({ clerkId, name, prefix, hash })
@@ -98,7 +98,7 @@ export async function verifyApiKeyFromHeader(
   if (!match) return null;
   const plain = match[1];
 
-  const hash = hashToken(plain);
+  const hash = await hashToken(plain);
   const rows = await db
     .select({ apiKey: apiKeys, user: users })
     .from(apiKeys)
