@@ -5,6 +5,7 @@
 import { auth } from "@/infrastructure/clerk";
 import { getOrCreateCurrentUser } from "@/features/users/service";
 import {
+  ApiKeyAlreadyExistsError,
   createApiKey,
   listApiKeys,
 } from "@/features/auth/api-keys/service";
@@ -42,12 +43,19 @@ export async function POST(req: Request) {
     );
   }
 
-  const created = await createApiKey(user.clerkId, name);
-  return Response.json(
-    {
-      ...created,
-      message: "키를 안전한 곳에 복사해주세요. 다시 보여드릴 수 없어요.",
-    },
-    { status: 201 }
-  );
+  try {
+    const created = await createApiKey(user.clerkId, name);
+    return Response.json(
+      {
+        ...created,
+        message: "키를 안전한 곳에 복사해주세요. 다시 보여드릴 수 없어요.",
+      },
+      { status: 201 }
+    );
+  } catch (err) {
+    if (err instanceof ApiKeyAlreadyExistsError) {
+      return Response.json({ error: err.message }, { status: 409 });
+    }
+    throw err;
+  }
 }

@@ -87,9 +87,15 @@ export default async function AdminUsersPage({
             >
               <div className="flex flex-col gap-0.5 min-w-0">
                 <span className="font-medium truncate">{u.email}</span>
-                <span className="text-xs text-zinc-500 flex gap-2 items-center">
+                <span className="text-xs text-zinc-500 flex gap-2 items-center flex-wrap">
                   <StatusBadge status={u.status} />
                   <RoleBadge role={u.role} />
+                  <span>
+                    · 한도{" "}
+                    {u.role === "admin"
+                      ? "무제한"
+                      : `${u.monthlyLimit.toLocaleString()}회/월`}
+                  </span>
                   <span>· 가입 {formatDate(u.createdAt)}</span>
                 </span>
               </div>
@@ -97,6 +103,7 @@ export default async function AdminUsersPage({
                 clerkId={u.clerkId}
                 currentStatus={u.status}
                 currentRole={u.role}
+                currentMonthlyLimit={u.monthlyLimit}
                 isSelf={u.clerkId === me.clerkId}
               />
             </li>

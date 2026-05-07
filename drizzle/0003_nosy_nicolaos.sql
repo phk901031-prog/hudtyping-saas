@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "monthly_limit" integer DEFAULT 500 NOT NULL;

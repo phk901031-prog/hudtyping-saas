@@ -77,6 +77,19 @@ export async function updateUserRole(
   return updated ?? null;
 }
 
+/** 월 검색 한도 변경 — 관리자가 사용자별로 조정 (예: VIP는 5000) */
+export async function updateUserMonthlyLimit(
+  clerkId: string,
+  monthlyLimit: number
+): Promise<User | null> {
+  const [updated] = await db
+    .update(users)
+    .set({ monthlyLimit, updatedAt: new Date() })
+    .where(eq(users.clerkId, clerkId))
+    .returning();
+  return updated ?? null;
+}
+
 // ──────────────────────────────────────────────────────────────────────
 // 전체 통계 (개인 통계는 features/search/service.ts의 getMyStats)
 // ──────────────────────────────────────────────────────────────────────

@@ -108,7 +108,9 @@ export default function ApiKeysPage() {
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-bold">API 키</h1>
         <p className="text-sm text-zinc-500 leading-relaxed">
-          로컬 HUD 앱에서 검색을 사용하려면 여기서 발급한 키가 필요해요. 디바이스(노트북, 회사 PC 등)별로 따로 발급하는 걸 권장해요.
+          로컬 HUD 앱에서 검색을 사용하려면 여기서 발급한 키가 필요해요.
+          <br />
+          <strong>계정당 1개만 발급 가능</strong>해요. 키를 잃어버렸으면 기존 키를 삭제 후 새로 발급받으세요.
         </p>
       </div>
 
@@ -145,33 +147,42 @@ export default function ApiKeysPage() {
         </div>
       )}
 
-      {/* 새 키 발급 폼 */}
-      <form
-        onSubmit={handleCreate}
-        className="flex gap-2 items-end border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4"
-      >
-        <div className="flex-1 flex flex-col gap-1.5">
-          <label htmlFor="new-key-name" className="text-sm font-medium">
-            새 키 이름
-          </label>
-          <input
-            id="new-key-name"
-            type="text"
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            placeholder="예: 내 노트북, 회사 PC"
-            maxLength={50}
-            className="rounded-full border border-zinc-300 dark:border-zinc-700 bg-transparent px-4 py-2 text-sm outline-none focus:border-zinc-500"
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={creating || !newName.trim()}
-          className="rounded-full bg-foreground text-background px-5 py-2 text-sm font-medium disabled:opacity-50 hover:opacity-90 transition"
+      {/* 새 키 발급 폼 — 키가 0개일 때만 표시 (1개 제한) */}
+      {!loading && keys.length === 0 && (
+        <form
+          onSubmit={handleCreate}
+          className="flex gap-2 items-end border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4"
         >
-          {creating ? "발급 중…" : "발급"}
-        </button>
-      </form>
+          <div className="flex-1 flex flex-col gap-1.5">
+            <label htmlFor="new-key-name" className="text-sm font-medium">
+              새 키 이름
+            </label>
+            <input
+              id="new-key-name"
+              type="text"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder="예: 내 노트북"
+              maxLength={50}
+              className="rounded-full border border-zinc-300 dark:border-zinc-700 bg-transparent px-4 py-2 text-sm outline-none focus:border-zinc-500"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={creating || !newName.trim()}
+            className="rounded-full bg-foreground text-background px-5 py-2 text-sm font-medium disabled:opacity-50 hover:opacity-90 transition"
+          >
+            {creating ? "발급 중…" : "발급"}
+          </button>
+        </form>
+      )}
+
+      {/* 키가 이미 있을 때 안내 */}
+      {!loading && keys.length > 0 && !justIssued && (
+        <div className="border border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 text-sm text-zinc-500">
+          이미 발급된 키가 있어요. 재발급하려면 아래 목록의 키를 삭제 후 다시 발급하세요.
+        </div>
+      )}
 
       {error && (
         <p className="rounded-lg border border-red-300 bg-red-50 dark:bg-red-950/30 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 text-sm">

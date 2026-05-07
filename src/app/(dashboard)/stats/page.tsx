@@ -12,6 +12,7 @@
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { getMyStats } from "@/features/search/service";
+import { getQuota } from "@/features/quota/service";
 import { getOrCreateCurrentUser } from "@/features/users/service";
 
 export default async function StatsPage() {
@@ -19,12 +20,20 @@ export default async function StatsPage() {
   const user = await getOrCreateCurrentUser();
   if (!user) return null; // 도달 불가 (layout이 redirect)
 
-  // 통계는 service에서 한 번에 가져옴 (요약 + 최근 + 인기 묶음)
-  const { total, cacheHits, firstSearch, recent, popular } = await getMyStats(
-    user.clerkId
-  );
+  // 통계 + 이번 달 한도 정보를 병렬로 가져옴
+  const [stats, quota] = await Promise.all([
+    getMyStats(user.clerkId),
+    getQuota(user),
+  ]);
+  const { total, cacheHits, firstSearch, recent, popular } = stats;
   const cacheHitRate = total > 0 ? (cacheHits / total) * 100 : 0;
   const summary = { firstSearch };
+  const remaining = quota.unlimited
+    ? null
+    : Math.max(0, quota.limit - quota.usage);
+  const usagePct = quota.unlimited
+    ? 0
+    : Math.min(100, (quota.usage / Math.max(1, quota.limit)) * 100);
 
   return (
     <main className="flex flex-1 flex-col px-6 py-8 gap-6 max-w-3xl w-full mx-auto">
@@ -44,6 +53,48 @@ export default async function StatsPage() {
           웹 검색과 로컬 HUD에서 한 모든 검색이 합산돼요.
         </p>
       </div>
+
+      {/* 이번 달 한도 카드 */}
+      <section className="rounded-2xl border border-border bg-card p-5 flex flex-col gap-3">
+        <div className="flex items-baseline justify-between gap-3">
+          <span className="text-sm font-semibold">이번 달 사용량</span>
+          {quota.unlimited ? (
+            <span className="text-xs text-accent">무제한 (관리자)</span>
+          ) : (
+            <span className="text-xs text-zinc-500">
+              리셋 {quota.resetAt.slice(0, 10)}
+            </span>
+          )}
+        </div>
+        <div className="flex items-baseline gap-2">
+          <span className="text-3xl font-bold">
+            {quota.usage.toLocaleString()}
+          </span>
+          {!quota.unlimited && (
+            <span className="text-sm text-zinc-500">
+              / {quota.limit.toLocaleString()}회
+            </span>
+          )}
+        </div>
+        {!quota.unlimited && (
+          <>
+            <div className="w-full h-2 rounded-full bg-muted-bg overflow-hidden">
+              <div
+                className="h-full bg-accent transition-all"
+                style={{ width: `${usagePct}%` }}
+              />
+            </div>
+            <div className="text-xs text-zinc-500">
+              남은 {remaining?.toLocaleString()}회
+              {remaining === 0 && (
+                <span className="text-danger font-medium ml-2">
+                  · 다음 달까지 검색 불가
+                </span>
+              )}
+            </div>
+          </>
+        )}
+      </section>
 
       {/* 요약 카드들 */}
       <section className="grid grid-cols-1 sm:grid-cols-3 gap-3">

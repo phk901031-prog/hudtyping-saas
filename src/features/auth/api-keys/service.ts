@@ -8,12 +8,33 @@ import { db } from "@/infrastructure/db";
 import { apiKeys, users, type User } from "@/infrastructure/db/schema";
 import { generateApiKey, hashToken } from "./token";
 
+/** 사용자가 이미 키를 가진 상태에서 새 발급 시도 시 throw */
+export class ApiKeyAlreadyExistsError extends Error {
+  constructor() {
+    super(
+      "이미 발급된 API 키가 있어요. 재발급하려면 기존 키를 먼저 삭제해주세요."
+    );
+    this.name = "ApiKeyAlreadyExistsError";
+  }
+}
+
 /**
  * 새 키 발급.
- * 응답에 평문 토큰(plain)이 포함되니 1회만 노출 후 클라이언트에서 즉시 보관해야 함.
- * DB에는 SHA256 해시만 저장.
+ * - **사용자 1인당 키 1개만 허용**. 이미 있으면 ApiKeyAlreadyExistsError throw.
+ * - 응답에 평문 토큰(plain)이 포함되니 1회만 노출 후 클라이언트에서 즉시 보관해야 함.
+ * - DB에는 SHA256 해시만 저장.
  */
 export async function createApiKey(clerkId: string, name: string) {
+  // 1개 제한 검사
+  const existing = await db
+    .select({ id: apiKeys.id })
+    .from(apiKeys)
+    .where(eq(apiKeys.clerkId, clerkId))
+    .limit(1);
+  if (existing.length > 0) {
+    throw new ApiKeyAlreadyExistsError();
+  }
+
   const { plain, prefix, hash } = generateApiKey();
   const [created] = await db
     .insert(apiKeys)

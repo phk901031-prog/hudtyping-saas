@@ -8,6 +8,7 @@ import { getOrCreateCurrentUser } from "@/features/users/service";
 import {
   AdminPermissionError,
   assertAdmin,
+  updateUserMonthlyLimit,
   updateUserRole,
   updateUserStatus,
 } from "@/features/admin/service";
@@ -15,6 +16,7 @@ import type { UserRole, UserStatus } from "@/infrastructure/db/schema";
 
 const VALID_STATUSES: UserStatus[] = ["pending", "approved", "rejected"];
 const VALID_ROLES: UserRole[] = ["user", "admin"];
+const MAX_MONTHLY_LIMIT = 1_000_000; // 사실상 무제한 — 더 큰 수는 의미 없음
 
 export async function PATCH(
   req: Request,
@@ -38,6 +40,7 @@ export async function PATCH(
   const body = (await req.json().catch(() => ({}))) as {
     status?: string;
     role?: string;
+    monthlyLimit?: number;
   };
 
   // 자기 자신 admin 해제는 차단 (lock-out 방지)
@@ -66,9 +69,22 @@ export async function PATCH(
       );
     }
     updated = await updateUserRole(targetClerkId, body.role as UserRole);
+  } else if (body.monthlyLimit !== undefined) {
+    if (
+      typeof body.monthlyLimit !== "number" ||
+      !Number.isInteger(body.monthlyLimit) ||
+      body.monthlyLimit < 0 ||
+      body.monthlyLimit > MAX_MONTHLY_LIMIT
+    ) {
+      return Response.json(
+        { error: `monthlyLimit은 0~${MAX_MONTHLY_LIMIT.toLocaleString()} 사이의 정수여야 해요.` },
+        { status: 400 }
+      );
+    }
+    updated = await updateUserMonthlyLimit(targetClerkId, body.monthlyLimit);
   } else {
     return Response.json(
-      { error: "status 또는 role 중 하나는 필요해요." },
+      { error: "status, role, monthlyLimit 중 하나는 필요해요." },
       { status: 400 }
     );
   }

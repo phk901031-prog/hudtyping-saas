@@ -15,6 +15,7 @@ interface Props {
   clerkId: string;
   currentStatus: Status;
   currentRole: Role;
+  currentMonthlyLimit: number;
   isSelf: boolean; // 본인이면 admin 해제 버튼 비활성화 (lock-out 방지)
 }
 
@@ -22,13 +23,18 @@ export function UserActionButtons({
   clerkId,
   currentStatus,
   currentRole,
+  currentMonthlyLimit,
   isSelf,
 }: Props) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function patch(body: { status?: Status; role?: Role }) {
+  async function patch(body: {
+    status?: Status;
+    role?: Role;
+    monthlyLimit?: number;
+  }) {
     setBusy(true);
     setError(null);
     try {
@@ -111,6 +117,29 @@ export function UserActionButtons({
             className="text-xs px-3 py-1 rounded border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-900 disabled:opacity-50 transition"
           >
             관리자 해제
+          </button>
+        )}
+        {/* 월 한도 조정 — admin은 어차피 무제한이므로 일반 사용자에게만 의미 */}
+        {currentRole === "user" && (
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => {
+              const input = prompt(
+                `월 검색 한도 (현재 ${currentMonthlyLimit.toLocaleString()}회)`,
+                String(currentMonthlyLimit)
+              );
+              if (input === null) return;
+              const n = parseInt(input.trim(), 10);
+              if (isNaN(n) || n < 0) {
+                alert("0 이상의 정수를 입력해주세요.");
+                return;
+              }
+              patch({ monthlyLimit: n });
+            }}
+            className="text-xs px-3 py-1 rounded border border-amber-300 text-amber-700 dark:border-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/30 disabled:opacity-50 transition"
+          >
+            한도 조정
           </button>
         )}
       </div>

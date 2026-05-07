@@ -11,6 +11,7 @@ import {
   serial,
   boolean,
   index,
+  integer,
 } from "drizzle-orm/pg-core";
 
 // PostgreSQL의 ENUM 타입을 정의 — DB 레벨에서 잘못된 값 입력을 차단한다.
@@ -41,6 +42,11 @@ export const users = pgTable("users", {
 
   // 역할 — 기본값 'user'. 관리자 한 명을 직접 'admin'으로 승격해 부트스트랩한다.
   role: userRoleEnum("role").notNull().default("user"),
+
+  // 월 검색 한도. 매월 1일 0시(UTC) 리셋.
+  // - 일반 사용자: 기본 500회. 관리자가 사용자별로 조정 가능 (예: VIP에게 5000으로).
+  // - admin은 role='admin'으로 한도 체크 자체를 스킵 (이 컬럼 값과 무관하게 무제한).
+  monthlyLimit: integer("monthly_limit").notNull().default(500),
 
   // 생성/수정 시각 — 'with timezone'으로 UTC 기준 저장.
   createdAt: timestamp("created_at", { withTimezone: true })
