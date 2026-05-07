@@ -1,0 +1,60 @@
+<svg width="1080" height="1080" viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg">
+  <!--
+    hudtyping 카카오톡 프로필 이미지 (1080x1080, 카카오 권장 비율)
+    톤: 따뜻한 크림 배경 + 코랄 글로우 + 흰색 H 키캡 (사이트와 일관)
+  -->
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FAF9F5" />
+      <stop offset="100%" stop-color="#F1EEE5" />
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#CC785C" stop-opacity="0.18" />
+      <stop offset="60%" stop-color="#CC785C" stop-opacity="0.05" />
+      <stop offset="100%" stop-color="#CC785C" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="keycap" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="55%" stop-color="#FCFAF3" />
+      <stop offset="100%" stop-color="#EFEBDF" />
+    </linearGradient>
+    <linearGradient id="topShine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.7" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="1080" height="1080" fill="url(#bg)" />
+  <circle cx="540" cy="540" r="500" fill="url(#glow)" />
+
+  <!-- 키캡 바닥 그림자 (입체감) -->
+  <rect x="270" y="296" width="540" height="540" rx="88" fill="#1F1E1D" opacity="0.08" />
+  <rect x="270" y="284" width="540" height="540" rx="88" fill="#E8E5DC" />
+
+  <!-- 키캡 메인 면 -->
+  <rect x="270" y="270" width="540" height="540" rx="88"
+        fill="url(#keycap)"
+        stroke="#E8E5DC" stroke-width="4" />
+
+  <!-- 윗면 정반사 광택 띠 -->
+  <rect x="296" y="290" width="488" height="220" rx="68" fill="url(#topShine)" />
+
+  <!-- H 글자 -->
+  <text x="540" y="660"
+        font-family="'Inter', 'Helvetica Neue', 'Arial', sans-serif"
+        font-size="340"
+        font-weight="900"
+        fill="#1F1E1D"
+        text-anchor="middle"
+        letter-spacing="-12">H</text>
+
+  <!-- 하단 작은 워드마크 -->
+  <text x="540" y="945"
+        font-family="'Inter', 'Helvetica Neue', 'Arial', sans-serif"
+        font-size="50"
+        font-weight="600"
+        fill="#6F6E6A"
+        text-anchor="middle"
+        letter-spacing="3">hudtyping</text>
+</svg>

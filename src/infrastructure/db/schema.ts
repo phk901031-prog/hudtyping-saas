@@ -73,6 +73,25 @@ export type NewUser = typeof users.$inferInsert;
 export type UserStatus = (typeof userStatusEnum.enumValues)[number]; // "pending" | "approved" | "rejected"
 export type UserRole = (typeof userRoleEnum.enumValues)[number]; // "user" | "admin"
 
+// ──────────────────────────────────────────────────────────────────────
+// official_binaries — 공식 빌드한 .exe 의 SHA-256 화이트리스트
+// 새 .exe 빌드 후 hash를 여기 등록하면 그 빌드만 검색 인증 통과.
+// 사용자가 .exe 변조 → hash 다름 → SaaS가 인증 거부 → 검색 불가.
+// ──────────────────────────────────────────────────────────────────────
+export const officialBinaries = pgTable(
+  "official_binaries",
+  {
+    id: serial("id").primaryKey(),
+    version: text("version").notNull(), // "0.2.0"
+    sha256: text("sha256").notNull().unique(), // 64자 hex
+    releasedAt: timestamp("released_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    notes: text("notes"), // 릴리스 노트 메모 (선택)
+  },
+  (table) => [index("official_binaries_sha256_idx").on(table.sha256)]
+);
+
 // search_logs 테이블 — 모든 검색 요청을 1건씩 기록.
 // 1년 무료 운영 동안 모인 데이터로 다음을 분석:
 //   - 사용자별 활동량 (유료화 협상 시 데이터)

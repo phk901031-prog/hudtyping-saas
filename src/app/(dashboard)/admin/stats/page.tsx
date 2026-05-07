@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
-import { getGlobalStats } from "@/features/admin/service";
+import { getGlobalStats } from "@/features/admin/stats";
 
 export default async function AdminStatsPage() {
   const { userCounts, searchSummary, popular, daily } = await getGlobalStats();

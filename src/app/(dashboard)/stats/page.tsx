@@ -11,7 +11,7 @@
 
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
-import { getMyStats } from "@/features/search/service";
+import { getMyStats } from "@/features/search/stats";
 import { getQuota } from "@/features/quota/service";
 import { getOrCreateCurrentUser } from "@/features/users/service";
 

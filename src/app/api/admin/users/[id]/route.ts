@@ -5,13 +5,12 @@
 // admin만 호출 가능. 본인 자신 admin 해제는 차단(lock-out 방지).
 
 import { getOrCreateCurrentUser } from "@/features/users/service";
+import { AdminPermissionError, assertAdmin } from "@/features/admin/permissions";
 import {
-  AdminPermissionError,
-  assertAdmin,
   updateUserMonthlyLimit,
   updateUserRole,
   updateUserStatus,
-} from "@/features/admin/service";
+} from "@/features/admin/users";
 import type { UserRole, UserStatus } from "@/infrastructure/db/schema";
 
 const VALID_STATUSES: UserStatus[] = ["pending", "approved", "rejected"];

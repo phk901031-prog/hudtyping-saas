@@ -7,6 +7,7 @@ import { eq, and, desc } from "drizzle-orm";
 import { db } from "@/infrastructure/db";
 import { apiKeys, users, type User } from "@/infrastructure/db/schema";
 import { generateApiKey, hashToken } from "./token";
+import { isOfficialBinary } from "@/features/security/binary-verification";
 
 /** 사용자가 이미 키를 가진 상태에서 새 발급 시도 시 throw */
 export class ApiKeyAlreadyExistsError extends Error {
@@ -83,20 +84,39 @@ export async function revokeApiKey(
 }
 
 /**
- * Authorization 헤더의 Bearer 토큰을 검증.
- * - 헤더 없음/형식 오류 → null
- * - 해시 매치 안 됨 → null
- * - status≠approved → null
- * - 통과: User 반환 + last_used_at 갱신
+ * Authorization 헤더의 Bearer 토큰 + 클라이언트 .exe hash를 함께 검증.
+ *
+ * 검증 실패 케이스 (모두 null):
+ *   - Bearer 헤더 없음/형식 오류
+ *   - API 키 해시 매치 실패
+ *   - 사용자 status ≠ approved
+ *   - clientHash 누락 — Bearer 인증은 반드시 X-Client-Hash 동반 (변조 .exe 차단)
+ *   - clientHash가 official_binaries 화이트리스트에 없음
+ *
+ * 통과 시: User 반환 + last_used_at 갱신 (fire-and-forget)
  */
 export async function verifyApiKeyFromHeader(
-  authHeader: string | null
+  authHeader: string | null,
+  clientHash: string | null
 ): Promise<User | null> {
   if (!authHeader) return null;
 
   const match = authHeader.match(/^Bearer\s+(\S+)$/);
   if (!match) return null;
   const plain = match[1];
+
+  // ⚠️ 클라이언트 무결성 검증 — Bearer 인증은 .exe에서만 와야 하므로 hash 필수.
+  // 변조된 .exe → hash 매치 실패 → 인증 거부.
+  if (!clientHash) {
+    console.warn("[binary-verify] X-Client-Hash 헤더 누락 — 옛 버전 또는 우회 시도");
+    return null;
+  }
+  if (!(await isOfficialBinary(clientHash))) {
+    console.warn(
+      `[binary-verify] hash 매치 실패: ${clientHash.slice(0, 12)}...`
+    );
+    return null;
+  }
 
   const hash = await hashToken(plain);
   const rows = await db

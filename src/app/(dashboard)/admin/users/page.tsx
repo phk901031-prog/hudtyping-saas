@@ -4,7 +4,7 @@
 
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
-import { listUsers } from "@/features/admin/service";
+import { listUsers } from "@/features/admin/users";
 import { getOrCreateCurrentUser } from "@/features/users/service";
 import { UserActionButtons } from "@/components/admin/user-action-buttons";
 import type { UserStatus } from "@/infrastructure/db/schema";

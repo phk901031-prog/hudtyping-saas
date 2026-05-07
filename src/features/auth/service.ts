@@ -19,7 +19,10 @@ import { getOrCreateCurrentUser } from "@/features/users/service";
 export async function authenticate(req: NextRequest): Promise<User | null> {
   const authHeader = req.headers.get("authorization");
   if (authHeader) {
-    return verifyApiKeyFromHeader(authHeader);
+    // .exe 클라이언트는 X-Client-Hash 헤더로 자기 무결성 증명 필수.
+    // 헤더 없거나 hash 매치 실패 → null.
+    const clientHash = req.headers.get("x-client-hash");
+    return verifyApiKeyFromHeader(authHeader, clientHash);
   }
 
   const user = await getOrCreateCurrentUser();

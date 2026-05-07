@@ -10,7 +10,8 @@
 
 import type { NextRequest } from "next/server";
 import { after } from "next/server";
-import { searchWord, logSearch } from "@/features/search/service";
+import { searchWord } from "@/features/search/service";
+import { logSearch } from "@/features/search/logger";
 import { authenticate } from "@/features/auth/service";
 import { checkQuota, incrementQuotaUsage } from "@/features/quota/service";
 
