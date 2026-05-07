@@ -73,8 +73,8 @@ export default async function HomePage() {
           </h1>
 
           <p className="text-lg sm:text-xl text-muted leading-relaxed max-w-2xl">
-            한글에서 단어를 블록 잡고 단축키 한 번. 우리말샘 결과가 옆에 살짝
-            떠요. 흐름이 끊기지 않아요.
+            한글에서 단어를 블록 잡고 지정한 단축키 한 번. 우리말샘 결과가 옆에
+            살짝 떠요. 흐름이 끊기지 않아요.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 mt-4">
@@ -126,8 +126,8 @@ export default async function HomePage() {
             />
             <Step
               n="2"
-              title="F2 누르기"
-              body="단축키를 누르는 순간, 우리말샘이 그 단어를 받아 사전을 찾기 시작해요."
+              title="단축키 누르기"
+              body="평소 안 쓰는 키 하나(예: Insert)를 단축키로 지정해두면, 한 번 누르는 순간 우리말샘이 그 단어를 찾기 시작해요."
             />
             <Step
               n="3"
@@ -156,7 +156,7 @@ export default async function HomePage() {
             <Feature
               icon="⌨"
               title="단축키 두 개로 충분"
-              body="블록 잡고 F2, 또는 커서 앞 단어를 자동으로 잡아주는 F3. 마우스도 거의 안 써요."
+              body="평소 안 쓰는 키 두 개를 직접 지정해요 — 블록 검색용·이전 단어 자동 검색용. 마우스도 거의 안 써요."
             />
             <Feature
               icon="⚡"
@@ -186,14 +186,22 @@ export default async function HomePage() {
               © 2026 hudtyping. 속기·회의록 작성을 위한 도구.
             </span>
           </div>
-          <div className="flex flex-col sm:items-end gap-1">
+          <div className="flex flex-col sm:items-end gap-2">
             <a
               href="mailto:phk901031@gmail.com"
               className="hover:text-foreground transition"
             >
               phk901031@gmail.com
             </a>
-            <span className="text-xs">문의는 메일로 받아요.</span>
+            <div className="flex gap-3 text-xs">
+              <Link href="/privacy" className="hover:text-foreground transition">
+                개인정보 처리방침
+              </Link>
+              <span className="text-border">·</span>
+              <Link href="/terms" className="hover:text-foreground transition">
+                이용약관
+              </Link>
+            </div>
           </div>
         </div>
       </footer>

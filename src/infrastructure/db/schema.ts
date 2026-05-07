@@ -115,8 +115,11 @@ export const apiKeys = pgTable(
   "api_keys",
   {
     id: serial("id").primaryKey(),
+    // unique() 제약: 사용자당 키 1개만 강제 (DB 레벨 race 차단).
+    // 동시에 두 발급 요청이 와도 두 번째는 unique violation으로 실패.
     clerkId: text("clerk_id")
       .notNull()
+      .unique()
       .references(() => users.clerkId, { onDelete: "cascade" }),
     // 사용자가 키를 식별하는 이름 (예: "내 노트북")
     name: text("name").notNull(),
