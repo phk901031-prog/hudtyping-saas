@@ -105,6 +105,12 @@ export default async function HomePage() {
           <p className="text-xs text-muted mt-2">
             Windows 10·11 · v0.1.0 (86MB) · 회원가입 + 관리자 승인 후 사용
           </p>
+          <p className="text-xs text-muted">
+            ⚠️ 안랩·알약 등 백신이 차단할 수 있어요 (서명 미인증 .exe).{" "}
+            <Link href="/install-help" className="underline hover:text-foreground transition">
+              설치 도움말
+            </Link>
+          </p>
         </div>
       </section>
 
