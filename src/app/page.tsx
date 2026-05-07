@@ -100,6 +100,13 @@ export default async function HomePage() {
                 대시보드로 →
               </Link>
             )}
+            <Link
+              href="/help"
+              className="px-6 py-3 rounded-full text-sm font-medium text-muted hover:text-foreground hover:bg-muted-bg transition inline-flex items-center justify-center gap-1.5"
+            >
+              <span>📖</span>
+              사용 가이드
+            </Link>
           </div>
 
           <p className="text-xs text-muted mt-2">
