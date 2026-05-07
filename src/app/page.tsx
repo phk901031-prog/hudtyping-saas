@@ -199,7 +199,15 @@ export default async function HomePage() {
             >
               phk901031@gmail.com
             </a>
-            <div className="flex gap-3 text-xs">
+            <div className="flex gap-3 text-xs flex-wrap sm:justify-end">
+              <Link href="/help" className="hover:text-foreground transition">
+                사용 가이드
+              </Link>
+              <span className="text-border">·</span>
+              <Link href="/install-help" className="hover:text-foreground transition">
+                설치 도움말
+              </Link>
+              <span className="text-border">·</span>
               <Link href="/privacy" className="hover:text-foreground transition">
                 개인정보 처리방침
               </Link>

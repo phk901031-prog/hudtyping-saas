@@ -53,6 +53,13 @@ export default async function PendingPage() {
             (베타 운영 단계라 가입 승인 절차가 있어요.)
           </span>
         </p>
+        <p className="text-sm text-zinc-500">
+          기다리는 동안{" "}
+          <Link href="/help" className="underline font-medium">
+            사용 가이드
+          </Link>
+          를 미리 읽어두시면 승인 후 빠르게 시작할 수 있어요.
+        </p>
         <LogoutButton />
       </div>
     </main>

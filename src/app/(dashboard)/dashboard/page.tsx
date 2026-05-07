@@ -61,6 +61,17 @@ export default async function DashboardPage() {
             </span>
           </Link>
 
+          <Link
+            href="/help"
+            className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 flex flex-col gap-2 hover:border-zinc-400 dark:hover:border-zinc-600 transition text-left"
+          >
+            <span className="text-2xl">📖</span>
+            <span className="font-semibold">사용 가이드</span>
+            <span className="text-sm text-zinc-500">
+              처음 사용하시면 여기부터
+            </span>
+          </Link>
+
           {/* admin만 보이는 카드 */}
           {isAdmin && (
             <Link

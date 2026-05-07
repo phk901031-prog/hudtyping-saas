@@ -111,6 +111,10 @@ export default function ApiKeysPage() {
           로컬 HUD 앱에서 검색을 사용하려면 여기서 발급한 키가 필요해요.
           <br />
           <strong>계정당 1개만 발급 가능</strong>해요. 키를 잃어버렸으면 기존 키를 삭제 후 새로 발급받으세요.
+          {" "}
+          <Link href="/help#step2" className="underline">
+            처음이라면 가이드 →
+          </Link>
         </p>
       </div>
 
