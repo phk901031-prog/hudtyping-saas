@@ -168,9 +168,27 @@ export default function HelpPage() {
           </h3>
           <ol className="list-decimal pl-5 flex flex-col gap-1.5">
             <li>한글에서 어떤 단어 뒤에 커서 두기 (블록 안 잡아도 됨)</li>
-            <li>지정한 단축키 누름</li>
-            <li>커서 앞 단어를 자동으로 잡아 검색</li>
+            <li>지정한 단축키 누름 → 커서 앞 단어 자동 검색</li>
+            <li>
+              <strong>연속해서 더 누르면</strong> 띄어쓰기를 넘어 한 단어씩
+              확장돼요. 두 번째 누름 → 앞 두 단어를 묶어서, 세 번째 → 세 단어,
+              계속 누를수록 더 길게.
+            </li>
           </ol>
+          <div className="rounded-xl border border-border bg-muted-bg p-4 text-sm">
+            <p className="font-semibold mb-1">예시</p>
+            <p className="text-muted leading-relaxed">
+              <code className="bg-card px-1.5 py-0.5 rounded text-xs">
+                회의 안건 정리|
+              </code>
+              {" "}커서 위치에서 단축키를 누르면 →{" "}
+              <strong>"정리"</strong> 검색.
+              <br />
+              한 번 더 → <strong>"안건 정리"</strong> 검색.
+              <br />
+              세 번째 → <strong>"회의 안건 정리"</strong> 전체 검색.
+            </p>
+          </div>
 
           <h3 className="font-display text-lg mt-3">단축키 변경</h3>
           <ol className="list-decimal pl-5 flex flex-col gap-1.5">
