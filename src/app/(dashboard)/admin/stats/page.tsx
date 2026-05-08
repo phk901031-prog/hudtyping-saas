@@ -84,30 +84,11 @@ export default async function AdminStatsPage() {
         </div>
       </section>
 
-      {/* 일별 그래프 (최근 30일) */}
+      {/* 일별 그래프 (최근 30일) — 빈 날도 0으로 채워 30칸 풀 표시 */}
       {daily.length > 0 && (
         <section className="flex flex-col gap-3">
           <h2 className="text-base font-semibold">일별 검색량 (최근 30일)</h2>
-          <div className="border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 flex items-end gap-1 h-40">
-            {daily.map((d) => (
-              <div
-                key={d.day}
-                className="flex-1 flex flex-col justify-end items-center gap-1 group min-w-0"
-                title={`${d.day}: ${d.cnt}건`}
-              >
-                <div
-                  className="w-full bg-foreground/80 hover:bg-foreground transition rounded-sm"
-                  style={{
-                    height: `${(d.cnt / maxDaily) * 100}%`,
-                    minHeight: d.cnt > 0 ? "2px" : "0",
-                  }}
-                />
-                <span className="text-[8px] text-zinc-500 truncate w-full text-center">
-                  {d.day.slice(5)}
-                </span>
-              </div>
-            ))}
-          </div>
+          <DailyChart daily={daily} maxDaily={maxDaily} />
         </section>
       )}
 
@@ -142,6 +123,64 @@ export default async function AdminStatsPage() {
 }
 
 // ─── 보조 컴포넌트 ───────────────────────────────────────────────
+
+/**
+ * 일별 그래프 — 30일을 풀로 채워서 빈 날도 0 막대로 표시.
+ * 막대 영역과 라벨 영역을 명확히 분리해서 비율 계산이 안정적.
+ */
+function DailyChart({
+  daily,
+  maxDaily,
+}: {
+  daily: Array<{ day: string; cnt: number }>;
+  maxDaily: number;
+}) {
+  // 최근 30일 풀 채우기 (빈 날은 0)
+  const today = new Date();
+  const days: Array<{ day: string; cnt: number }> = [];
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(today);
+    d.setUTCDate(d.getUTCDate() - i);
+    const day = d.toISOString().slice(0, 10); // YYYY-MM-DD
+    const found = daily.find((row) => row.day === day);
+    days.push({ day, cnt: found?.cnt ?? 0 });
+  }
+
+  return (
+    <div className="border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 flex flex-col gap-2">
+      {/* 막대 영역 — 고정 높이로 % 계산 정확 */}
+      <div className="h-40 flex items-end gap-0.5">
+        {days.map((d) => (
+          <div
+            key={d.day}
+            className="flex-1 h-full flex items-end min-w-0 group relative"
+            title={`${d.day}: ${d.cnt.toLocaleString()}건`}
+          >
+            <div
+              className="w-full bg-accent/80 hover:bg-accent transition-colors rounded-sm"
+              style={{
+                height: maxDaily > 0 ? `${(d.cnt / maxDaily) * 100}%` : "0%",
+                minHeight: d.cnt > 0 ? "3px" : "0",
+              }}
+            />
+          </div>
+        ))}
+      </div>
+      {/* 라벨 영역 — 일주일 단위로만 표시해 빽빽하지 않게 */}
+      <div className="flex items-end gap-0.5 text-[9px] text-zinc-500">
+        {days.map((d, i) => (
+          <span
+            key={d.day}
+            className="flex-1 text-center truncate min-w-0"
+          >
+            {/* 7일마다 하나씩만 라벨 표시 (월/일) */}
+            {i % 7 === 0 || i === days.length - 1 ? d.day.slice(5) : ""}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function SummaryCard({
   label,
