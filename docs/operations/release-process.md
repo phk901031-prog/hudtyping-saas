@@ -34,16 +34,25 @@ npm run build
 
 **필수**. 등록 안 된 hash는 SaaS가 거부.
 
+⚠️ **중요**: 등록할 파일은 **`dist/win-unpacked/hudtyping.exe`** (설치된 본체, ~180MB)
+NSIS Setup .exe (`hudtyping-Setup-X.Y.Z.exe`)가 아님!
+
+이유: 사용자 PC에서 실제 실행되는 파일 = 설치된 본체. SaaS의 `integrity.ts`가
+`process.execPath`로 읽는 게 설치된 본체 .exe라, **그 파일의 hash가 등록돼야** 매치됨.
+
 ```bash
 cd C:\app\new-hudtyping-saas
-node scripts/register-binary.mjs "C:\app\hudtyping\dist\hudtyping-Setup-X.Y.Z.exe" X.Y.Z
+node scripts/register-binary.mjs "C:\app\hudtyping\dist\win-unpacked\hudtyping.exe" X.Y.Z
 ```
 
 출력 예:
 ```
-✓ Registered v0.2.0: a1b2c3...
-  Size: 86.3 MB
+✓ Registered v0.2.0: 3f88af33...
+  Size: 180.3 MB
 ```
+
+> NSIS Installer (`hudtyping-Setup-X.Y.Z.exe`, ~86MB)는 사용자가 다운받아 설치할 때만 쓰이고,
+> 설치 끝나면 본체 (`hudtyping.exe`, ~180MB)를 풀어 놓고 사라짐. 무결성 검증 대상은 본체.
 
 ## 단계 4: GitHub Release
 
