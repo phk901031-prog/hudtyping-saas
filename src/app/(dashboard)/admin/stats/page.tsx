@@ -6,7 +6,8 @@ import { UserButton } from "@clerk/nextjs";
 import { getGlobalStats } from "@/features/admin/stats";
 
 export default async function AdminStatsPage() {
-  const { userCounts, searchSummary, popular, daily } = await getGlobalStats();
+  const { userCounts, searchSummary, popular, daily, hourly } =
+    await getGlobalStats();
 
   // 사용자 status 별 카운트 매핑
   const usersByStatus = Object.fromEntries(
@@ -92,6 +93,16 @@ export default async function AdminStatsPage() {
         </section>
       )}
 
+      {/* 시간대별 그래프 (최근 30일, KST 기준 4시간 슬롯 6개) */}
+      {hourly.length > 0 && (
+        <section className="flex flex-col gap-3">
+          <h2 className="text-base font-semibold">
+            시간대별 검색량 (최근 30일, 한국시간)
+          </h2>
+          <HourlyChart hourly={hourly} />
+        </section>
+      )}
+
       {/* 인기 검색어 */}
       {popular.length > 0 && (
         <section className="flex flex-col gap-3">
@@ -123,6 +134,60 @@ export default async function AdminStatsPage() {
 }
 
 // ─── 보조 컴포넌트 ───────────────────────────────────────────────
+
+/**
+ * 시간대별 그래프 — KST 기준 4시간 슬롯 6개.
+ * slot 0=0~4시, 1=4~8시, 2=8~12시, 3=12~16시, 4=16~20시, 5=20~24시
+ */
+function HourlyChart({
+  hourly,
+}: {
+  hourly: Array<{ slot: number; cnt: number }>;
+}) {
+  const SLOT_LABELS = [
+    "0-4시",
+    "4-8시",
+    "8-12시",
+    "12-16시",
+    "16-20시",
+    "20-24시",
+  ];
+  // 비어있는 슬롯도 0으로 채워서 6칸 풀 표시
+  const slots = SLOT_LABELS.map((_, i) => ({
+    slot: i,
+    cnt: hourly.find((row) => row.slot === i)?.cnt ?? 0,
+  }));
+  const max = Math.max(...slots.map((s) => s.cnt), 1);
+
+  return (
+    <div className="border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 flex flex-col gap-2">
+      <div className="h-40 flex items-end gap-2">
+        {slots.map((s, i) => (
+          <div
+            key={s.slot}
+            className="flex-1 h-full flex items-end min-w-0 group"
+            title={`${SLOT_LABELS[i]}: ${s.cnt.toLocaleString()}건`}
+          >
+            <div
+              className="w-full bg-accent/80 hover:bg-accent transition-colors rounded-sm"
+              style={{
+                height: `${(s.cnt / max) * 100}%`,
+                minHeight: s.cnt > 0 ? "4px" : "0",
+              }}
+            />
+          </div>
+        ))}
+      </div>
+      <div className="flex gap-2 text-xs text-zinc-500">
+        {SLOT_LABELS.map((label) => (
+          <span key={label} className="flex-1 text-center truncate min-w-0">
+            {label}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 /**
  * 일별 그래프 — 30일을 풀로 채워서 빈 날도 0 막대로 표시.

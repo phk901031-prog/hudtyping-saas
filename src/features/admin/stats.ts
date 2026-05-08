@@ -24,7 +24,7 @@ export async function getGlobalStats() {
     })
     .from(searchLogs);
 
-  // 3) 인기 검색어 top 20 (전체 사용자 합산)
+  // 3) 인기 검색어 top 50 (전체 사용자 합산)
   const popular = await db
     .select({
       query: searchLogs.query,
@@ -33,7 +33,7 @@ export async function getGlobalStats() {
     .from(searchLogs)
     .groupBy(searchLogs.query)
     .orderBy(sql`COUNT(*) DESC`)
-    .limit(20);
+    .limit(50);
 
   // 4) 일별 검색량 (최근 30일)
   const thirtyDaysAgo = new Date();
@@ -48,10 +48,24 @@ export async function getGlobalStats() {
     .groupBy(sql`TO_CHAR(${searchLogs.createdAt}, 'YYYY-MM-DD')`)
     .orderBy(sql`TO_CHAR(${searchLogs.createdAt}, 'YYYY-MM-DD')`);
 
+  // 5) 시간대별 분포 — 한국 시간(KST) 기준 4시간 슬롯 6개 (최근 30일)
+  //    slot 0=0~4시, 1=4~8시, 2=8~12시, 3=12~16시, 4=16~20시, 5=20~24시
+  //    AT TIME ZONE 'Asia/Seoul' 로 UTC → KST 변환 후 EXTRACT(HOUR)
+  const hourly = await db
+    .select({
+      slot: sql<number>`FLOOR(EXTRACT(HOUR FROM ${searchLogs.createdAt} AT TIME ZONE 'Asia/Seoul') / 4)::int`,
+      cnt: sql<number>`COUNT(*)::int`,
+    })
+    .from(searchLogs)
+    .where(gte(searchLogs.createdAt, thirtyDaysAgo))
+    .groupBy(sql`FLOOR(EXTRACT(HOUR FROM ${searchLogs.createdAt} AT TIME ZONE 'Asia/Seoul') / 4)`)
+    .orderBy(sql`FLOOR(EXTRACT(HOUR FROM ${searchLogs.createdAt} AT TIME ZONE 'Asia/Seoul') / 4)`);
+
   return {
     userCounts,
     searchSummary: searchSummary ?? { total: 0, cacheHits: 0, uniqueUsers: 0 },
     popular,
     daily,
+    hourly,
   };
 }
