@@ -105,17 +105,24 @@ export async function verifyApiKeyFromHeader(
   if (!match) return null;
   const plain = match[1];
 
-  // ⚠️ 클라이언트 무결성 검증 — Bearer 인증은 .exe에서만 와야 하므로 hash 필수.
-  // 변조된 .exe → hash 매치 실패 → 인증 거부.
+  // ⚠️ 클라이언트 무결성 검증 — 현재 monitoring 모드 (2026-05-08)
+  //
+  // 사연: NSIS Installer 빌드가 사용자 환경(백신 격리 후 복원, NSIS 환경별 차이 등)에
+  // 따라 hudtyping.exe를 미세하게 가공하는 케이스 발견 → hash 매치 실패로 정상 사용자도
+  // 401 거부. 16명/20명이 즉시 막혀버림.
+  //
+  // 임시 정책: 헤더 누락/매치실패는 로깅만 하고 통과. 모니터링 데이터로 패턴 파악 후
+  // v0.3.0에서 asar 파일 기반 검증(NSIS·백신 영향 거의 없음)으로 교체 → strict 복원.
+  //
+  // TODO(v0.3.0): asar hash 기반 검증 + strict 복원
   if (!clientHash) {
-    console.warn("[binary-verify] X-Client-Hash 헤더 누락 — 옛 버전 또는 우회 시도");
-    return null;
-  }
-  if (!(await isOfficialBinary(clientHash))) {
     console.warn(
-      `[binary-verify] hash 매치 실패: ${clientHash.slice(0, 12)}...`
+      `[binary-verify monitoring] hash 헤더 누락 — clerkId: ${user.clerkId}`
     );
-    return null;
+  } else if (!(await isOfficialBinary(clientHash))) {
+    console.warn(
+      `[binary-verify monitoring] hash 매치 실패: ${clientHash.slice(0, 12)}... clerkId: ${user.clerkId}`
+    );
   }
 
   const hash = await hashToken(plain);
