@@ -116,12 +116,10 @@ export async function verifyApiKeyFromHeader(
   //
   // TODO(v0.3.0): asar hash 기반 검증 + strict 복원
   if (!clientHash) {
-    console.warn(
-      `[binary-verify monitoring] hash 헤더 누락 — clerkId: ${user.clerkId}`
-    );
+    console.warn("[binary-verify monitoring] hash 헤더 누락");
   } else if (!(await isOfficialBinary(clientHash))) {
     console.warn(
-      `[binary-verify monitoring] hash 매치 실패: ${clientHash.slice(0, 12)}... clerkId: ${user.clerkId}`
+      `[binary-verify monitoring] hash 매치 실패: ${clientHash.slice(0, 12)}...`
     );
   }
 
