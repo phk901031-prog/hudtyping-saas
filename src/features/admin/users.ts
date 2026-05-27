@@ -2,10 +2,11 @@
 // 관리자가 회원을 다루는 동작들 (② Application).
 // 호출자는 반드시 본인의 User 객체로 assertAdmin을 통과시킨 뒤 호출해야 함.
 
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, sql } from "drizzle-orm";
 import { db } from "@/infrastructure/db";
 import {
   users,
+  searchLogs,
   type User,
   type UserStatus,
   type UserRole,
@@ -66,4 +67,77 @@ export async function updateUserMonthlyLimit(
     .where(eq(users.clerkId, clerkId))
     .returning();
   return updated ?? null;
+}
+
+// ──────────────────────────────────────────────────────────────────
+// 사용자 상세 조회 (관리자가 "누가 뭘 검색했는지" 보는 화면용)
+// ──────────────────────────────────────────────────────────────────
+
+/** 특정 사용자 row 1건. 없으면 null. */
+export async function getUserById(clerkId: string): Promise<User | null> {
+  const [row] = await db
+    .select()
+    .from(users)
+    .where(eq(users.clerkId, clerkId))
+    .limit(1);
+  return row ?? null;
+}
+
+/**
+ * 한 사용자의 검색 활동 요약 + 인기 검색어.
+ * /admin/users/[id] 페이지에서 사용.
+ */
+export async function getUserSearchActivity(clerkId: string) {
+  // 1) 요약 집계
+  const [summary] = await db
+    .select({
+      total: sql<number>`COUNT(*)::int`,
+      cacheHits: sql<number>`COALESCE(SUM(CASE WHEN ${searchLogs.cacheHit} THEN 1 ELSE 0 END), 0)::int`,
+      firstSearch: sql<Date | null>`MIN(${searchLogs.createdAt})`,
+      lastSearch: sql<Date | null>`MAX(${searchLogs.createdAt})`,
+    })
+    .from(searchLogs)
+    .where(eq(searchLogs.clerkId, clerkId));
+
+  // 2) 인기 검색어 top 20 (이 사용자만)
+  const popular = await db
+    .select({
+      query: searchLogs.query,
+      cnt: sql<number>`COUNT(*)::int`,
+    })
+    .from(searchLogs)
+    .where(eq(searchLogs.clerkId, clerkId))
+    .groupBy(searchLogs.query)
+    .orderBy(sql`COUNT(*) DESC`)
+    .limit(20);
+
+  return {
+    total: summary?.total ?? 0,
+    cacheHits: Number(summary?.cacheHits ?? 0),
+    firstSearch: summary?.firstSearch ?? null,
+    lastSearch: summary?.lastSearch ?? null,
+    popular,
+  };
+}
+
+/**
+ * 한 사용자의 최근 검색 기록.
+ * limit 기본 100. 페이지네이션은 향후 필요해지면 추가.
+ */
+export async function getUserSearchHistory(
+  clerkId: string,
+  limit = 100
+): Promise<
+  Array<{ query: string; cacheHit: boolean; createdAt: Date }>
+> {
+  return db
+    .select({
+      query: searchLogs.query,
+      cacheHit: searchLogs.cacheHit,
+      createdAt: searchLogs.createdAt,
+    })
+    .from(searchLogs)
+    .where(eq(searchLogs.clerkId, clerkId))
+    .orderBy(desc(searchLogs.createdAt))
+    .limit(limit);
 }

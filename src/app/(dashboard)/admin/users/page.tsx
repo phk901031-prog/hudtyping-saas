@@ -85,7 +85,11 @@ export default async function AdminUsersPage({
               key={u.clerkId}
               className="px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
             >
-              <div className="flex flex-col gap-0.5 min-w-0">
+              {/* 이름/이메일 영역을 Link로 — 클릭하면 상세 페이지 (검색 기록 포함) */}
+              <Link
+                href={`/admin/users/${encodeURIComponent(u.clerkId)}`}
+                className="flex flex-col gap-0.5 min-w-0 flex-1 hover:opacity-70 transition"
+              >
                 <span className="font-medium flex items-baseline gap-2 flex-wrap">
                   {/* 성명 우선 표시. 없으면 이메일만. */}
                   {(u.lastName || u.firstName) && (
@@ -94,6 +98,7 @@ export default async function AdminUsersPage({
                     </span>
                   )}
                   <span className="text-xs text-zinc-500 truncate">{u.email}</span>
+                  <span className="text-xs text-accent">상세 →</span>
                 </span>
                 <span className="text-xs text-zinc-500 flex gap-2 items-center flex-wrap">
                   <StatusBadge status={u.status} />
@@ -106,7 +111,7 @@ export default async function AdminUsersPage({
                   </span>
                   <span>· 가입 {formatDate(u.createdAt)}</span>
                 </span>
-              </div>
+              </Link>
               <UserActionButtons
                 clerkId={u.clerkId}
                 currentStatus={u.status}
