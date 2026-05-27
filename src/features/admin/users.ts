@@ -2,7 +2,7 @@
 // 관리자가 회원을 다루는 동작들 (② Application).
 // 호출자는 반드시 본인의 User 객체로 assertAdmin을 통과시킨 뒤 호출해야 함.
 
-import { eq, desc, sql } from "drizzle-orm";
+import { eq, desc, sql, gte, and, inArray } from "drizzle-orm";
 import { db } from "@/infrastructure/db";
 import {
   users,
@@ -11,6 +11,14 @@ import {
   type UserStatus,
   type UserRole,
 } from "@/infrastructure/db/schema";
+
+/** UTC 기준 이번달 시작 — quota/service.ts 와 동일 기준 */
+function startOfThisMonthUTC(): Date {
+  const now = new Date();
+  return new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0)
+  );
+}
 
 /**
  * 회원 목록.
@@ -28,6 +36,72 @@ export async function listUsers(filter?: {
       .orderBy(desc(users.createdAt));
   }
   return db.select().from(users).orderBy(desc(users.createdAt));
+}
+
+/**
+ * 회원 목록 + 활동 정보 (이번달 검색 수 + 마지막 검색).
+ * /admin/users 인라인 표시용. 정렬은 listUsers와 동일(가입일 역순).
+ *
+ * 쿼리 3개를 병렬로 묶고 JS에서 merge:
+ *   1) users 목록
+ *   2) clerk_id별 이번달 검색 수 (GROUP BY)
+ *   3) clerk_id별 마지막 검색 (DISTINCT ON)
+ * 사용자 수 30명 규모면 충분히 가볍다.
+ */
+export type UserWithActivity = User & {
+  monthlyCount: number;
+  lastQuery: string | null;
+  lastSearchAt: Date | null;
+};
+
+export async function listUsersWithActivity(filter?: {
+  status?: UserStatus;
+}): Promise<UserWithActivity[]> {
+  const usersList = await listUsers(filter);
+  if (usersList.length === 0) return [];
+
+  const monthStart = startOfThisMonthUTC();
+  const clerkIds = usersList.map((u) => u.clerkId);
+
+  const [monthlyRows, lastRows] = await Promise.all([
+    db
+      .select({
+        clerkId: searchLogs.clerkId,
+        cnt: sql<number>`COUNT(*)::int`,
+      })
+      .from(searchLogs)
+      .where(
+        and(
+          gte(searchLogs.createdAt, monthStart),
+          inArray(searchLogs.clerkId, clerkIds)
+        )
+      )
+      .groupBy(searchLogs.clerkId),
+    db
+      .selectDistinctOn([searchLogs.clerkId], {
+        clerkId: searchLogs.clerkId,
+        query: searchLogs.query,
+        createdAt: searchLogs.createdAt,
+      })
+      .from(searchLogs)
+      .where(inArray(searchLogs.clerkId, clerkIds))
+      .orderBy(searchLogs.clerkId, desc(searchLogs.createdAt)),
+  ]);
+
+  const monthlyMap = new Map(monthlyRows.map((r) => [r.clerkId, r.cnt]));
+  const lastMap = new Map(
+    lastRows.map((r) => [r.clerkId, { query: r.query, createdAt: r.createdAt }])
+  );
+
+  return usersList.map((u) => {
+    const last = lastMap.get(u.clerkId);
+    return {
+      ...u,
+      monthlyCount: monthlyMap.get(u.clerkId) ?? 0,
+      lastQuery: last?.query ?? null,
+      lastSearchAt: last?.createdAt ?? null,
+    };
+  });
 }
 
 /** 사용자 status 변경 (승인/거절) */

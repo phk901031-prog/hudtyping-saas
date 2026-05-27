@@ -4,7 +4,7 @@
 
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
-import { listUsers } from "@/features/admin/users";
+import { listUsersWithActivity } from "@/features/admin/users";
 import { getOrCreateCurrentUser } from "@/features/users/service";
 import { UserActionButtons } from "@/components/admin/user-action-buttons";
 import type { UserStatus } from "@/infrastructure/db/schema";
@@ -31,7 +31,7 @@ export default async function AdminUsersPage({
       ? (params.status as UserStatus)
       : undefined;
 
-  const users = await listUsers({ status: filter });
+  const users = await listUsersWithActivity({ status: filter });
 
   return (
     <main className="flex flex-1 flex-col px-6 py-8 gap-6 max-w-4xl w-full mx-auto">
@@ -104,12 +104,38 @@ export default async function AdminUsersPage({
                   <StatusBadge status={u.status} />
                   <RoleBadge role={u.role} />
                   <span>
-                    · 한도{" "}
+                    · 이번달{" "}
+                    <span
+                      className={
+                        u.role !== "admin" &&
+                        u.monthlyCount >= u.monthlyLimit * 0.8
+                          ? "text-amber-600 font-medium"
+                          : "text-zinc-700 dark:text-zinc-300 font-medium"
+                      }
+                    >
+                      {u.monthlyCount.toLocaleString()}
+                    </span>
                     {u.role === "admin"
-                      ? "무제한"
-                      : `${u.monthlyLimit.toLocaleString()}회/월`}
+                      ? "회"
+                      : ` / ${u.monthlyLimit.toLocaleString()}회`}
                   </span>
                   <span>· 가입 {formatDate(u.createdAt)}</span>
+                </span>
+                {/* 마지막 검색 — 한 줄 인라인 미리보기 */}
+                <span className="text-xs text-zinc-500 flex gap-1.5 items-center min-w-0">
+                  {u.lastSearchAt && u.lastQuery ? (
+                    <>
+                      <span className="shrink-0">최근:</span>
+                      <span className="font-medium text-zinc-700 dark:text-zinc-300 truncate">
+                        &ldquo;{u.lastQuery}&rdquo;
+                      </span>
+                      <span className="shrink-0 text-zinc-400">
+                        · {formatRelative(u.lastSearchAt)}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-zinc-400">아직 검색 없음</span>
+                  )}
                 </span>
               </Link>
               <UserActionButtons
@@ -159,6 +185,25 @@ function RoleBadge({ role }: { role: "user" | "admin" }) {
 
 function formatDate(d: Date | string): string {
   const date = d instanceof Date ? d : new Date(d);
+  return date.toLocaleDateString("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+}
+
+/** "방금 전" / "5분 전" / "3시간 전" / "어제" / "2026.05.20" */
+function formatRelative(d: Date | string): string {
+  const date = d instanceof Date ? d : new Date(d);
+  const diffMs = Date.now() - date.getTime();
+  const min = Math.floor(diffMs / 60_000);
+  if (min < 1) return "방금 전";
+  if (min < 60) return `${min}분 전`;
+  const hour = Math.floor(min / 60);
+  if (hour < 24) return `${hour}시간 전`;
+  const day = Math.floor(hour / 24);
+  if (day === 1) return "어제";
+  if (day < 7) return `${day}일 전`;
   return date.toLocaleDateString("ko-KR", {
     year: "numeric",
     month: "2-digit",
