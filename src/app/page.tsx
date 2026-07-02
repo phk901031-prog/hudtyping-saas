@@ -3,7 +3,7 @@ import { auth } from "@/infrastructure/clerk";
 import { UserButton } from "@clerk/nextjs";
 
 const DOWNLOAD_URL =
-  "https://github.com/phk901031-prog/hudtyping-saas/releases/latest/download/hudtyping-Setup-0.2.1.exe";
+  "https://github.com/phk901031-prog/hudtyping-saas/releases/latest/download/hudtyping-Setup-0.2.2.exe";
 
 export default async function HomePage() {
   const { userId } = await auth();
@@ -61,7 +61,7 @@ export default async function HomePage() {
             <div className="flex flex-col gap-5">
               <div className="flex flex-wrap items-center gap-2">
                 <StatusPill tone="green">서비스 운영 중</StatusPill>
-                <StatusPill>Windows v0.2.1</StatusPill>
+                <StatusPill>Windows v0.2.2</StatusPill>
                 <StatusPill>승인 후 사용</StatusPill>
               </div>
 
@@ -122,7 +122,7 @@ export default async function HomePage() {
           <WorkflowCard
             step="1"
             title="앱 설치"
-            body="최신 설치 파일을 내려받고 실행합니다. 기존 사용자는 자동 업데이트 또는 재설치로 v0.2.1을 받을 수 있습니다."
+            body="최신 설치 파일을 내려받고 실행합니다. 기존 사용자는 자동 업데이트 또는 재설치로 v0.2.2를 받을 수 있습니다."
           />
           <WorkflowCard
             step="2"
@@ -144,8 +144,8 @@ export default async function HomePage() {
                 자주 검색되는 단어는 서버 캐시에 저장되어 다음 검색부터 더
                 빠르게 표시됩니다.
               </Notice>
-              <Notice title="최신 버전" date="v0.2.1">
-                검색 지연 완화를 포함한 최신 Windows 설치 파일을 배포했습니다.
+              <Notice title="최신 버전" date="v0.2.2">
+                커서 앞 검색 중심으로 단축키 화면을 정리하고, 연속 입력 시 검색어를 먼저 확장한 뒤 한 번만 검색하도록 개선했습니다.
               </Notice>
               <Notice title="문의 창구" date="상시">
                 오류 제보, 승인 요청, 기능 건의는 카카오톡 papawheels로
