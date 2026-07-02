@@ -1,7 +1,3 @@
-// src/app/(dashboard)/admin/users/page.tsx
-// 회원 관리 페이지 — RSC.
-// 상단에 status 필터(쿼리 스트링), 본문은 회원 row 목록 + 액션 버튼.
-
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { listUsersWithActivity } from "@/features/admin/users";
@@ -22,7 +18,6 @@ export default async function AdminUsersPage({
   searchParams: Promise<{ status?: string }>;
 }) {
   const me = await getOrCreateCurrentUser();
-  // admin layout에서 이미 검증했지만 안전장치
   if (!me) return null;
 
   const params = await searchParams;
@@ -32,155 +27,243 @@ export default async function AdminUsersPage({
       : undefined;
 
   const users = await listUsersWithActivity({ status: filter });
+  const totalMonthly = users.reduce((sum, user) => sum + user.monthlyCount, 0);
+  const activeUsers = users.filter((user) => user.monthlyCount > 0).length;
+  const pendingUsers = users.filter((user) => user.status === "pending").length;
+  const limitRiskUsers = users.filter(
+    (user) =>
+      user.role !== "admin" &&
+      user.monthlyLimit > 0 &&
+      user.monthlyCount / user.monthlyLimit >= 0.8
+  ).length;
 
   return (
-    <main className="flex flex-1 flex-col px-6 py-8 gap-6 max-w-4xl w-full mx-auto">
-      <header className="flex items-center justify-between">
-        <Link href="/admin" className="text-sm text-zinc-500 hover:underline">
-          ← 관리자
+    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-7 px-5 py-7 sm:px-8">
+      <header className="flex items-center justify-between gap-4">
+        <Link href="/admin" className="text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100">
+          관리자 홈
         </Link>
         <UserButton />
       </header>
 
-      <div className="flex flex-col gap-2">
-        <h1 className="text-2xl font-bold">회원 관리</h1>
-        <p className="text-sm text-zinc-500">
-          가입자 {users.length}명 표시 중 ({filter ?? "전체"})
-        </p>
-      </div>
+      <section className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold text-accent">사용자 운영</p>
+            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+              사용자 사용 현황
+            </h1>
+          </div>
+          <Link
+            href="/admin/stats"
+            className="w-fit rounded-lg border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+          >
+            전체 통계 보기
+          </Link>
+        </div>
 
-      {/* 필터 탭 */}
-      <nav className="flex gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-2">
-        {FILTER_OPTIONS.map((opt) => {
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <MetricCard label="표시 사용자" value={`${users.length.toLocaleString()}명`} />
+          <MetricCard label="이번 달 검색" value={`${totalMonthly.toLocaleString()}건`} />
+          <MetricCard label="이번 달 활성" value={`${activeUsers.toLocaleString()}명`} />
+          <MetricCard
+            label="확인 필요"
+            value={`${(pendingUsers + limitRiskUsers).toLocaleString()}명`}
+            hint={`승인 대기 ${pendingUsers} · 한도 80% 이상 ${limitRiskUsers}`}
+            tone={pendingUsers + limitRiskUsers > 0 ? "amber" : undefined}
+          />
+        </div>
+      </section>
+
+      <nav className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3 dark:border-zinc-800">
+        {FILTER_OPTIONS.map((option) => {
           const active =
-            (opt.value === "all" && !filter) || opt.value === filter;
+            (option.value === "all" && !filter) || option.value === filter;
           const href =
-            opt.value === "all" ? "/admin/users" : `/admin/users?status=${opt.value}`;
+            option.value === "all"
+              ? "/admin/users"
+              : `/admin/users?status=${option.value}`;
+
           return (
             <Link
-              key={opt.value}
+              key={option.value}
               href={href}
               className={
-                "text-sm px-3 py-1 rounded-full transition " +
+                "rounded-full px-3 py-1.5 text-sm font-medium transition " +
                 (active
-                  ? "bg-foreground text-background"
-                  : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900")
+                  ? "bg-zinc-950 text-white dark:bg-zinc-50 dark:text-zinc-950"
+                  : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-900")
               }
             >
-              {opt.label}
+              {option.label}
             </Link>
           );
         })}
       </nav>
 
-      {/* 목록 */}
       {users.length === 0 ? (
-        <p className="text-sm text-zinc-500 text-center py-12 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl">
-          해당하는 회원이 없어요.
-        </p>
+        <div className="rounded-xl border border-dashed border-zinc-300 px-5 py-12 text-center text-sm text-zinc-500 dark:border-zinc-800">
+          조건에 맞는 사용자가 없습니다.
+        </div>
       ) : (
-        <ul className="flex flex-col divide-y divide-zinc-200 dark:divide-zinc-800 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden">
-          {users.map((u) => (
-            <li
-              key={u.clerkId}
-              className="px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
-            >
-              {/* 이름/이메일 영역을 Link로 — 클릭하면 상세 페이지 (검색 기록 포함) */}
-              <Link
-                href={`/admin/users/${encodeURIComponent(u.clerkId)}`}
-                className="flex flex-col gap-0.5 min-w-0 flex-1 hover:opacity-70 transition"
-              >
-                <span className="font-medium flex items-baseline gap-2 flex-wrap">
-                  {/* 성명 우선 표시. 없으면 이메일만. */}
-                  {(u.lastName || u.firstName) && (
-                    <span className="truncate">
-                      {[u.lastName, u.firstName].filter(Boolean).join(" ")}
+        <section className="flex flex-col gap-3">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-base font-bold">이번 달 사용량 순위</h2>
+            <span className="text-xs text-zinc-500">
+              검색 수가 많은 사용자부터 표시됩니다.
+            </span>
+          </div>
+
+          <ul className="overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
+            {users.map((user, index) => {
+              const usageRate =
+                user.role === "admin" || user.monthlyLimit <= 0
+                  ? 0
+                  : Math.min(100, (user.monthlyCount / user.monthlyLimit) * 100);
+              const cacheRate =
+                user.totalCount > 0
+                  ? (user.cacheHitCount / user.totalCount) * 100
+                  : 0;
+              const isLimitRisk =
+                user.role !== "admin" && user.monthlyLimit > 0 && usageRate >= 80;
+
+              return (
+                <li
+                  key={user.clerkId}
+                  className="grid gap-4 border-b border-zinc-100 px-4 py-4 last:border-b-0 dark:border-zinc-900 lg:grid-cols-[minmax(0,1fr)_220px_220px]"
+                >
+                  <div className="flex min-w-0 gap-3">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-sm font-bold text-zinc-600 dark:bg-zinc-900 dark:text-zinc-300">
+                      {index + 1}
                     </span>
-                  )}
-                  <span className="text-xs text-zinc-500 truncate">{u.email}</span>
-                  <span className="text-xs text-accent">상세 →</span>
-                </span>
-                <span className="text-xs text-zinc-500 flex gap-2 items-center flex-wrap">
-                  <StatusBadge status={u.status} />
-                  <RoleBadge role={u.role} />
-                  <span>
-                    · 이번달{" "}
-                    <span
-                      className={
-                        u.role !== "admin" &&
-                        u.monthlyCount >= u.monthlyLimit * 0.8
-                          ? "text-amber-600 font-medium"
-                          : "text-zinc-700 dark:text-zinc-300 font-medium"
-                      }
-                    >
-                      {u.monthlyCount.toLocaleString()}
+                    <div className="min-w-0 flex-1">
+                      <Link
+                        href={`/admin/users/${encodeURIComponent(user.clerkId)}`}
+                        className="group flex min-w-0 flex-col gap-1"
+                      >
+                        <span className="flex flex-wrap items-center gap-2">
+                          <span className="truncate text-base font-bold group-hover:underline">
+                            {displayName(user)}
+                          </span>
+                          <StatusBadge status={user.status} />
+                          {user.role === "admin" && <RoleBadge />}
+                        </span>
+                        <span className="truncate text-sm text-zinc-500">
+                          {user.email}
+                        </span>
+                      </Link>
+
+                      <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-500">
+                        <span>전체 {user.totalCount.toLocaleString()}건</span>
+                        <span>캐시 {cacheRate.toFixed(0)}%</span>
+                        <span>가입 {formatDate(user.createdAt)}</span>
+                      </div>
+
+                      <p className="mt-2 truncate text-sm text-zinc-600 dark:text-zinc-400">
+                        {user.lastSearchAt && user.lastQuery
+                          ? `최근 검색: "${user.lastQuery}" · ${formatRelative(user.lastSearchAt)}`
+                          : "아직 검색 기록이 없습니다."}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col justify-center gap-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="font-semibold">이번 달</span>
+                      <span className={isLimitRisk ? "font-bold text-amber-700 dark:text-amber-300" : "font-bold"}>
+                        {user.monthlyCount.toLocaleString()}
+                        {user.role === "admin"
+                          ? "건"
+                          : ` / ${user.monthlyLimit.toLocaleString()}건`}
+                      </span>
+                    </div>
+                    <div className="h-2 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-900">
+                      <div
+                        className={
+                          "h-full rounded-full " +
+                          (isLimitRisk ? "bg-amber-500" : "bg-accent")
+                        }
+                        style={{ width: `${user.role === "admin" ? 100 : usageRate}%` }}
+                      />
+                    </div>
+                    <span className="text-xs text-zinc-500">
+                      {user.role === "admin"
+                        ? "관리자는 한도 제외"
+                        : `${usageRate.toFixed(0)}% 사용`}
                     </span>
-                    {u.role === "admin"
-                      ? "회"
-                      : ` / ${u.monthlyLimit.toLocaleString()}회`}
-                  </span>
-                  <span>· 가입 {formatDate(u.createdAt)}</span>
-                </span>
-                {/* 마지막 검색 — 한 줄 인라인 미리보기 */}
-                <span className="text-xs text-zinc-500 flex gap-1.5 items-center min-w-0">
-                  {u.lastSearchAt && u.lastQuery ? (
-                    <>
-                      <span className="shrink-0">최근:</span>
-                      <span className="font-medium text-zinc-700 dark:text-zinc-300 truncate">
-                        &ldquo;{u.lastQuery}&rdquo;
-                      </span>
-                      <span className="shrink-0 text-zinc-400">
-                        · {formatRelative(u.lastSearchAt)}
-                      </span>
-                    </>
-                  ) : (
-                    <span className="text-zinc-400">아직 검색 없음</span>
-                  )}
-                </span>
-              </Link>
-              <UserActionButtons
-                clerkId={u.clerkId}
-                currentStatus={u.status}
-                currentRole={u.role}
-                currentMonthlyLimit={u.monthlyLimit}
-                isSelf={u.clerkId === me.clerkId}
-              />
-            </li>
-          ))}
-        </ul>
+                  </div>
+
+                  <div className="flex items-center justify-start lg:justify-end">
+                    <UserActionButtons
+                      clerkId={user.clerkId}
+                      currentStatus={user.status}
+                      currentRole={user.role}
+                      currentMonthlyLimit={user.monthlyLimit}
+                      isSelf={user.clerkId === me.clerkId}
+                    />
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
       )}
     </main>
   );
 }
 
+function MetricCard({
+  label,
+  value,
+  hint,
+  tone,
+}: {
+  label: string;
+  value: string;
+  hint?: string;
+  tone?: "amber";
+}) {
+  return (
+    <div className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950">
+      <p className="text-xs font-medium text-zinc-500">{label}</p>
+      <p className={tone === "amber" ? "mt-1 text-2xl font-bold text-amber-700 dark:text-amber-300" : "mt-1 text-2xl font-bold"}>
+        {value}
+      </p>
+      {hint && <p className="mt-1 text-xs text-zinc-500">{hint}</p>}
+    </div>
+  );
+}
+
 function StatusBadge({ status }: { status: UserStatus }) {
-  const colors: Record<UserStatus, string> = {
-    pending: "bg-amber-100 text-amber-700 dark:bg-amber-950/30 dark:text-amber-300",
-    approved:
-      "bg-green-100 text-green-700 dark:bg-green-950/30 dark:text-green-300",
-    rejected: "bg-red-100 text-red-700 dark:bg-red-950/30 dark:text-red-300",
-  };
   const labels: Record<UserStatus, string> = {
     pending: "대기",
     approved: "승인",
     rejected: "거절",
   };
+  const colors: Record<UserStatus, string> = {
+    pending: "bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300",
+    approved: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300",
+    rejected: "bg-rose-100 text-rose-800 dark:bg-rose-950/40 dark:text-rose-300",
+  };
+
   return (
-    <span className={`px-1.5 py-0.5 rounded text-[10px] ${colors[status]}`}>
+    <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${colors[status]}`}>
       {labels[status]}
     </span>
   );
 }
 
-function RoleBadge({ role }: { role: "user" | "admin" }) {
-  if (role === "admin") {
-    return (
-      <span className="px-1.5 py-0.5 rounded text-[10px] bg-purple-100 text-purple-700 dark:bg-purple-950/30 dark:text-purple-300">
-        admin
-      </span>
-    );
-  }
-  return null;
+function RoleBadge() {
+  return (
+    <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[11px] font-bold text-violet-800 dark:bg-violet-950/40 dark:text-violet-300">
+      관리자
+    </span>
+  );
+}
+
+function displayName(user: { firstName: string | null; lastName: string | null; email: string }) {
+  const name = [user.lastName, user.firstName].filter(Boolean).join(" ").trim();
+  return name || user.email;
 }
 
 function formatDate(d: Date | string): string {
@@ -192,7 +275,6 @@ function formatDate(d: Date | string): string {
   });
 }
 
-/** "방금 전" / "5분 전" / "3시간 전" / "어제" / "2026.05.20" */
 function formatRelative(d: Date | string): string {
   const date = d instanceof Date ? d : new Date(d);
   const diffMs = Date.now() - date.getTime();
@@ -204,9 +286,5 @@ function formatRelative(d: Date | string): string {
   const day = Math.floor(hour / 24);
   if (day === 1) return "어제";
   if (day < 7) return `${day}일 전`;
-  return date.toLocaleDateString("ko-KR", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
+  return formatDate(date);
 }

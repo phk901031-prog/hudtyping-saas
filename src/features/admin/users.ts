@@ -50,6 +50,8 @@ export async function listUsers(filter?: {
  */
 export type UserWithActivity = User & {
   monthlyCount: number;
+  totalCount: number;
+  cacheHitCount: number;
   lastQuery: string | null;
   lastSearchAt: Date | null;
 };
@@ -63,7 +65,7 @@ export async function listUsersWithActivity(filter?: {
   const monthStart = startOfThisMonthUTC();
   const clerkIds = usersList.map((u) => u.clerkId);
 
-  const [monthlyRows, lastRows] = await Promise.all([
+  const [monthlyRows, totalRows, lastRows] = await Promise.all([
     db
       .select({
         clerkId: searchLogs.clerkId,
@@ -78,6 +80,15 @@ export async function listUsersWithActivity(filter?: {
       )
       .groupBy(searchLogs.clerkId),
     db
+      .select({
+        clerkId: searchLogs.clerkId,
+        total: sql<number>`COUNT(*)::int`,
+        cacheHits: sql<number>`COALESCE(SUM(CASE WHEN ${searchLogs.cacheHit} THEN 1 ELSE 0 END), 0)::int`,
+      })
+      .from(searchLogs)
+      .where(inArray(searchLogs.clerkId, clerkIds))
+      .groupBy(searchLogs.clerkId),
+    db
       .selectDistinctOn([searchLogs.clerkId], {
         clerkId: searchLogs.clerkId,
         query: searchLogs.query,
@@ -89,6 +100,12 @@ export async function listUsersWithActivity(filter?: {
   ]);
 
   const monthlyMap = new Map(monthlyRows.map((r) => [r.clerkId, r.cnt]));
+  const totalMap = new Map(
+    totalRows.map((r) => [
+      r.clerkId,
+      { total: Number(r.total), cacheHits: Number(r.cacheHits) },
+    ])
+  );
   const lastMap = new Map(
     lastRows.map((r) => [r.clerkId, { query: r.query, createdAt: r.createdAt }])
   );
@@ -98,9 +115,16 @@ export async function listUsersWithActivity(filter?: {
     return {
       ...u,
       monthlyCount: monthlyMap.get(u.clerkId) ?? 0,
+      totalCount: totalMap.get(u.clerkId)?.total ?? 0,
+      cacheHitCount: totalMap.get(u.clerkId)?.cacheHits ?? 0,
       lastQuery: last?.query ?? null,
       lastSearchAt: last?.createdAt ?? null,
     };
+  }).sort((a, b) => {
+    if (b.monthlyCount !== a.monthlyCount) return b.monthlyCount - a.monthlyCount;
+    const bTime = b.lastSearchAt?.getTime() ?? 0;
+    const aTime = a.lastSearchAt?.getTime() ?? 0;
+    return bTime - aTime;
   });
 }
 
