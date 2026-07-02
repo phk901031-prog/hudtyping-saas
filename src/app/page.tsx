@@ -1,12 +1,9 @@
-// src/app/page.tsx
-// 랜딩 페이지 — 비로그인 사용자가 처음 보는 화면.
-// 목적: "이게 뭐고, 왜 필요하고, 어떻게 받는가" 1분 안에 전달.
-//
-// 디자인 방향: Claude 톤 (따뜻한 크림 배경 + 코랄 액센트 + 인간적 카피).
-
 import Link from "next/link";
 import { auth } from "@/infrastructure/clerk";
 import { UserButton } from "@clerk/nextjs";
+
+const DOWNLOAD_URL =
+  "https://github.com/phk901031-prog/hudtyping-saas/releases/latest/download/hudtyping-Setup-0.2.1.exe";
 
 export default async function HomePage() {
   const { userId } = await auth();
@@ -14,269 +11,312 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-1 flex-col bg-background text-foreground">
-      {/* ───── 상단 네비 ───── */}
-      <nav className="px-6 sm:px-10 py-5 flex items-center justify-between max-w-6xl w-full mx-auto">
-        {/*
-          로고 — 키캡(keyboard cap) 모티프.
-          HUD가 단축키 도구라는 정체성 + Pretendard 굵은 가중으로 시인성 강화.
-        */}
-        <Link
-          href="/"
-          aria-label="hudtyping 홈"
-          className="inline-flex items-center gap-2.5 group"
-        >
-          <span className="keycap w-10 h-10 text-base">H</span>
-          <span className="font-display text-xl sm:text-2xl">hudtyping</span>
-        </Link>
-        <div className="flex items-center gap-4">
-          {isSignedIn ? (
-            <>
-              <Link
-                href="/dashboard"
-                className="text-sm text-muted hover:text-foreground transition"
-              >
-                대시보드
-              </Link>
-              <UserButton />
-            </>
-          ) : (
-            <>
-              <Link
-                href="/sign-in"
-                className="text-sm text-muted hover:text-foreground transition"
-              >
-                로그인
-              </Link>
-              <Link
-                href="/sign-up"
-                className="text-sm font-medium px-4 py-2 rounded-full bg-foreground text-background hover:opacity-90 transition"
-              >
-                시작하기
-              </Link>
-            </>
-          )}
+      <nav className="border-b border-border bg-card/70">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
+          <Link href="/" className="group inline-flex items-center gap-2.5">
+            <span className="keycap h-10 w-10 text-base">H</span>
+            <span className="font-display text-xl">hudtyping</span>
+          </Link>
+
+          <div className="flex items-center gap-3">
+            <Link
+              href="/help"
+              className="hidden text-sm text-muted transition hover:text-foreground sm:inline"
+            >
+              사용 가이드
+            </Link>
+            {isSignedIn ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="rounded-full border border-border px-4 py-2 text-sm font-medium transition hover:bg-muted-bg"
+                >
+                  대시보드
+                </Link>
+                <UserButton />
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/sign-in"
+                  className="text-sm text-muted transition hover:text-foreground"
+                >
+                  로그인
+                </Link>
+                <Link
+                  href="/sign-up"
+                  className="rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background transition hover:opacity-90"
+                >
+                  가입하기
+                </Link>
+              </>
+            )}
+          </div>
         </div>
       </nav>
 
-      {/* ───── Hero ───── */}
-      <section className="px-6 sm:px-10 pt-16 sm:pt-24 pb-20 max-w-6xl w-full mx-auto">
-        <div className="max-w-3xl flex flex-col gap-6">
-          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl leading-[1.15] tracking-tight">
-            회의록 쓰다가 단어 막혔을 때,
-            <br />
-            <span className="text-accent">Alt+Tab 없이</span> 찾는 법.
-          </h1>
+      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-10 px-5 py-8 sm:px-8 sm:py-10">
+        <section className="grid gap-5 lg:grid-cols-[1.25fr_0.75fr]">
+          <div className="flex flex-col justify-between gap-8 rounded-lg border border-border bg-card p-6 sm:p-8">
+            <div className="flex flex-col gap-5">
+              <div className="flex flex-wrap items-center gap-2">
+                <StatusPill tone="green">서비스 운영 중</StatusPill>
+                <StatusPill>Windows v0.2.1</StatusPill>
+                <StatusPill>승인 후 사용</StatusPill>
+              </div>
 
-          <p className="text-lg sm:text-xl text-muted leading-relaxed max-w-2xl">
-            한글에서 단어를 블록 잡고 지정한 단축키 한 번. 우리말샘 결과가 옆에
-            살짝 떠요. 흐름이 끊기지 않아요.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-3 mt-4">
-            <a
-              href="https://github.com/phk901031-prog/hudtyping-saas/releases/latest/download/hudtyping-Setup-0.2.1.exe"
-              className="px-6 py-3 rounded-full bg-accent text-white text-sm font-medium hover:bg-accent-hover transition inline-flex items-center justify-center gap-2"
-            >
-              <span>⬇</span>
-              데스크톱 앱 다운로드
-            </a>
-            {!isSignedIn ? (
-              <Link
-                href="/sign-up"
-                className="px-6 py-3 rounded-full border border-border text-sm font-medium hover:bg-muted-bg transition inline-flex items-center justify-center"
-              >
-                먼저 회원가입
-              </Link>
-            ) : (
-              <Link
-                href="/dashboard"
-                className="px-6 py-3 rounded-full border border-border text-sm font-medium hover:bg-muted-bg transition inline-flex items-center justify-center"
-              >
-                대시보드로 →
-              </Link>
-            )}
-            <Link
-              href="/help"
-              className="px-6 py-3 rounded-full border border-border text-sm font-medium hover:bg-muted-bg transition inline-flex items-center justify-center gap-1.5"
-            >
-              <span>📖</span>
-              사용 가이드
-            </Link>
-          </div>
-
-          <p className="text-xs text-muted mt-2">
-            Windows 10·11 · v0.2.1 (87MB) · 회원가입 + 관리자 승인 후 사용
-          </p>
-          <p className="text-xs text-muted">
-            ⚠️ 안랩·알약 등 백신이 차단할 수 있어요 (서명 미인증 .exe).{" "}
-            <Link href="/install-help" className="underline hover:text-foreground transition">
-              설치 도움말
-            </Link>
-          </p>
-        </div>
-      </section>
-
-      {/* ───── 사용 흐름 (3단계) ───── */}
-      <section className="px-6 sm:px-10 py-16 bg-muted-bg">
-        <div className="max-w-6xl w-full mx-auto flex flex-col gap-10">
-          <div className="flex flex-col gap-2">
-            <p className="text-sm text-accent font-medium">사용법</p>
-            <h2 className="font-display text-3xl sm:text-4xl tracking-tight">
-              세 번의 단계, 그 다음엔 단축키 하나.
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <Step
-              n="1"
-              title="블록 잡기"
-              body="한글에서 모르는 단어를 마우스로 살짝 드래그해서 블록을 잡아요. 그게 다예요."
-            />
-            <Step
-              n="2"
-              title="단축키 누르기"
-              body="평소 안 쓰는 키 하나(예: Insert)를 단축키로 지정해두면, 한 번 누르는 순간 우리말샘이 그 단어를 찾기 시작해요."
-            />
-            <Step
-              n="3"
-              title="옆에서 확인"
-              body="반투명 HUD가 한글 위에 떠 있어요. 시선만 살짝 옮기면 끝. 한글 작업은 그대로."
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* ───── 차별점 ───── */}
-      <section className="px-6 sm:px-10 py-20 max-w-6xl w-full mx-auto">
-        <div className="flex flex-col gap-12">
-          <div className="max-w-2xl flex flex-col gap-2">
-            <p className="text-sm text-accent font-medium">왜 hudtyping인가</p>
-            <h2 className="font-display text-3xl sm:text-4xl tracking-tight">
-              검색 횟수가 늘수록 더 빨라져요.
-            </h2>
-            <p className="text-muted text-lg leading-relaxed mt-2">
-              모든 사용자의 검색이 한 캐시를 공유해요. 같은 단어를 다른 분이
-              먼저 찾아봤다면, 당신은 5밀리초 안에 결과를 받아요.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Feature
-              icon="⌨"
-              title="단축키 두 개로 충분"
-              body="평소 안 쓰는 키 두 개를 직접 지정해요 — 블록 검색용·이전 단어 자동 검색용. 마우스도 거의 안 써요."
-            />
-            <Feature
-              icon="⚡"
-              title="공유 캐시로 빨라요"
-              body="누군가 한 번 찾은 단어는 나에게도 즉시 응답. 우리말샘 직접 호출보다 50배 빨라요."
-            />
-            <Feature
-              icon="🪟"
-              title="HUD 오버레이"
-              body="한글 위에 반투명으로 떠 있어요. 클릭 통과 모드로 두면 마우스 클릭도 한글에 그대로 전달돼요."
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* ───── 푸터 ───── */}
-      <footer className="px-6 sm:px-10 py-10 border-t border-border max-w-6xl w-full mx-auto">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-sm text-muted">
-          <div className="flex flex-col gap-1">
-            <div className="inline-flex items-center gap-2 group">
-              <span className="keycap w-6 h-6 text-[11px]">H</span>
-              <span className="font-display text-foreground text-base">
-                hudtyping
-              </span>
+              <div className="flex max-w-3xl flex-col gap-4">
+                <h1 className="font-display text-3xl leading-tight sm:text-5xl">
+                  한글 작업 중 단어 검색을 바로 띄우는 속기사용 HUD
+                </h1>
+                <p className="text-base leading-relaxed text-muted sm:text-lg">
+                  한글 문서에서 커서 앞 단어를 지정 단축키로 검색하고,
+                  우리말샘 결과를 작은 HUD로 확인합니다. 설치, 승인,
+                  문의까지 이 화면에서 바로 처리할 수 있습니다.
+                </p>
+              </div>
             </div>
-            <span className="text-xs">
-              © 2026 hudtyping. 속기·회의록 작성을 위한 도구.
-            </span>
-          </div>
-          <div className="flex flex-col sm:items-end gap-3">
-            <KakaoContact />
-            <div className="flex gap-3 text-xs flex-wrap sm:justify-end">
-              <Link href="/help" className="hover:text-foreground transition">
-                사용 가이드
+
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <a
+                href={DOWNLOAD_URL}
+                className="inline-flex items-center justify-center rounded-full bg-accent px-5 py-3 text-sm font-semibold text-white transition hover:bg-accent-hover"
+              >
+                Windows 앱 다운로드
+              </a>
+              <Link
+                href="/help"
+                className="inline-flex items-center justify-center rounded-full border border-border px-5 py-3 text-sm font-semibold transition hover:bg-muted-bg"
+              >
+                사용 가이드 보기
               </Link>
-              <span className="text-border">·</span>
-              <Link href="/install-help" className="hover:text-foreground transition">
-                설치 도움말
-              </Link>
-              <span className="text-border">·</span>
-              <Link href="/privacy" className="hover:text-foreground transition">
-                개인정보 처리방침
-              </Link>
-              <span className="text-border">·</span>
-              <Link href="/terms" className="hover:text-foreground transition">
-                이용약관
-              </Link>
+              {!isSignedIn && (
+                <Link
+                  href="/sign-up"
+                  className="inline-flex items-center justify-center rounded-full border border-border px-5 py-3 text-sm font-semibold transition hover:bg-muted-bg"
+                >
+                  승인 요청하기
+                </Link>
+              )}
             </div>
           </div>
-        </div>
-      </footer>
+
+          <aside className="grid gap-4">
+            <ActionPanel
+              title="빠른 승인"
+              body="가입 후 성명 확인이 필요합니다. 빠른 승인을 원하면 카카오톡 papawheels로 연락해주세요."
+              action="카카오톡 papawheels"
+              href="#support"
+              tone="yellow"
+            />
+            <ActionPanel
+              title="설치가 막힐 때"
+              body="안랩, 알약, Windows 보안에서 설치 파일을 검사하거나 차단할 수 있습니다."
+              action="설치 문제 해결"
+              href="/install-help"
+            />
+          </aside>
+        </section>
+
+        <section className="grid gap-4 md:grid-cols-3">
+          <WorkflowCard
+            step="1"
+            title="앱 설치"
+            body="최신 설치 파일을 내려받고 실행합니다. 기존 사용자는 자동 업데이트 또는 재설치로 v0.2.1을 받을 수 있습니다."
+          />
+          <WorkflowCard
+            step="2"
+            title="API 키 입력"
+            body="SaaS 대시보드에서 발급한 키를 HUD 설정에 붙여넣습니다. 사용자는 별도 우리말샘 키가 필요 없습니다."
+          />
+          <WorkflowCard
+            step="3"
+            title="한글에서 검색"
+            body="단어 뒤에 커서를 두고 지정 단축키를 누릅니다. 연속 입력하면 띄어쓰기 앞 단어까지 확장해 검색할 수 있습니다."
+          />
+        </section>
+
+        <section className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+          <div id="support" className="rounded-lg border border-border bg-card p-6">
+            <h2 className="font-display text-2xl">운영 안내</h2>
+            <div className="mt-5 divide-y divide-border">
+              <Notice title="검색 속도 개선" date="2026.07.02">
+                자주 검색되는 단어는 서버 캐시에 저장되어 다음 검색부터 더
+                빠르게 표시됩니다.
+              </Notice>
+              <Notice title="최신 버전" date="v0.2.1">
+                검색 지연 완화를 포함한 최신 Windows 설치 파일을 배포했습니다.
+              </Notice>
+              <Notice title="문의 창구" date="상시">
+                오류 제보, 승인 요청, 기능 건의는 카카오톡 papawheels로
+                보내주세요.
+              </Notice>
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-border bg-card p-6">
+            <h2 className="font-display text-2xl">지원 채널</h2>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <SupportLink
+                title="카카오톡 문의"
+                body="승인, 오류, 기능 건의"
+                href="#support"
+                label="papawheels"
+              />
+              <SupportLink
+                title="사용 가이드"
+                body="설치부터 단축키 검색까지"
+                href="/help"
+                label="가이드"
+              />
+              <SupportLink
+                title="설치 문제"
+                body="보안 프로그램 차단 대응"
+                href="/install-help"
+                label="도움말"
+              />
+              <SupportLink
+                title="대시보드"
+                body="API 키와 사용량 확인"
+                href={isSignedIn ? "/dashboard" : "/sign-in"}
+                label={isSignedIn ? "열기" : "로그인"}
+              />
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
   );
 }
 
-// ─── 보조 컴포넌트 ──────────────────────────────────────────────────
-
-// 카카오톡 친구 추가 안내 — 카카오 브랜드 색상(#FEE500) + 말풍선
-function KakaoContact() {
+function StatusPill({
+  children,
+  tone,
+}: {
+  children: React.ReactNode;
+  tone?: "green";
+}) {
   return (
-    <div className="inline-flex items-center gap-2.5 rounded-full bg-[#FEE500] text-[#1a1a1a] px-4 py-2 text-sm font-medium shadow-sm">
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        aria-hidden="true"
+    <span
+      className={`rounded-full border px-3 py-1 text-xs font-medium ${
+        tone === "green"
+          ? "border-success/30 bg-success/10 text-success"
+          : "border-border bg-muted-bg text-muted"
+      }`}
+    >
+      {children}
+    </span>
+  );
+}
+
+function ActionPanel({
+  title,
+  body,
+  action,
+  href,
+  external,
+  tone,
+}: {
+  title: string;
+  body: string;
+  action: string;
+  href: string;
+  external?: boolean;
+  tone?: "yellow";
+}) {
+  return (
+    <div
+      className={`rounded-lg border p-5 ${
+        tone === "yellow"
+          ? "border-[#E7D367] bg-[#FEE500]/25"
+          : "border-border bg-card"
+      }`}
+    >
+      <h2 className="font-display text-xl">{title}</h2>
+      <p className="mt-2 text-sm leading-relaxed text-muted">{body}</p>
+      <a
+        href={href}
+        target={external ? "_blank" : undefined}
+        rel={external ? "noreferrer" : undefined}
+        className="mt-4 inline-flex rounded-full bg-foreground px-4 py-2 text-sm font-semibold text-background transition hover:opacity-90"
       >
-        <path d="M12 3C6.48 3 2 6.58 2 11c0 2.85 1.86 5.36 4.66 6.78-.16.55-.6 2.1-.69 2.42-.11.4.15.4.31.29.13-.09 2.07-1.41 2.91-1.98.93.13 1.85.2 2.81.2 5.52 0 10-3.58 10-8S17.52 3 12 3z" />
-      </svg>
-      <span>
-        문의: <strong className="font-bold">papawheels</strong> 친구 추가
-      </span>
+        {action}
+      </a>
     </div>
   );
 }
 
-function Step({
-  n,
+function WorkflowCard({
+  step,
   title,
   body,
 }: {
-  n: string;
+  step: string;
   title: string;
   body: string;
 }) {
   return (
-    <div className="flex flex-col gap-4 p-7 sm:p-8 rounded-2xl bg-card border border-border">
+    <div className="rounded-lg border border-border bg-card p-5">
       <div className="flex items-center gap-3">
-        <span className="font-display text-3xl text-accent">{n}</span>
-        <span className="h-px flex-1 bg-border" />
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-soft text-sm font-bold text-accent">
+          {step}
+        </span>
+        <h2 className="font-display text-xl">{title}</h2>
       </div>
-      <h3 className="font-display text-2xl tracking-tight">{title}</h3>
-      <p className="text-muted leading-relaxed text-base">{body}</p>
+      <p className="mt-3 text-sm leading-relaxed text-muted">{body}</p>
     </div>
   );
 }
 
-function Feature({
-  icon,
+function Notice({
   title,
-  body,
+  date,
+  children,
 }: {
-  icon: string;
   title: string;
-  body: string;
+  date: string;
+  children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-4 p-7 sm:p-8 rounded-2xl bg-card border border-border">
-      <span className="text-4xl">{icon}</span>
-      <h3 className="font-display text-xl tracking-tight">{title}</h3>
-      <p className="text-muted leading-relaxed text-base">{body}</p>
+    <div className="grid gap-2 py-4 sm:grid-cols-[120px_1fr]">
+      <span className="text-xs font-medium text-accent">{date}</span>
+      <div>
+        <h3 className="text-sm font-semibold">{title}</h3>
+        <p className="mt-1 text-sm leading-relaxed text-muted">{children}</p>
+      </div>
     </div>
+  );
+}
+
+function SupportLink({
+  title,
+  body,
+  href,
+  label,
+  external,
+}: {
+  title: string;
+  body: string;
+  href: string;
+  label: string;
+  external?: boolean;
+}) {
+  return (
+    <a
+      href={href}
+      target={external ? "_blank" : undefined}
+      rel={external ? "noreferrer" : undefined}
+      className="rounded-lg border border-border p-4 transition hover:bg-muted-bg"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h3 className="text-sm font-semibold">{title}</h3>
+          <p className="mt-1 text-sm text-muted">{body}</p>
+        </div>
+        <span className="shrink-0 rounded-full bg-muted-bg px-2.5 py-1 text-xs text-muted">
+          {label}
+        </span>
+      </div>
+    </a>
   );
 }

@@ -1,9 +1,13 @@
 // src/features/admin/stats.ts
 // 관리자용 전체 통계 — 모든 사용자 합산 (개인 통계는 features/search/stats.ts).
 
-import { sql, gte } from "drizzle-orm";
+import { desc, sql, gte } from "drizzle-orm";
 import { db } from "@/infrastructure/db";
-import { users, searchLogs } from "@/infrastructure/db/schema";
+import {
+  users,
+  searchLogs,
+  dictionaryCache,
+} from "@/infrastructure/db/schema";
 
 export async function getGlobalStats() {
   // 1) 사용자 status별 분포
@@ -61,11 +65,36 @@ export async function getGlobalStats() {
     .groupBy(sql`FLOOR(EXTRACT(HOUR FROM ${searchLogs.createdAt} AT TIME ZONE 'Asia/Seoul') / 4)`)
     .orderBy(sql`FLOOR(EXTRACT(HOUR FROM ${searchLogs.createdAt} AT TIME ZONE 'Asia/Seoul') / 4)`);
 
+  const [dictionarySummary] = await db
+    .select({
+      total: sql<number>`COUNT(*)::int`,
+      totalHits: sql<number>`COALESCE(SUM(${dictionaryCache.hitCount}), 0)::int`,
+      lastUpdated: sql<Date | null>`MAX(${dictionaryCache.updatedAt})`,
+    })
+    .from(dictionaryCache);
+
+  const recentSearches = await db
+    .select({
+      query: searchLogs.query,
+      cacheHit: searchLogs.cacheHit,
+      createdAt: searchLogs.createdAt,
+      clerkId: searchLogs.clerkId,
+    })
+    .from(searchLogs)
+    .orderBy(desc(searchLogs.createdAt))
+    .limit(8);
+
   return {
     userCounts,
     searchSummary: searchSummary ?? { total: 0, cacheHits: 0, uniqueUsers: 0 },
     popular,
     daily,
     hourly,
+    dictionarySummary: dictionarySummary ?? {
+      total: 0,
+      totalHits: 0,
+      lastUpdated: null,
+    },
+    recentSearches,
   };
 }
