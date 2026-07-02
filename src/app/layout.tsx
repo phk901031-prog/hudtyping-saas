@@ -1,11 +1,3 @@
-// src/app/layout.tsx
-// 루트 레이아웃 — HTML 골격 + 폰트 + 인증 컨텍스트 + 메타데이터.
-//
-// 폰트 전략:
-//   - 본문/UI: Pretendard Variable (globals.css에서 CDN 로드, 한국어 시인성 우수, 무료)
-//   - 영문 fallback: Geist Sans
-//   - 코드: Geist Mono
-
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -22,10 +14,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "hudtyping — 회의록 쓰면서, 단어 찾는 시간을 줄여요",
+  title: "HUDTyping | 한글 문서 위 우리말샘 HUD",
   description:
-    "한글에서 단축키 한 번이면 우리말샘 사전이 옆에 떠요. 속기사·회의록 작성자를 위한 데스크톱 HUD 도구.",
-  keywords: ["속기", "우리말샘", "사전", "회의록", "한글", "HUD", "단축키"],
+    "속기사가 한글 문서 작성 중 Alt+Tab 없이 우리말샘 검색 결과를 확인할 수 있는 Windows HUD 도구.",
+  keywords: ["속기", "우리말샘", "회의록", "한글", "HUD", "단축키"],
 };
 
 export default function RootLayout({
@@ -39,7 +31,7 @@ export default function RootLayout({
         lang="ko"
         className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       >
-        <body className="min-h-full flex flex-col">{children}</body>
+        <body className="flex min-h-full flex-col">{children}</body>
       </html>
     </ClerkProvider>
   );

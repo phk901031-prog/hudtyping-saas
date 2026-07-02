@@ -15,18 +15,21 @@
  * 차가운 검정 배경에 형광 액센트로 도배된 "AI 스타터킷" 느낌 회피.
  */
 :root {
-  --background: #faf9f5; /* warm cream */
-  --foreground: #1f1e1d; /* warm near-black */
-  --muted: #6f6e6a;
-  --muted-bg: #f1eee5;
-  --border: #e8e5dc;
+  --background: #f7f6f0;
+  --foreground: #20231f;
+  --muted: #6b7067;
+  --muted-bg: #ebe8df;
+  --border: #ded9cb;
   --card: #ffffff;
-  --accent: #cc785c; /* claude orange */
-  --accent-hover: #b96749;
-  --accent-soft: #f7e9e1;
-  --success: #4f7d4d;
-  --warning: #c08a2c;
-  --danger: #b04a3e;
+  --panel: #efeee6;
+  --paper: #f4efe1;
+  --ink: #17201a;
+  --accent: #b85f3d;
+  --accent-hover: #9f4f31;
+  --accent-soft: #ead2c4;
+  --success: #506f52;
+  --warning: #a9792b;
+  --danger: #a8463c;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -37,6 +40,9 @@
     --muted-bg: #2f2d2a;
     --border: #3d3b37;
     --card: #2f2d2a;
+    --panel: #2b2e29;
+    --paper: #e8dcc3;
+    --ink: #121713;
     --accent: #d88a6e;
     --accent-hover: #e29c81;
     --accent-soft: #3d2c25;
@@ -53,6 +59,9 @@
   --color-muted-bg: var(--muted-bg);
   --color-border: var(--border);
   --color-card: var(--card);
+  --color-panel: var(--panel);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-accent-soft: var(--accent-soft);
@@ -84,7 +93,7 @@ body {
   font-family:
     "Pretendard Variable", "Pretendard", system-ui, sans-serif;
   font-weight: 700;
-  letter-spacing: -0.025em;
+  letter-spacing: 0;
 }
 
 /* 부드러운 selection */
