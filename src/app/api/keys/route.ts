@@ -1,6 +1,6 @@
 // src/app/api/keys/route.ts
-// GET  /api/keys  → 내 키 목록
-// POST /api/keys  → 새 키 발급 (응답에 평문 1회 포함)
+// GET  /api/keys  list current user's API keys
+// POST /api/keys  create a new API key
 
 import { auth } from "@/infrastructure/clerk";
 import { getOrCreateCurrentUser } from "@/features/users/service";
@@ -15,6 +15,7 @@ export async function GET() {
   if (!userId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
+
   const keys = await listApiKeys(userId);
   return Response.json({ keys });
 }
@@ -24,6 +25,7 @@ export async function POST(req: Request) {
   if (!user) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
+
   if (user.status !== "approved") {
     return Response.json(
       { error: "관리자 승인이 필요합니다." },
@@ -36,6 +38,7 @@ export async function POST(req: Request) {
   if (!name) {
     return Response.json({ error: "키 이름이 필요해요." }, { status: 400 });
   }
+
   if (name.length > 50) {
     return Response.json(
       { error: "키 이름은 50자 이하로 입력해주세요." },
@@ -48,7 +51,8 @@ export async function POST(req: Request) {
     return Response.json(
       {
         ...created,
-        message: "키를 안전한 곳에 복사해주세요. 다시 보여드릴 수 없어요.",
+        message:
+          "새 API 키를 안전한 곳에 복사해주세요. 이 키는 다시 보여드릴 수 없어요.",
       },
       { status: 201 }
     );
@@ -56,6 +60,7 @@ export async function POST(req: Request) {
     if (err instanceof ApiKeyAlreadyExistsError) {
       return Response.json({ error: err.message }, { status: 409 });
     }
+
     throw err;
   }
 }
