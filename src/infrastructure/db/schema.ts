@@ -12,6 +12,7 @@ import {
   boolean,
   index,
   integer,
+  jsonb,
 } from "drizzle-orm/pg-core";
 
 // PostgreSQL의 ENUM 타입을 정의 — DB 레벨에서 잘못된 값 입력을 차단한다.
@@ -167,3 +168,26 @@ export const apiKeys = pgTable(
 
 export type ApiKey = typeof apiKeys.$inferSelect;
 export type NewApiKey = typeof apiKeys.$inferInsert;
+
+export const dictionaryCache = pgTable(
+  "dictionary_cache",
+  {
+    query: text("query").primaryKey(),
+    result: jsonb("result").notNull(),
+    hitCount: integer("hit_count").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    lastUsedAt: timestamp("last_used_at", { withTimezone: true }),
+  },
+  (table) => [
+    index("dictionary_cache_updated_at_idx").on(table.updatedAt),
+    index("dictionary_cache_hit_count_idx").on(table.hitCount),
+  ]
+);
+
+export type DictionaryCache = typeof dictionaryCache.$inferSelect;
+export type NewDictionaryCache = typeof dictionaryCache.$inferInsert;
