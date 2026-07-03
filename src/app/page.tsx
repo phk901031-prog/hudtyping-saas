@@ -11,14 +11,14 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-1 flex-col bg-background text-foreground">
-      <nav className="border-b border-border bg-background/94 backdrop-blur">
+      <nav className="border-b border-border bg-background/90 backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
           <Link href="/" className="group inline-flex items-center gap-3">
             <span className="keycap h-11 w-11 text-base">H</span>
             <span className="flex flex-col leading-none">
               <span className="font-display text-xl">HUDTyping</span>
               <span className="mt-1 text-[11px] font-medium text-muted">
-                한글 문서 위에 뜨는 우리말샘 HUD
+                속기사 업무용 우리말샘 HUD
               </span>
             </span>
           </Link>
@@ -62,32 +62,37 @@ export default async function HomePage() {
 
       <main className="flex flex-1 flex-col">
         <section className="relative overflow-hidden border-b border-border">
-          <div className="hero-motion absolute inset-0 opacity-70" />
-          <div className="mx-auto grid w-full max-w-6xl gap-9 px-5 py-10 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:py-14">
-            <div className="relative flex flex-col justify-center gap-7">
+          <div className="hero-motion absolute inset-0" />
+          <div className="circuit-layer absolute inset-0" />
+
+          <div className="relative mx-auto grid w-full max-w-6xl gap-9 px-5 py-10 sm:px-8 lg:grid-cols-[0.88fr_1.12fr] lg:py-14">
+            <div className="flex flex-col justify-center gap-7">
               <div className="flex flex-wrap gap-2">
                 <StatusPill tone="green">서비스 운영 중</StatusPill>
                 <StatusPill>Windows v0.2.4</StatusPill>
-                <StatusPill>관리자 승인 후 사용</StatusPill>
+                <StatusPill>관리자 승인제</StatusPill>
               </div>
 
               <div className="flex max-w-2xl flex-col gap-4">
+                <p className="w-fit rounded-full border border-accent/25 bg-accent-soft/45 px-3 py-1 text-xs font-bold text-accent">
+                  한글 문서 위에서 동작하는 실시간 검색 보조 시스템
+                </p>
                 <h1 className="font-display text-3xl leading-tight [word-break:keep-all] sm:text-5xl">
-                  한글 문서에서
+                  회의록 작성 흐름을
                   <br />
-                  커서 앞 단어를 바로 찾습니다.
+                  끊지 않는 사전 검색 HUD.
                 </h1>
                 <p className="text-base leading-8 text-muted [word-break:keep-all] sm:text-lg">
-                  회의록을 쓰다가 궁금한 단어 뒤에 커서를 두고 지정 키를 누르세요.
-                  HUDTyping이 커서 앞 표현을 잡아 우리말샘 결과를 작은 창으로 보여줍니다.
-                  브라우저를 열거나 단어를 다시 입력하는 흐름을 줄이는 데 집중했습니다.
+                  단어 뒤에 커서를 두고 지정 키를 누르면, HUDTyping이 커서 앞 표현을
+                  잡아 우리말샘 결과를 작은 창으로 보여줍니다. 검색 속도, 사용량,
+                  실패율, 앱 버전까지 운영자가 확인할 수 있도록 SaaS 방식으로 관리합니다.
                 </p>
               </div>
 
               <div className="flex flex-col gap-3 sm:flex-row">
                 <a
                   href={DOWNLOAD_URL}
-                  className="inline-flex items-center justify-center rounded-lg bg-accent px-5 py-3 text-sm font-bold text-white shadow-[0_12px_30px_rgba(13,89,99,0.24)] transition hover:bg-accent-hover"
+                  className="inline-flex items-center justify-center rounded-lg bg-accent px-5 py-3 text-sm font-bold text-white shadow-[0_18px_42px_rgba(5,94,105,0.28)] transition hover:bg-accent-hover"
                 >
                   Windows 앱 다운로드
                 </a>
@@ -106,6 +111,8 @@ export default async function HomePage() {
                   </Link>
                 )}
               </div>
+
+              <TrustStrip />
             </div>
 
             <ProductScreen />
@@ -114,54 +121,54 @@ export default async function HomePage() {
 
         <section className="mx-auto grid w-full max-w-6xl gap-4 px-5 py-8 sm:px-8 md:grid-cols-3">
           <FeatureCard
-            label="1"
-            title="블록 지정 없이 커서만 둡니다"
-            body="한글 문서에서 단어 뒤에 커서를 두면 됩니다. 마우스로 단어를 긁거나 화면을 바꿀 필요가 없습니다."
+            label="01"
+            title="커서 앞 검색 단일 흐름"
+            body="블록 지정 없이 커서 앞 표현을 검색합니다. 키를 연속해서 누르면 띄어쓰기를 넘어 표현이 확장됩니다."
           />
           <FeatureCard
-            label="2"
-            title="검색 키를 누르면 HUD가 뜹니다"
-            body="Insert처럼 익숙한 키를 사용자가 직접 지정할 수 있습니다. 기본 안내는 커서 앞 검색 중심으로 정리했습니다."
+            label="02"
+            title="운영자가 보는 사용 데이터"
+            body="검색 수, 실패율, 평균 응답속도, 앱 버전을 관리자 화면에서 확인해 문제 사용자를 빠르게 파악합니다."
           />
           <FeatureCard
-            label="3"
-            title="연속 입력으로 표현을 넓힙니다"
-            body="키를 연속해서 누르면 띄어쓰기를 넘어 더 긴 표현으로 확장됩니다. 결과가 없어도 먼저 확장한 뒤 한 번에 검색합니다."
+            label="03"
+            title="캐시 기반 응답 최적화"
+            body="자주 찾는 검색어는 서버 캐시에 저장해 같은 단어를 더 빠르게 응답하도록 운영합니다."
           />
         </section>
 
         <section className="border-y border-border bg-panel">
-          <div className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-10 sm:px-8 lg:grid-cols-[0.75fr_1.25fr]">
+          <div className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-10 sm:px-8 lg:grid-cols-[0.78fr_1.22fr]">
             <div className="flex flex-col justify-center gap-3">
-              <p className="text-sm font-bold text-accent">사용 흐름</p>
+              <p className="text-sm font-bold text-accent">업무 흐름</p>
               <h2 className="font-display text-3xl [word-break:keep-all]">
-                짧은 키 입력만으로 검색 흐름을 끝냅니다.
+                화면을 바꾸지 않고, 필요한 순간만 검색합니다.
               </h2>
               <p className="leading-7 text-muted">
-                실제 사용자는 한글 문서를 벗어나지 않습니다. 커서 앞 검색,
-                연속 확장, HUD 결과 확인까지 한 화면 안에서 이어집니다.
+                속기사는 한글 문서에 계속 머물러야 합니다. HUDTyping은 브라우저 검색,
+                단어 재입력, Alt+Tab 이동을 줄이는 데 초점을 둔 도구입니다.
               </p>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3">
               <GuideStep
                 step="01"
-                title="커서 앞에 둠"
+                title="커서 두기"
                 body="검색할 표현 뒤에 커서를 둡니다."
                 sample="회의 안건 정리|"
               />
               <GuideStep
                 step="02"
                 title="지정 키 입력"
-                body="원하는 키를 누릅니다. 연속 입력하면 앞쪽 표현까지 넓어집니다."
+                body="Insert 등 원하는 키를 누릅니다. 연속 입력하면 표현이 확장됩니다."
                 sample="Insert"
                 keycap
               />
               <GuideStep
                 step="03"
-                title="HUD 결과 확인"
-                body="작은 창에서 뜻을 확인하고 바로 회의록 작성을 이어갑니다."
-                sample="검색 실패 시: 우리말샘 응답 지연 중"
+                title="HUD 확인"
+                body="작은 창에서 뜻을 확인하고 바로 작성 흐름으로 돌아갑니다."
+                sample="우리말샘 응답 지연 중"
               />
             </div>
           </div>
@@ -219,13 +226,36 @@ export default async function HomePage() {
   );
 }
 
+function TrustStrip() {
+  return (
+    <div className="grid gap-2 rounded-xl border border-border bg-card/72 p-3 shadow-[0_18px_48px_rgba(10,26,34,0.08)] backdrop-blur sm:grid-cols-3">
+      <TrustItem label="API" value="SaaS 인증" />
+      <TrustItem label="LOG" value="실패율 추적" />
+      <TrustItem label="CACHE" value="반복 검색 최적화" />
+    </div>
+  );
+}
+
+function TrustItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center gap-3 rounded-lg bg-muted-bg/65 px-3 py-2">
+      <span className="status-led" />
+      <div className="min-w-0">
+        <p className="font-mono text-[10px] font-bold text-accent">{label}</p>
+        <p className="truncate text-xs font-bold">{value}</p>
+      </div>
+    </div>
+  );
+}
+
 function ProductScreen() {
   return (
-    <div className="hud-stage relative min-h-[470px] overflow-hidden rounded-xl border border-border bg-ink p-4 text-white shadow-[0_24px_70px_rgba(11,22,26,0.28)] sm:p-5">
+    <div className="hud-stage tech-shell relative min-h-[480px] overflow-hidden rounded-xl border border-border bg-ink p-4 text-white shadow-[0_30px_80px_rgba(5,18,26,0.35)] sm:p-5">
       <div className="absolute inset-x-0 top-0 h-1 bg-signal" />
       <div className="screen-grid absolute inset-0 opacity-35" />
+      <div className="scan-line absolute inset-x-0 top-0 h-24" />
 
-      <div className="relative flex h-full flex-col rounded-lg border border-white/10 bg-[#101d21]/96 p-4">
+      <div className="relative flex h-full flex-col rounded-lg border border-white/10 bg-[#0a1519]/96 p-4">
         <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-3">
           <div>
             <p className="text-xs font-semibold text-white/45">HWP DOCUMENT</p>
@@ -247,7 +277,16 @@ function ProductScreen() {
           </p>
         </div>
 
-        <div className="hud-panel absolute bottom-5 right-5 w-[min(88%,390px)] rounded-lg border border-white/14 bg-[#061112]/96 p-4 shadow-2xl">
+        <div className="system-rail absolute bottom-6 left-5 hidden w-32 rounded-md border border-white/10 bg-white/[0.045] p-3 text-[11px] text-white/58 sm:block">
+          <p className="font-bold text-white/82">LIVE CHECK</p>
+          <div className="mt-3 grid gap-2">
+            <RailRow label="AUTH" value="OK" />
+            <RailRow label="CACHE" value="HIT" />
+            <RailRow label="LATENCY" value="184ms" />
+          </div>
+        </div>
+
+        <div className="hud-panel absolute bottom-5 right-5 w-[min(88%,390px)] rounded-lg border border-white/14 bg-[#041012]/96 p-4 shadow-2xl">
           <div className="mb-4 flex items-center justify-between">
             <span className="text-xs font-bold text-white/50">HUDTyping</span>
             <span className="rounded bg-accent/22 px-2 py-0.5 text-[11px] font-bold text-[#bff6ef]">
@@ -283,15 +322,16 @@ function ProductScreen() {
             <span className="rounded-md border border-white/10 py-1.5">3회 회의 안건 정리</span>
           </div>
         </div>
-
-        <div className="absolute bottom-6 left-5 hidden w-40 rounded-md border border-white/10 bg-white/6 p-3 text-xs text-white/55 sm:block">
-          <p className="font-bold text-white/80">상태표시줄</p>
-          <div className="mt-3 flex items-center gap-2">
-            <span className="tray-badge">H</span>
-            <span>작게 떠 있어도 보이게</span>
-          </div>
-        </div>
       </div>
+    </div>
+  );
+}
+
+function RailRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between gap-2">
+      <span className="font-mono text-white/42">{label}</span>
+      <span className="font-mono font-bold text-[#a8fff4]">{value}</span>
     </div>
   );
 }
@@ -326,8 +366,8 @@ function FeatureCard({
   body: string;
 }) {
   return (
-    <article className="rounded-lg border border-border bg-card p-5 shadow-[0_14px_40px_rgba(17,29,36,0.06)]">
-      <p className="text-xs font-bold text-signal">STEP {label}</p>
+    <article className="feature-card rounded-lg border border-border bg-card p-5 shadow-[0_14px_40px_rgba(17,29,36,0.06)]">
+      <p className="font-mono text-xs font-bold text-signal">{label}</p>
       <h2 className="mt-3 text-lg font-bold">{title}</h2>
       <p className="mt-2 text-sm leading-6 text-muted">{body}</p>
     </article>
@@ -350,7 +390,7 @@ function GuideStep({
   return (
     <article className="rounded-lg border border-border bg-card p-4">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-bold text-accent">STEP {step}</span>
+        <span className="font-mono text-xs font-bold text-accent">STEP {step}</span>
         <span className="step-dot h-2 w-2 rounded-full bg-signal" />
       </div>
       <h3 className="mt-4 font-bold">{title}</h3>
@@ -379,7 +419,7 @@ function Notice({
 }) {
   return (
     <div className="grid gap-2 py-4 sm:grid-cols-[92px_1fr]">
-      <span className="text-xs font-bold text-accent">{date}</span>
+      <span className="font-mono text-xs font-bold text-accent">{date}</span>
       <div>
         <h3 className="text-sm font-bold">{title}</h3>
         <p className="mt-1 text-sm leading-6 text-muted">{children}</p>

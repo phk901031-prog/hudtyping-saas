@@ -15,22 +15,22 @@
  * 차가운 검정 배경에 형광 액센트로 도배된 "AI 스타터킷" 느낌 회피.
  */
 :root {
-  --background: #f2efe7;
-  --foreground: #10191b;
-  --muted: #586367;
-  --muted-bg: #e4e1d8;
-  --border: #cfc8ba;
+  --background: #eef2f0;
+  --foreground: #0b171b;
+  --muted: #526167;
+  --muted-bg: #dfe7e3;
+  --border: #c4d0cd;
   --card: #ffffff;
-  --panel: #e8e3d8;
-  --paper: #f5ead1;
-  --ink: #0d171a;
-  --accent: #0d6670;
-  --accent-hover: #094f58;
-  --accent-soft: #d0e7e5;
-  --signal: #c35a36;
-  --success: #2e7a58;
-  --warning: #9a6b20;
-  --danger: #a8463c;
+  --panel: #e2ebe7;
+  --paper: #f4e7c9;
+  --ink: #061217;
+  --accent: #065f6b;
+  --accent-hover: #044b55;
+  --accent-soft: #cbe7e5;
+  --signal: #d05b32;
+  --success: #176b4d;
+  --warning: #9a6718;
+  --danger: #a43435;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -56,10 +56,20 @@
 
 .hero-motion {
   background:
-    radial-gradient(circle at 18% 18%, rgba(13, 102, 112, 0.13), transparent 30%),
-    radial-gradient(circle at 76% 12%, rgba(195, 90, 54, 0.11), transparent 28%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.48), transparent 55%);
+    radial-gradient(circle at 18% 20%, rgba(6, 95, 107, 0.18), transparent 31%),
+    radial-gradient(circle at 74% 16%, rgba(208, 91, 50, 0.12), transparent 30%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.62), rgba(214, 228, 225, 0.42) 46%, transparent 72%);
   animation: hero-breathe 8s ease-in-out infinite;
+}
+
+.circuit-layer {
+  background-image:
+    linear-gradient(rgba(6, 95, 107, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(6, 95, 107, 0.08) 1px, transparent 1px),
+    linear-gradient(120deg, transparent 0 72%, rgba(208, 91, 50, 0.08) 72.5%, transparent 73%);
+  background-size: 48px 48px, 48px 48px, 220px 220px;
+  mask-image: linear-gradient(90deg, transparent, black 14%, black 86%, transparent);
+  animation: circuit-shift 18s linear infinite;
 }
 
 .hud-stage {
@@ -68,10 +78,30 @@
 
 .screen-grid {
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+    linear-gradient(rgba(168, 255, 244, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168, 255, 244, 0.07) 1px, transparent 1px);
   background-size: 28px 28px;
   animation: screen-drift 12s linear infinite;
+}
+
+.tech-shell::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: 0.7rem;
+  border: 1px solid rgba(168, 255, 244, 0.12);
+  pointer-events: none;
+}
+
+.scan-line {
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(168, 255, 244, 0.11),
+    transparent
+  );
+  animation: scan-line 5.5s ease-in-out infinite;
+  pointer-events: none;
 }
 
 .hud-panel {
@@ -132,6 +162,40 @@
   animation: dot-pulse 1.8s ease-in-out infinite;
 }
 
+.status-led {
+  position: relative;
+  display: inline-flex;
+  width: 9px;
+  height: 9px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--success);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--success), transparent 82%);
+}
+
+.status-led::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: inherit;
+  border: 1px solid color-mix(in srgb, var(--success), transparent 42%);
+  animation: led-ping 2.2s ease-out infinite;
+}
+
+.feature-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--signal));
+  opacity: 0.9;
+}
+
 .tray-badge {
   display: inline-flex;
   width: 22px;
@@ -155,6 +219,15 @@
   }
 }
 
+@keyframes circuit-shift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(48px, 48px, 0);
+  }
+}
+
 @keyframes hero-breathe {
   0%,
   100% {
@@ -164,6 +237,24 @@
   50% {
     transform: scale(1.035);
     opacity: 0.95;
+  }
+}
+
+@keyframes scan-line {
+  0%,
+  100% {
+    transform: translateY(-120%);
+    opacity: 0;
+  }
+  14% {
+    opacity: 0.85;
+  }
+  58% {
+    opacity: 0.55;
+  }
+  80% {
+    transform: translateY(520%);
+    opacity: 0;
   }
 }
 
@@ -268,6 +359,18 @@
   50% {
     opacity: 1;
     transform: scale(1.25);
+  }
+}
+
+@keyframes led-ping {
+  0% {
+    opacity: 0.7;
+    transform: scale(0.78);
+  }
+  80%,
+  100% {
+    opacity: 0;
+    transform: scale(1.55);
   }
 }
 
@@ -440,6 +543,8 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .screen-grid,
   .hero-motion,
+  .circuit-layer,
+  .scan-line,
   .hud-panel,
   .cycle-item,
   .search-progress,
@@ -448,7 +553,8 @@ body {
   .select-token-2,
   .select-token-3,
   .typing-caret,
-  .step-dot {
+  .step-dot,
+  .status-led::after {
     animation: none;
   }
 
