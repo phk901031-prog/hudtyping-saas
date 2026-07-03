@@ -61,7 +61,7 @@ export default async function HomePage() {
       </nav>
 
       <main className="flex flex-1 flex-col">
-        <section className="relative overflow-hidden border-b border-border">
+        <section className="hero-slab relative overflow-hidden border-b border-border bg-ink text-white">
           <div className="hero-motion absolute inset-0" />
           <div className="circuit-layer absolute inset-0" />
 
@@ -69,12 +69,12 @@ export default async function HomePage() {
             <div className="flex flex-col justify-center gap-7">
               <div className="flex flex-wrap gap-2">
                 <StatusPill tone="green">서비스 운영 중</StatusPill>
-                <StatusPill>Windows v0.2.4</StatusPill>
-                <StatusPill>관리자 승인제</StatusPill>
+                <StatusPill tone="dark">Windows v0.2.4</StatusPill>
+                <StatusPill tone="dark">관리자 승인제</StatusPill>
               </div>
 
               <div className="flex max-w-2xl flex-col gap-4">
-                <p className="w-fit rounded-full border border-accent/25 bg-accent-soft/45 px-3 py-1 text-xs font-bold text-accent">
+                <p className="w-fit rounded-full border border-white/15 bg-white/8 px-3 py-1 text-xs font-bold text-[#a8fff4]">
                   한글 문서 위에서 동작하는 실시간 검색 보조 시스템
                 </p>
                 <h1 className="font-display text-3xl leading-tight [word-break:keep-all] sm:text-5xl">
@@ -82,7 +82,7 @@ export default async function HomePage() {
                   <br />
                   끊지 않는 사전 검색 HUD.
                 </h1>
-                <p className="text-base leading-8 text-muted [word-break:keep-all] sm:text-lg">
+                <p className="text-base leading-8 text-white/72 [word-break:keep-all] sm:text-lg">
                   단어 뒤에 커서를 두고 지정 키를 누르면, HUDTyping이 커서 앞 표현을
                   잡아 우리말샘 결과를 작은 창으로 보여줍니다. 검색 속도, 사용량,
                   실패율, 앱 버전까지 운영자가 확인할 수 있도록 SaaS 방식으로 관리합니다.
@@ -92,20 +92,20 @@ export default async function HomePage() {
               <div className="flex flex-col gap-3 sm:flex-row">
                 <a
                   href={DOWNLOAD_URL}
-                  className="inline-flex items-center justify-center rounded-lg bg-accent px-5 py-3 text-sm font-bold text-white shadow-[0_18px_42px_rgba(5,94,105,0.28)] transition hover:bg-accent-hover"
+                  className="inline-flex items-center justify-center rounded-lg bg-signal px-5 py-3 text-sm font-bold text-white shadow-[0_18px_42px_rgba(208,91,50,0.28)] transition hover:brightness-110"
                 >
                   Windows 앱 다운로드
                 </a>
                 <Link
                   href="/help"
-                  className="inline-flex items-center justify-center rounded-lg border border-border bg-card px-5 py-3 text-sm font-bold transition hover:bg-muted-bg"
+                  className="inline-flex items-center justify-center rounded-lg border border-white/18 bg-white/8 px-5 py-3 text-sm font-bold text-white transition hover:bg-white/14"
                 >
                   사용법 보기
                 </Link>
                 {!isSignedIn && (
                   <Link
                     href="/sign-up"
-                    className="inline-flex items-center justify-center rounded-lg border border-border bg-card px-5 py-3 text-sm font-bold transition hover:bg-muted-bg"
+                    className="inline-flex items-center justify-center rounded-lg border border-white/18 bg-white/8 px-5 py-3 text-sm font-bold text-white transition hover:bg-white/14"
                   >
                     가입 승인 요청
                   </Link>
@@ -116,6 +116,14 @@ export default async function HomePage() {
             </div>
 
             <ProductScreen />
+          </div>
+        </section>
+
+        <section className="impact-band border-b border-border bg-[#d95d35] text-white">
+          <div className="mx-auto grid w-full max-w-6xl gap-4 px-5 py-6 sm:px-8 md:grid-cols-3">
+            <ImpactItem label="운영 관측" value="실패율 · 응답속도 · 버전 추적" />
+            <ImpactItem label="검색 흐름" value="커서 앞 검색 · 연속 확장" />
+            <ImpactItem label="배포 관리" value="자동 업데이트 · 구버전 정책" />
           </div>
         </section>
 
@@ -228,7 +236,7 @@ export default async function HomePage() {
 
 function TrustStrip() {
   return (
-    <div className="grid gap-2 rounded-xl border border-border bg-card/72 p-3 shadow-[0_18px_48px_rgba(10,26,34,0.08)] backdrop-blur sm:grid-cols-3">
+    <div className="grid gap-2 rounded-xl border border-white/12 bg-white/8 p-3 shadow-[0_18px_48px_rgba(0,0,0,0.18)] backdrop-blur sm:grid-cols-3">
       <TrustItem label="API" value="SaaS 인증" />
       <TrustItem label="LOG" value="실패율 추적" />
       <TrustItem label="CACHE" value="반복 검색 최적화" />
@@ -238,12 +246,26 @@ function TrustStrip() {
 
 function TrustItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center gap-3 rounded-lg bg-muted-bg/65 px-3 py-2">
+    <div className="flex items-center gap-3 rounded-lg bg-white/8 px-3 py-2">
       <span className="status-led" />
       <div className="min-w-0">
-        <p className="font-mono text-[10px] font-bold text-accent">{label}</p>
-        <p className="truncate text-xs font-bold">{value}</p>
+        <p className="font-mono text-[10px] font-bold text-[#a8fff4]">{label}</p>
+        <p className="truncate text-xs font-bold text-white">{value}</p>
       </div>
+    </div>
+  );
+}
+
+function ImpactItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between gap-4 border-l border-white/35 pl-4">
+      <div>
+        <p className="font-mono text-[11px] font-bold uppercase tracking-[0.08em] text-white/65">
+          {label}
+        </p>
+        <p className="mt-1 text-sm font-bold [word-break:keep-all]">{value}</p>
+      </div>
+      <span className="hidden h-2 w-2 shrink-0 rounded-full bg-white/80 shadow-[0_0_18px_rgba(255,255,255,0.8)] sm:block" />
     </div>
   );
 }
@@ -341,13 +363,15 @@ function StatusPill({
   tone,
 }: {
   children: React.ReactNode;
-  tone?: "green";
+  tone?: "green" | "dark";
 }) {
   return (
     <span
       className={`rounded-full border px-3 py-1 text-xs font-bold ${
         tone === "green"
           ? "border-success/30 bg-success/10 text-success"
+          : tone === "dark"
+            ? "border-white/16 bg-white/8 text-white/78"
           : "border-border bg-card text-muted"
       }`}
     >
