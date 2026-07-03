@@ -1,9 +1,3 @@
-// src/app/(dashboard)/admin/users/[id]/page.tsx
-// 사용자 상세 — 관리자가 "특정 사용자가 뭘 검색했는지" 본다.
-//
-// (dashboard) + admin layout이 admin 권한을 이미 검증.
-// URL의 id는 clerkId.
-
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
@@ -21,115 +15,107 @@ export default async function AdminUserDetailPage({
 }) {
   const { id: clerkId } = await params;
   const user = await getUserById(clerkId);
-  if (!user) {
-    notFound();
-  }
+  if (!user) notFound();
 
-  // 검색 활동을 병렬로 가져옴
   const [activity, history] = await Promise.all([
     getUserSearchActivity(clerkId),
     getUserSearchHistory(clerkId, 100),
   ]);
 
   const cacheHitRate =
-    activity.total > 0
-      ? (activity.cacheHits / activity.total) * 100
-      : 0;
-  const displayName = [user.lastName, user.firstName]
-    .filter(Boolean)
-    .join(" ");
+    activity.total > 0 ? (activity.cacheHits / activity.total) * 100 : 0;
+  const failureRate =
+    activity.total > 0 ? (activity.failures / activity.total) * 100 : 0;
+  const displayName = [user.lastName, user.firstName].filter(Boolean).join(" ");
 
   return (
-    <main className="flex flex-1 flex-col px-6 py-8 gap-6 max-w-4xl w-full mx-auto">
+    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-5 py-7 sm:px-8">
       <header className="flex items-center justify-between">
-        <Link
-          href="/admin/users"
-          className="text-sm text-zinc-500 hover:underline"
-        >
+        <Link href="/admin/users" className="text-sm text-zinc-500 hover:underline">
           ← 회원 관리
         </Link>
         <UserButton />
       </header>
 
-      {/* 사용자 헤더 */}
-      <div className="flex flex-col gap-2">
-        <h1 className="text-2xl font-bold">
-          {displayName || user.email}
-        </h1>
-        {displayName && (
-          <p className="text-sm text-zinc-500">{user.email}</p>
-        )}
-        <div className="flex gap-2 items-center flex-wrap text-xs text-zinc-500">
-          <StatusBadge status={user.status} />
-          {user.role === "admin" && (
-            <span className="px-1.5 py-0.5 rounded text-[10px] bg-purple-100 text-purple-700 dark:bg-purple-950/30 dark:text-purple-300">
-              admin
+      <section className="flex flex-col gap-2 rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">{displayName || user.email}</h1>
+            {displayName && <p className="mt-1 text-sm text-zinc-500">{user.email}</p>}
+          </div>
+          <div className="flex flex-wrap gap-2 text-xs text-zinc-500">
+            <StatusBadge status={user.status} />
+            {user.role === "admin" && <span className="rounded bg-purple-100 px-2 py-1 font-bold text-purple-700 dark:bg-purple-950/30 dark:text-purple-300">admin</span>}
+            <span className="rounded bg-zinc-100 px-2 py-1 dark:bg-zinc-900">
+              한도 {user.role === "admin" ? "무제한" : `${user.monthlyLimit.toLocaleString()}회`}
             </span>
-          )}
-          <span>
-            한도{" "}
-            {user.role === "admin"
-              ? "무제한"
-              : `${user.monthlyLimit.toLocaleString()}회/월`}
-          </span>
-          <span>· 가입 {formatDate(user.createdAt)}</span>
-        </div>
-      </div>
-
-      {/* 검색 활동 요약 */}
-      <section className="flex flex-col gap-3">
-        <h2 className="text-base font-semibold">검색 활동</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <SummaryCard
-            label="총 검색"
-            value={activity.total.toLocaleString()}
-          />
-          <SummaryCard
-            label="캐시 적중률"
-            value={activity.total > 0 ? `${cacheHitRate.toFixed(1)}%` : "—"}
-            hint={`${activity.cacheHits.toLocaleString()}건`}
-          />
-          <SummaryCard
-            label="첫 검색"
-            value={
-              activity.firstSearch ? formatDate(activity.firstSearch) : "—"
-            }
-          />
-          <SummaryCard
-            label="최근 검색"
-            value={
-              activity.lastSearch ? formatDateTime(activity.lastSearch) : "—"
-            }
-          />
+            <span className="rounded bg-zinc-100 px-2 py-1 dark:bg-zinc-900">
+              가입 {formatDate(user.createdAt)}
+            </span>
+          </div>
         </div>
       </section>
 
-      {/* 검색 기록이 0이면 빈 상태 */}
+      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <SummaryCard label="총 검색" value={activity.total.toLocaleString()} />
+        <SummaryCard
+          label="실패율"
+          value={activity.total > 0 ? `${failureRate.toFixed(1)}%` : "0%"}
+          hint={`${activity.failures.toLocaleString()}건 실패`}
+          tone={failureRate >= 5 ? "red" : failureRate > 0 ? "amber" : "green"}
+        />
+        <SummaryCard
+          label="평균 응답"
+          value={`${activity.avgResponseMs.toLocaleString()}ms`}
+          hint={`5초 이상 ${activity.slowSearches.toLocaleString()}건`}
+          tone={activity.avgResponseMs >= 3000 ? "red" : activity.avgResponseMs >= 1200 ? "amber" : "green"}
+        />
+        <SummaryCard
+          label="최근 버전"
+          value={`v${activity.lastAppVersion ?? "legacy/web"}`}
+          hint={activity.lastSearch ? formatDateTime(activity.lastSearch) : undefined}
+        />
+      </section>
+
+      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <SummaryCard
+          label="캐시 적중률"
+          value={activity.total > 0 ? `${cacheHitRate.toFixed(1)}%` : "0%"}
+          hint={`${activity.cacheHits.toLocaleString()}건`}
+        />
+        <SummaryCard
+          label="첫 검색"
+          value={activity.firstSearch ? formatDate(activity.firstSearch) : "-"}
+        />
+        <SummaryCard
+          label="최근 검색"
+          value={activity.lastSearch ? formatDateTime(activity.lastSearch) : "-"}
+        />
+        <SummaryCard
+          label="상태"
+          value={user.status === "approved" ? "승인" : user.status === "pending" ? "대기" : "거절"}
+        />
+      </section>
+
       {activity.total === 0 && (
-        <p className="text-sm text-zinc-500 text-center py-12 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl">
+        <p className="rounded-xl border border-dashed border-zinc-200 py-12 text-center text-sm text-zinc-500 dark:border-zinc-800">
           이 사용자의 검색 기록이 없습니다.
         </p>
       )}
 
-      {/* 인기 검색어 (이 사용자) */}
       {activity.popular.length > 0 && (
         <section className="flex flex-col gap-3">
           <h2 className="text-base font-semibold">
             자주 찾은 단어 top {activity.popular.length}
           </h2>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 divide-y sm:divide-y-0 divide-zinc-200 dark:divide-zinc-800 border border-zinc-200 dark:border-zinc-800 rounded-2xl px-4">
+          <ul className="grid grid-cols-1 gap-x-4 divide-y divide-zinc-200 rounded-xl border border-zinc-200 px-4 dark:divide-zinc-800 dark:border-zinc-800 sm:grid-cols-2 sm:divide-y-0">
             {activity.popular.map((row, i) => (
-              <li
-                key={row.query}
-                className="flex items-center justify-between py-2 text-sm"
-              >
-                <span className="flex items-center gap-3 min-w-0">
-                  <span className="text-zinc-400 font-mono text-xs w-6 shrink-0">
-                    #{i + 1}
-                  </span>
-                  <span className="font-medium truncate">{row.query}</span>
+              <li key={row.query} className="flex items-center justify-between py-2 text-sm">
+                <span className="flex min-w-0 items-center gap-3">
+                  <span className="w-6 shrink-0 font-mono text-xs text-zinc-400">#{i + 1}</span>
+                  <span className="truncate font-medium">{row.query}</span>
                 </span>
-                <span className="text-xs text-zinc-500 shrink-0">
+                <span className="shrink-0 text-xs text-zinc-500">
                   {row.cnt.toLocaleString()}회
                 </span>
               </li>
@@ -138,7 +124,6 @@ export default async function AdminUserDetailPage({
         </section>
       )}
 
-      {/* 최근 검색 기록 (시간순, 최대 100건) */}
       {history.length > 0 && (
         <section className="flex flex-col gap-3">
           <h2 className="text-base font-semibold">
@@ -147,55 +132,82 @@ export default async function AdminUserDetailPage({
               ` · 전체 ${activity.total.toLocaleString()}건 중`}
             )
           </h2>
-          <ul className="flex flex-col divide-y divide-zinc-200 dark:divide-zinc-800 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden">
+          <ul className="flex flex-col divide-y divide-zinc-200 overflow-hidden rounded-xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
             {history.map((row, i) => (
               <li
                 key={`${row.createdAt.toString()}-${i}`}
-                className="flex items-center justify-between px-4 py-2 text-sm"
+                className="grid gap-2 px-4 py-3 text-sm sm:grid-cols-[minmax(0,1fr)_auto]"
               >
-                <span className="font-medium truncate">{row.query}</span>
-                <span className="flex items-center gap-3 text-xs text-zinc-500 shrink-0">
-                  <span
-                    className={
-                      row.cacheHit ? "text-green-600" : "text-amber-600"
-                    }
-                  >
-                    {row.cacheHit ? "캐시" : "miss"}
-                  </span>
+                <div className="min-w-0">
+                  <p className="truncate font-medium">{row.query}</p>
+                  <p className="mt-1 text-xs text-zinc-500">
+                    v{row.appVersion ?? "legacy/web"} · {row.responseMs ? `${row.responseMs.toLocaleString()}ms` : "응답시간 없음"}
+                  </p>
+                </div>
+                <span className="flex items-center gap-3 text-xs text-zinc-500 sm:justify-end">
+                  <SearchStatus
+                    status={row.status}
+                    cacheHit={row.cacheHit}
+                    errorCode={row.errorCode}
+                  />
                   <span>{formatDateTime(row.createdAt)}</span>
                 </span>
               </li>
             ))}
           </ul>
-          {activity.total > history.length && (
-            <p className="text-xs text-zinc-500 text-right">
-              ※ 최근 {history.length}건만 표시. 페이지네이션은 추후 추가 예정.
-            </p>
-          )}
         </section>
       )}
     </main>
   );
 }
 
-// ─── 보조 컴포넌트 ───────────────────────────────────────────────
-
 function SummaryCard({
   label,
   value,
   hint,
+  tone,
 }: {
   label: string;
   value: string;
   hint?: string;
+  tone?: "green" | "amber" | "red";
 }) {
+  const toneClass =
+    tone === "green"
+      ? "text-emerald-700 dark:text-emerald-300"
+      : tone === "amber"
+        ? "text-amber-700 dark:text-amber-300"
+        : tone === "red"
+          ? "text-rose-700 dark:text-rose-300"
+          : "";
+
   return (
-    <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 flex flex-col gap-1">
+    <div className="flex flex-col gap-1 rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
       <span className="text-xs text-zinc-500">{label}</span>
-      <span className="text-xl font-bold">{value}</span>
+      <span className={`text-xl font-bold ${toneClass}`}>{value}</span>
       {hint && <span className="text-xs text-zinc-400">{hint}</span>}
     </div>
   );
+}
+
+function SearchStatus({
+  status,
+  cacheHit,
+  errorCode,
+}: {
+  status: string;
+  cacheHit: boolean;
+  errorCode: string | null;
+}) {
+  if (status === "success") {
+    return (
+      <span className={cacheHit ? "text-green-600" : "text-amber-600"}>
+        {cacheHit ? "캐시" : "신규"}
+      </span>
+    );
+  }
+
+  return <span className="text-rose-600">{errorCode ?? "실패"}</span>;
 }
 
 function StatusBadge({ status }: { status: UserStatus }) {
@@ -212,7 +224,7 @@ function StatusBadge({ status }: { status: UserStatus }) {
     rejected: "거절",
   };
   return (
-    <span className={`px-1.5 py-0.5 rounded text-[10px] ${colors[status]}`}>
+    <span className={`rounded px-2 py-1 text-xs font-bold ${colors[status]}`}>
       {labels[status]}
     </span>
   );

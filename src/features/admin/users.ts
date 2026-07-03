@@ -52,8 +52,11 @@ export type UserWithActivity = User & {
   monthlyCount: number;
   totalCount: number;
   cacheHitCount: number;
+  failureCount: number;
+  avgResponseMs: number;
   lastQuery: string | null;
   lastSearchAt: Date | null;
+  lastAppVersion: string | null;
 };
 
 export async function listUsersWithActivity(filter?: {
@@ -84,6 +87,8 @@ export async function listUsersWithActivity(filter?: {
         clerkId: searchLogs.clerkId,
         total: sql<number>`COUNT(*)::int`,
         cacheHits: sql<number>`COALESCE(SUM(CASE WHEN ${searchLogs.cacheHit} THEN 1 ELSE 0 END), 0)::int`,
+        failures: sql<number>`COALESCE(SUM(CASE WHEN ${searchLogs.status} <> 'success' THEN 1 ELSE 0 END), 0)::int`,
+        avgResponseMs: sql<number>`COALESCE(ROUND(AVG(${searchLogs.responseMs})), 0)::int`,
       })
       .from(searchLogs)
       .where(inArray(searchLogs.clerkId, clerkIds))
@@ -93,6 +98,7 @@ export async function listUsersWithActivity(filter?: {
         clerkId: searchLogs.clerkId,
         query: searchLogs.query,
         createdAt: searchLogs.createdAt,
+        appVersion: searchLogs.appVersion,
       })
       .from(searchLogs)
       .where(inArray(searchLogs.clerkId, clerkIds))
@@ -103,11 +109,19 @@ export async function listUsersWithActivity(filter?: {
   const totalMap = new Map(
     totalRows.map((r) => [
       r.clerkId,
-      { total: Number(r.total), cacheHits: Number(r.cacheHits) },
+      {
+        total: Number(r.total),
+        cacheHits: Number(r.cacheHits),
+        failures: Number(r.failures),
+        avgResponseMs: Number(r.avgResponseMs),
+      },
     ])
   );
   const lastMap = new Map(
-    lastRows.map((r) => [r.clerkId, { query: r.query, createdAt: r.createdAt }])
+    lastRows.map((r) => [
+      r.clerkId,
+      { query: r.query, createdAt: r.createdAt, appVersion: r.appVersion },
+    ])
   );
 
   return usersList.map((u) => {
@@ -117,8 +131,11 @@ export async function listUsersWithActivity(filter?: {
       monthlyCount: monthlyMap.get(u.clerkId) ?? 0,
       totalCount: totalMap.get(u.clerkId)?.total ?? 0,
       cacheHitCount: totalMap.get(u.clerkId)?.cacheHits ?? 0,
+      failureCount: totalMap.get(u.clerkId)?.failures ?? 0,
+      avgResponseMs: totalMap.get(u.clerkId)?.avgResponseMs ?? 0,
       lastQuery: last?.query ?? null,
       lastSearchAt: last?.createdAt ?? null,
+      lastAppVersion: last?.appVersion ?? null,
     };
   }).sort((a, b) => {
     if (b.monthlyCount !== a.monthlyCount) return b.monthlyCount - a.monthlyCount;
@@ -191,8 +208,12 @@ export async function getUserSearchActivity(clerkId: string) {
     .select({
       total: sql<number>`COUNT(*)::int`,
       cacheHits: sql<number>`COALESCE(SUM(CASE WHEN ${searchLogs.cacheHit} THEN 1 ELSE 0 END), 0)::int`,
+      failures: sql<number>`COALESCE(SUM(CASE WHEN ${searchLogs.status} <> 'success' THEN 1 ELSE 0 END), 0)::int`,
+      avgResponseMs: sql<number>`COALESCE(ROUND(AVG(${searchLogs.responseMs})), 0)::int`,
+      slowSearches: sql<number>`COALESCE(SUM(CASE WHEN ${searchLogs.responseMs} >= 5000 THEN 1 ELSE 0 END), 0)::int`,
       firstSearch: sql<Date | null>`MIN(${searchLogs.createdAt})`,
       lastSearch: sql<Date | null>`MAX(${searchLogs.createdAt})`,
+      lastAppVersion: sql<string | null>`(ARRAY_AGG(${searchLogs.appVersion} ORDER BY ${searchLogs.createdAt} DESC))[1]`,
     })
     .from(searchLogs)
     .where(eq(searchLogs.clerkId, clerkId));
@@ -212,8 +233,12 @@ export async function getUserSearchActivity(clerkId: string) {
   return {
     total: summary?.total ?? 0,
     cacheHits: Number(summary?.cacheHits ?? 0),
+    failures: Number(summary?.failures ?? 0),
+    avgResponseMs: Number(summary?.avgResponseMs ?? 0),
+    slowSearches: Number(summary?.slowSearches ?? 0),
     firstSearch: summary?.firstSearch ?? null,
     lastSearch: summary?.lastSearch ?? null,
+    lastAppVersion: summary?.lastAppVersion ?? null,
     popular,
   };
 }
@@ -226,12 +251,24 @@ export async function getUserSearchHistory(
   clerkId: string,
   limit = 100
 ): Promise<
-  Array<{ query: string; cacheHit: boolean; createdAt: Date }>
+  Array<{
+    query: string;
+    cacheHit: boolean;
+    status: string;
+    errorCode: string | null;
+    responseMs: number | null;
+    appVersion: string | null;
+    createdAt: Date;
+  }>
 > {
   return db
     .select({
       query: searchLogs.query,
       cacheHit: searchLogs.cacheHit,
+      status: searchLogs.status,
+      errorCode: searchLogs.errorCode,
+      responseMs: searchLogs.responseMs,
+      appVersion: searchLogs.appVersion,
       createdAt: searchLogs.createdAt,
     })
     .from(searchLogs)

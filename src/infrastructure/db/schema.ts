@@ -109,6 +109,10 @@ export const searchLogs = pgTable(
       .references(() => users.clerkId, { onDelete: "cascade" }),
     query: text("query").notNull(),
     cacheHit: boolean("cache_hit").notNull(),
+    status: text("status").notNull().default("success"),
+    errorCode: text("error_code"),
+    responseMs: integer("response_ms"),
+    appVersion: text("app_version"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

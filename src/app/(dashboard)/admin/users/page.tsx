@@ -156,6 +156,9 @@ export default async function AdminUsersPage({
                       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-500">
                         <span>전체 {user.totalCount.toLocaleString()}건</span>
                         <span>캐시 {cacheRate.toFixed(0)}%</span>
+                        <span>실패 {user.failureCount.toLocaleString()}건</span>
+                        <span>평균 {user.avgResponseMs.toLocaleString()}ms</span>
+                        <span>버전 v{user.lastAppVersion ?? "legacy/web"}</span>
                         <span>가입 {formatDate(user.createdAt)}</span>
                       </div>
 

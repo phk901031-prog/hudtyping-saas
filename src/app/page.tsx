@@ -3,7 +3,7 @@ import { UserButton } from "@clerk/nextjs";
 import { auth } from "@/infrastructure/clerk";
 
 const DOWNLOAD_URL =
-  "https://github.com/phk901031-prog/hudtyping-saas/releases/latest/download/hudtyping-Setup-0.2.3.exe";
+  "https://github.com/phk901031-prog/hudtyping-saas/releases/latest/download/hudtyping-Setup-0.2.4.exe";
 
 export default async function HomePage() {
   const { userId } = await auth();
@@ -67,7 +67,7 @@ export default async function HomePage() {
             <div className="relative flex flex-col justify-center gap-7">
               <div className="flex flex-wrap gap-2">
                 <StatusPill tone="green">서비스 운영 중</StatusPill>
-                <StatusPill>Windows v0.2.3</StatusPill>
+                <StatusPill>Windows v0.2.4</StatusPill>
                 <StatusPill>관리자 승인 후 사용</StatusPill>
               </div>
 
@@ -171,8 +171,8 @@ export default async function HomePage() {
           <div id="support" className="rounded-lg border border-border bg-card p-6">
             <h2 className="font-display text-2xl">운영 안내</h2>
             <div className="mt-5 divide-y divide-border">
-              <Notice title="현재 배포 버전" date="v0.2.3">
-                커서 앞 검색 중심으로 앱 화면을 정리했고, 상태표시줄 아이콘과 설치 파일을 갱신했습니다.
+              <Notice title="현재 배포 버전" date="v0.2.4">
+                앱 버전 보고, 업데이트 안내, 검색 실패/응답시간 기록을 추가했습니다.
               </Notice>
               <Notice title="응답 지연 안내" date="검색">
                 우리말샘 또는 서버 응답이 늦으면 앱에 “우리말샘 응답 지연 중”으로 표시됩니다.
