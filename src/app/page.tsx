@@ -11,7 +11,7 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-1 flex-col bg-background text-foreground">
-      <nav className="border-b border-border bg-background/90 backdrop-blur-xl">
+      <nav className="border-b border-border bg-background/92 backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
           <Link href="/" className="group inline-flex items-center gap-3">
             <span className="keycap h-11 w-11 text-base">H</span>
@@ -61,31 +61,31 @@ export default async function HomePage() {
       </nav>
 
       <main className="flex flex-1 flex-col">
-        <section className="hero-slab relative overflow-hidden border-b border-border bg-ink text-white">
+        <section className="hero-slab relative overflow-hidden bg-ink text-white">
           <div className="hero-motion absolute inset-0" />
           <div className="circuit-layer absolute inset-0" />
 
-          <div className="relative mx-auto grid w-full max-w-6xl gap-9 px-5 py-10 sm:px-8 lg:grid-cols-[0.88fr_1.12fr] lg:py-14">
+          <div className="relative mx-auto grid w-full max-w-6xl gap-10 px-5 pb-16 pt-10 sm:px-8 lg:grid-cols-[0.88fr_1.12fr] lg:pb-20 lg:pt-16">
             <div className="flex flex-col justify-center gap-7">
               <div className="flex flex-wrap gap-2">
                 <StatusPill tone="green">서비스 운영 중</StatusPill>
                 <StatusPill tone="dark">Windows v0.2.4</StatusPill>
-                <StatusPill tone="dark">관리자 승인제</StatusPill>
+                <StatusPill tone="dark">승인제 운영</StatusPill>
               </div>
 
               <div className="flex max-w-2xl flex-col gap-4">
-                <p className="w-fit rounded-full border border-white/15 bg-white/8 px-3 py-1 text-xs font-bold text-[#a8fff4]">
-                  한글 문서 위에서 동작하는 실시간 검색 보조 시스템
+                <p className="w-fit rounded-full border border-white/12 bg-white/7 px-3 py-1 text-xs font-bold text-[#a8fff4]">
+                  한글 문서 위에서 바로 뜨는 우리말샘 검색 보조 시스템
                 </p>
                 <h1 className="font-display text-3xl leading-tight [word-break:keep-all] sm:text-5xl">
-                  회의록 작성 흐름을
+                  회의록 작성 화면에서
                   <br />
-                  끊지 않는 사전 검색 HUD.
+                  바로 검색되는 사전 HUD.
                 </h1>
                 <p className="text-base leading-8 text-white/72 [word-break:keep-all] sm:text-lg">
-                  단어 뒤에 커서를 두고 지정 키를 누르면, HUDTyping이 커서 앞 표현을
-                  잡아 우리말샘 결과를 작은 창으로 보여줍니다. 검색 속도, 사용량,
-                  실패율, 앱 버전까지 운영자가 확인할 수 있도록 SaaS 방식으로 관리합니다.
+                  단어 뒤에 커서를 두고 지정 키를 누르면 HUDTyping이 커서 앞 표현을
+                  잡아 우리말샘 결과를 작은 창으로 보여줍니다. 사용자는 한글 문서를
+                  벗어나지 않고, 관리자는 검색 실패율과 응답속도까지 확인합니다.
                 </p>
               </div>
 
@@ -119,30 +119,42 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="impact-band border-b border-border bg-[#d95d35] text-white">
-          <div className="mx-auto grid w-full max-w-6xl gap-4 px-5 py-6 sm:px-8 md:grid-cols-3">
-            <ImpactItem label="운영 관측" value="실패율 · 응답속도 · 버전 추적" />
-            <ImpactItem label="검색 흐름" value="커서 앞 검색 · 연속 확장" />
-            <ImpactItem label="배포 관리" value="자동 업데이트 · 구버전 정책" />
+        <section className="relative z-10 border-b border-border">
+          <div className="mx-auto grid w-full max-w-6xl gap-3 px-5 py-6 sm:px-8 lg:-mt-10 lg:grid-cols-3 lg:py-0">
+            <ProofCard label="운영 관측" value="실패율 · 응답속도 · 앱 버전" />
+            <ProofCard label="검색 흐름" value="커서 앞 검색 · 연속 확장" />
+            <ProofCard label="배포 관리" value="자동 업데이트 · 구버전 정책" />
           </div>
         </section>
 
-        <section className="mx-auto grid w-full max-w-6xl gap-4 px-5 py-8 sm:px-8 md:grid-cols-3">
-          <FeatureCard
-            label="01"
-            title="커서 앞 검색 단일 흐름"
-            body="블록 지정 없이 커서 앞 표현을 검색합니다. 키를 연속해서 누르면 띄어쓰기를 넘어 표현이 확장됩니다."
-          />
-          <FeatureCard
-            label="02"
-            title="운영자가 보는 사용 데이터"
-            body="검색 수, 실패율, 평균 응답속도, 앱 버전을 관리자 화면에서 확인해 문제 사용자를 빠르게 파악합니다."
-          />
-          <FeatureCard
-            label="03"
-            title="캐시 기반 응답 최적화"
-            body="자주 찾는 검색어는 서버 캐시에 저장해 같은 단어를 더 빠르게 응답하도록 운영합니다."
-          />
+        <section className="mx-auto grid w-full max-w-6xl gap-7 px-5 py-10 sm:px-8 lg:grid-cols-[0.7fr_1.3fr]">
+          <div className="flex flex-col gap-3">
+            <p className="text-sm font-bold text-accent">제품 기준</p>
+            <h2 className="font-display text-3xl [word-break:keep-all]">
+              화려한 검색창보다, 작업 흐름을 지키는 도구가 필요합니다.
+            </h2>
+            <p className="leading-7 text-muted">
+              HUDTyping은 랜딩페이지보다 실제 속기사 업무 화면에서의 반응속도와
+              안정성을 우선합니다.
+            </p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            <FeatureCard
+              label="01"
+              title="커서 앞 검색"
+              body="블록 지정 없이 커서 앞 표현을 검색합니다. 키를 연속해서 누르면 표현이 확장됩니다."
+            />
+            <FeatureCard
+              label="02"
+              title="운영 데이터"
+              body="검색 수, 실패율, 평균 응답속도, 앱 버전을 관리자 화면에서 확인합니다."
+            />
+            <FeatureCard
+              label="03"
+              title="캐시 최적화"
+              body="자주 찾는 검색어는 서버 캐시에 저장해 더 빠르게 응답하도록 운영합니다."
+            />
+          </div>
         </section>
 
         <section className="border-y border-border bg-panel">
@@ -256,23 +268,20 @@ function TrustItem({ label, value }: { label: string; value: string }) {
   );
 }
 
-function ImpactItem({ label, value }: { label: string; value: string }) {
+function ProofCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between gap-4 border-l border-white/35 pl-4">
-      <div>
-        <p className="font-mono text-[11px] font-bold uppercase tracking-[0.08em] text-white/65">
-          {label}
-        </p>
-        <p className="mt-1 text-sm font-bold [word-break:keep-all]">{value}</p>
-      </div>
-      <span className="hidden h-2 w-2 shrink-0 rounded-full bg-white/80 shadow-[0_0_18px_rgba(255,255,255,0.8)] sm:block" />
-    </div>
+    <article className="rounded-lg border border-border bg-card p-5 shadow-[0_18px_48px_rgba(10,26,34,0.09)]">
+      <p className="font-mono text-[11px] font-bold uppercase tracking-[0.08em] text-signal">
+        {label}
+      </p>
+      <p className="mt-2 text-sm font-bold">{value}</p>
+    </article>
   );
 }
 
 function ProductScreen() {
   return (
-    <div className="hud-stage tech-shell relative min-h-[480px] overflow-hidden rounded-xl border border-border bg-ink p-4 text-white shadow-[0_30px_80px_rgba(5,18,26,0.35)] sm:p-5">
+    <div className="hud-stage tech-shell relative min-h-[480px] overflow-hidden rounded-xl border border-white/12 bg-ink p-4 text-white shadow-[0_30px_80px_rgba(5,18,26,0.35)] sm:p-5">
       <div className="absolute inset-x-0 top-0 h-1 bg-signal" />
       <div className="screen-grid absolute inset-0 opacity-35" />
       <div className="scan-line absolute inset-x-0 top-0 h-24" />
@@ -369,10 +378,10 @@ function StatusPill({
     <span
       className={`rounded-full border px-3 py-1 text-xs font-bold ${
         tone === "green"
-          ? "border-success/30 bg-success/10 text-success"
+          ? "border-emerald-300/20 bg-emerald-300/10 text-emerald-200"
           : tone === "dark"
             ? "border-white/16 bg-white/8 text-white/78"
-          : "border-border bg-card text-muted"
+            : "border-border bg-card text-muted"
       }`}
     >
       {children}
