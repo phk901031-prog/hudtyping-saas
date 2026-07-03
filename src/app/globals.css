@@ -15,19 +15,19 @@
  * 차가운 검정 배경에 형광 액센트로 도배된 "AI 스타터킷" 느낌 회피.
  */
 :root {
-  --background: #f7f6f0;
-  --foreground: #20231f;
-  --muted: #6b7067;
-  --muted-bg: #ebe8df;
-  --border: #ded9cb;
+  --background: #f4f7f3;
+  --foreground: #14201c;
+  --muted: #657169;
+  --muted-bg: #e8eee7;
+  --border: #d8e0d5;
   --card: #ffffff;
-  --panel: #efeee6;
+  --panel: #edf3ee;
   --paper: #f4efe1;
-  --ink: #17201a;
-  --accent: #b85f3d;
-  --accent-hover: #9f4f31;
-  --accent-soft: #ead2c4;
-  --success: #506f52;
+  --ink: #0f1d1f;
+  --accent: #2f7d73;
+  --accent-hover: #25695f;
+  --accent-soft: #d9ebe7;
+  --success: #3f7a55;
   --warning: #a9792b;
   --danger: #a8463c;
 }
@@ -43,12 +43,92 @@
     --panel: #2b2e29;
     --paper: #e8dcc3;
     --ink: #121713;
-    --accent: #d88a6e;
-    --accent-hover: #e29c81;
-    --accent-soft: #3d2c25;
+    --accent: #65b8aa;
+    --accent-hover: #7bc9bc;
+    --accent-soft: #203d39;
     --success: #7eaa7c;
     --warning: #d9b066;
     --danger: #d27a6f;
+  }
+}
+
+.hud-stage {
+  isolation: isolate;
+}
+
+.screen-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+  background-size: 28px 28px;
+  animation: screen-drift 12s linear infinite;
+}
+
+.hud-panel {
+  animation: hud-float 4.2s ease-in-out infinite;
+}
+
+.typing-caret {
+  animation: caret-blink 1s steps(1, end) infinite;
+}
+
+.step-dot {
+  animation: dot-pulse 1.8s ease-in-out infinite;
+}
+
+.tray-badge {
+  display: inline-flex;
+  width: 22px;
+  height: 22px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: var(--accent);
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.16);
+}
+
+@keyframes screen-drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(28px, 28px, 0);
+  }
+}
+
+@keyframes hud-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes caret-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes dot-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.25);
   }
 }
 
@@ -218,6 +298,13 @@ body {
 
 /* 모션 줄이기 사용자 선호 시 sweep 끔 */
 @media (prefers-reduced-motion: reduce) {
+  .screen-grid,
+  .hud-panel,
+  .typing-caret,
+  .step-dot {
+    animation: none;
+  }
+
   .keycap::after {
     animation: none;
   }
