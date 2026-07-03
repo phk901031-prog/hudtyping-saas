@@ -15,20 +15,21 @@
  * 차가운 검정 배경에 형광 액센트로 도배된 "AI 스타터킷" 느낌 회피.
  */
 :root {
-  --background: #f4f7f3;
-  --foreground: #14201c;
-  --muted: #657169;
-  --muted-bg: #e8eee7;
-  --border: #d8e0d5;
+  --background: #f2efe7;
+  --foreground: #10191b;
+  --muted: #586367;
+  --muted-bg: #e4e1d8;
+  --border: #cfc8ba;
   --card: #ffffff;
-  --panel: #edf3ee;
-  --paper: #f4efe1;
-  --ink: #0f1d1f;
-  --accent: #2f7d73;
-  --accent-hover: #25695f;
-  --accent-soft: #d9ebe7;
-  --success: #3f7a55;
-  --warning: #a9792b;
+  --panel: #e8e3d8;
+  --paper: #f5ead1;
+  --ink: #0d171a;
+  --accent: #0d6670;
+  --accent-hover: #094f58;
+  --accent-soft: #d0e7e5;
+  --signal: #c35a36;
+  --success: #2e7a58;
+  --warning: #9a6b20;
   --danger: #a8463c;
 }
 
@@ -46,10 +47,19 @@
     --accent: #65b8aa;
     --accent-hover: #7bc9bc;
     --accent-soft: #203d39;
+    --signal: #e68461;
     --success: #7eaa7c;
     --warning: #d9b066;
     --danger: #d27a6f;
   }
+}
+
+.hero-motion {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(13, 102, 112, 0.13), transparent 30%),
+    radial-gradient(circle at 76% 12%, rgba(195, 90, 54, 0.11), transparent 28%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.48), transparent 55%);
+  animation: hero-breathe 8s ease-in-out infinite;
 }
 
 .hud-stage {
@@ -66,6 +76,52 @@
 
 .hud-panel {
   animation: hud-float 4.2s ease-in-out infinite;
+}
+
+.query-cycle {
+  position: relative;
+}
+
+.cycle-item {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: query-cycle 6s ease-in-out infinite;
+}
+
+.cycle-item-2 {
+  animation-delay: 2s;
+}
+
+.cycle-item-3 {
+  animation-delay: 4s;
+}
+
+.search-progress {
+  animation: search-progress 2s ease-in-out infinite;
+  transform-origin: left;
+}
+
+.key-press {
+  animation: key-press 2s ease-in-out infinite;
+}
+
+.select-token {
+  border-radius: 0.25rem;
+  padding: 0.125rem 0.375rem;
+}
+
+.select-token-1 {
+  animation: select-token-1 6s ease-in-out infinite;
+}
+
+.select-token-2 {
+  animation: select-token-2 6s ease-in-out infinite;
+}
+
+.select-token-3 {
+  animation: select-token-3 6s ease-in-out infinite;
 }
 
 .typing-caret {
@@ -99,6 +155,18 @@
   }
 }
 
+@keyframes hero-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.65;
+  }
+  50% {
+    transform: scale(1.035);
+    opacity: 0.95;
+  }
+}
+
 @keyframes hud-float {
   0%,
   100% {
@@ -106,6 +174,77 @@
   }
   50% {
     transform: translateY(-6px);
+  }
+}
+
+@keyframes query-cycle {
+  0%,
+  27% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  33%,
+  100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes search-progress {
+  0% {
+    transform: scaleX(0.16);
+  }
+  58% {
+    transform: scaleX(1);
+  }
+  100% {
+    transform: scaleX(0.2);
+  }
+}
+
+@keyframes key-press {
+  0%,
+  100% {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(0);
+  }
+  16% {
+    background: rgba(195, 90, 54, 0.32);
+    transform: translateY(1px);
+  }
+}
+
+@keyframes select-token-1 {
+  0%,
+  100% {
+    background: var(--paper);
+    color: var(--ink);
+  }
+}
+
+@keyframes select-token-2 {
+  0%,
+  30% {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.72);
+  }
+  34%,
+  100% {
+    background: var(--paper);
+    color: var(--ink);
+  }
+}
+
+@keyframes select-token-3 {
+  0%,
+  63% {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.72);
+  }
+  67%,
+  100% {
+    background: var(--paper);
+    color: var(--ink);
   }
 }
 
@@ -145,6 +284,7 @@
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-accent-soft: var(--accent-soft);
+  --color-signal: var(--signal);
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-danger: var(--danger);
@@ -299,7 +439,14 @@ body {
 /* 모션 줄이기 사용자 선호 시 sweep 끔 */
 @media (prefers-reduced-motion: reduce) {
   .screen-grid,
+  .hero-motion,
   .hud-panel,
+  .cycle-item,
+  .search-progress,
+  .key-press,
+  .select-token-1,
+  .select-token-2,
+  .select-token-3,
   .typing-caret,
   .step-dot {
     animation: none;

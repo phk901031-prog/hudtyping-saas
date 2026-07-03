@@ -26,9 +26,33 @@ export async function handleClerkWebhook(event: WebhookEvent): Promise<void> {
       }
       await db
         .insert(users)
-        .values({ clerkId: u.id, email })
+        .values({
+          clerkId: u.id,
+          email,
+          firstName: u.first_name ?? null,
+          lastName: u.last_name ?? null,
+        })
         .onConflictDoNothing();
       console.log(`[clerk-webhook] user.created: ${u.id} (${email})`);
+      break;
+    }
+
+    case "user.updated": {
+      const u = event.data;
+      const email = u.email_addresses[0]?.email_address;
+      if (!email) {
+        console.warn(`[clerk-webhook] user.updated with no email: ${u.id}`);
+        return;
+      }
+      await db
+        .update(users)
+        .set({
+          email,
+          firstName: u.first_name ?? null,
+          lastName: u.last_name ?? null,
+        })
+        .where(eq(users.clerkId, u.id));
+      console.log(`[clerk-webhook] user.updated: ${u.id} (${email})`);
       break;
     }
 

@@ -1,30 +1,20 @@
-// src/app/(auth)/pending/page.tsx
-// 승인 대기 페이지.
-// 서버 컴포넌트(RSC)에서 다음 분기를 한다:
-//   - 비로그인 → "로그인하기" 안내
-//   - 로그인 + status='approved' → /dashboard 로 자동 이동 (이미 승인된 사람)
-//   - 로그인 + status='pending'/'rejected' → 본 안내 화면
-
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import { getOrCreateCurrentUser } from "@/features/users/service";
+import { redirect } from "next/navigation";
 import { LogoutButton } from "@/components/logout-button";
+import { getOrCreateCurrentUser } from "@/features/users/service";
 
 export default async function PendingPage() {
   const user = await getOrCreateCurrentUser();
 
-  // 비로그인 사용자가 직접 URL 친 경우
   if (!user) {
     return (
       <main className="flex flex-1 items-center justify-center p-6">
-        <div className="max-w-md text-center flex flex-col gap-6">
-          <h1 className="text-2xl font-bold">승인 대기 중</h1>
-          <p className="text-zinc-600 dark:text-zinc-400">
-            로그인되어 있지 않아요.
-          </p>
+        <div className="flex max-w-md flex-col gap-6 text-center">
+          <h1 className="text-2xl font-bold">로그인이 필요합니다</h1>
+          <p className="text-muted">가입 승인 상태를 확인하려면 먼저 로그인해주세요.</p>
           <Link
             href="/sign-in"
-            className="rounded-full bg-foreground text-background px-6 py-2 text-sm font-medium hover:opacity-90 transition mx-auto"
+            className="mx-auto rounded-lg bg-foreground px-6 py-2 text-sm font-bold text-background transition hover:opacity-90"
           >
             로그인하기
           </Link>
@@ -33,35 +23,42 @@ export default async function PendingPage() {
     );
   }
 
-  // 이미 승인된 사용자 → 워크스페이스로 자동 이동
   if (user.status === "approved") {
     redirect("/dashboard");
   }
 
-  // pending 또는 rejected 사용자 → 안내 화면
-  // (rejected는 별도 메시지로 분기할 수 있지만 지금은 동일 안내)
   return (
-    <main className="flex flex-1 items-center justify-center p-6">
-      <div className="max-w-md text-center flex flex-col gap-6">
-        <h1 className="text-2xl font-bold">승인 대기 중</h1>
-        <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
-          회원가입이 완료됐어요. 🎉
-          <br />
-          관리자가 가입을 검토한 뒤 이메일로 알려드릴게요.
-          <br />
-          <span className="text-sm text-zinc-500">
-            (베타 운영 단계라 가입 승인 절차가 있어요.)
-          </span>
+    <main className="flex flex-1 items-center justify-center px-5 py-10">
+      <section className="w-full max-w-xl rounded-xl border border-border bg-card p-7 text-center shadow-[0_14px_40px_rgba(17,29,36,0.06)]">
+        <p className="text-sm font-bold text-accent">승인 대기</p>
+        <h1 className="mt-3 font-display text-3xl">가입 요청이 접수됐습니다</h1>
+        <p className="mt-4 leading-7 text-muted">
+          관리자가 성명과 가입 정보를 확인한 뒤 사용 권한을 열어드립니다.
+          빠른 승인이 필요하면 카카오톡 <strong>papawheels</strong>로 가입 이메일과
+          성명을 보내주세요.
         </p>
-        <p className="text-sm text-zinc-500">
-          기다리는 동안{" "}
-          <Link href="/help" className="underline font-medium">
-            사용 가이드
+
+        <div className="mt-6 grid gap-3 text-left sm:grid-cols-2">
+          <div className="rounded-lg border border-border bg-muted-bg/55 p-4">
+            <p className="text-sm font-bold">현재 계정</p>
+            <p className="mt-1 break-all text-sm text-muted">{user.email}</p>
+          </div>
+          <div className="rounded-lg border border-border bg-muted-bg/55 p-4">
+            <p className="text-sm font-bold">문의 채널</p>
+            <p className="mt-1 text-sm text-muted">카카오톡 papawheels</p>
+          </div>
+        </div>
+
+        <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
+          <Link
+            href="/help"
+            className="inline-flex items-center justify-center rounded-lg border border-border px-5 py-3 text-sm font-bold transition hover:bg-muted-bg"
+          >
+            사용 가이드 보기
           </Link>
-          를 미리 읽어두시면 승인 후 빠르게 시작할 수 있어요.
-        </p>
-        <LogoutButton />
-      </div>
+          <LogoutButton />
+        </div>
+      </section>
     </main>
   );
 }
