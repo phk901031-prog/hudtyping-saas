@@ -21,7 +21,7 @@ export default function HelpPage() {
 
       <nav className="flex flex-col gap-2 rounded-lg border border-border bg-muted-bg p-4 text-sm">
         <a href="#approval" className="transition hover:text-accent">1. 가입 승인</a>
-        <a href="#api-key" className="transition hover:text-accent">2. API 키 발급</a>
+        <a href="#program-connect" className="transition hover:text-accent">2. 프로그램 연결</a>
         <a href="#install" className="transition hover:text-accent">3. Windows 앱 설치</a>
         <a href="#search" className="transition hover:text-accent">4. 커서 앞 검색</a>
         <a href="#faq" className="transition hover:text-accent">5. 자주 묻는 질문</a>
@@ -36,16 +36,16 @@ export default function HelpPage() {
         </p>
       </section>
 
-      <section id="api-key" className="flex flex-col gap-3">
-        <h2 className="font-display text-2xl">2. API 키 발급</h2>
+      <section id="program-connect" className="flex flex-col gap-3">
+        <h2 className="font-display text-2xl">2. 프로그램 연결</h2>
         <ol className="flex list-decimal flex-col gap-1.5 pl-5">
           <li>로그인 후 대시보드로 이동합니다.</li>
-          <li>API 키 카드에서 키를 발급합니다.</li>
-          <li>발급된 <code className="rounded bg-muted-bg px-1.5 py-0.5 text-xs">hk_live_...</code> 키를 복사합니다.</li>
-          <li>HUD 앱 설정의 API 키 입력칸에 붙여넣고 저장합니다.</li>
+          <li>프로그램 연결 카드에서 연결 코드를 발급합니다.</li>
+          <li>HUD 앱 설정의 계정 연결 칸에 연결 코드를 입력합니다.</li>
+          <li>연결이 완료되면 이후부터는 별도 입력 없이 사용할 수 있습니다.</li>
         </ol>
         <p className="text-sm text-muted">
-          API 키는 발급 직후 한 번만 보입니다. 잃어버리면 기존 키를 삭제하고 새로 발급하세요.
+          연결 코드는 10분 동안 한 번만 사용할 수 있습니다. 시간이 지나면 새 코드를 다시 발급하세요.
         </p>
       </section>
 

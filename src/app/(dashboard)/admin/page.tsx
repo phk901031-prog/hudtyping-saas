@@ -113,7 +113,7 @@ export default async function AdminHomePage() {
             />
             <TaskRow
               title="사용자 응대"
-              body="설치 차단, API 키 입력, 승인 요청은 카카오톡 papawheels로 모읍니다."
+              body="설치 차단, 계정 연결, 승인 요청은 카카오톡 papawheels로 모읍니다."
               href="/help"
               label="가이드"
             />

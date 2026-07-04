@@ -51,10 +51,10 @@ export default async function DashboardPage() {
             href="/api-keys"
             className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 flex flex-col gap-2 hover:border-zinc-400 dark:hover:border-zinc-600 transition text-left"
           >
-            <span className="text-2xl">🔑</span>
-            <span className="font-semibold">API 키</span>
+            <span className="text-2xl">🔗</span>
+            <span className="font-semibold">프로그램 연결</span>
             <span className="text-sm text-zinc-500">
-              로컬 HUD 앱 인증용 키 발급/관리
+              HUDTyping 앱에 승인 계정 연결
             </span>
           </Link>
 

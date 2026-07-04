@@ -3,7 +3,7 @@ import { UserButton } from "@clerk/nextjs";
 import { auth } from "@/infrastructure/clerk";
 
 const DOWNLOAD_URL =
-  "https://github.com/phk901031-prog/hudtyping-saas/releases/latest/download/hudtyping-Setup-0.2.5.exe";
+  "https://github.com/phk901031-prog/hudtyping-saas/releases/latest/download/hudtyping-Setup-0.2.6.exe";
 
 export default async function HomePage() {
   const { userId } = await auth();
@@ -234,7 +234,7 @@ export default async function HomePage() {
               />
               <SupportLink
                 title="대시보드"
-                body="API 키와 사용량 확인"
+                body="프로그램 연결과 사용량 확인"
                 href={isSignedIn ? "/dashboard" : "/sign-in"}
                 label={isSignedIn ? "열기" : "로그인"}
               />

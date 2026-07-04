@@ -58,8 +58,8 @@ export default function TermsPage() {
         <section>
           <h2 className="font-display text-xl mb-3">4. 사용자 의무</h2>
           <ul className="list-disc pl-5 flex flex-col gap-1.5">
-            <li>본인 계정과 API 키를 안전하게 관리해 주세요</li>
-            <li>API 키는 계정당 1개만 발급돼요. 노출됐다면 즉시 삭제 후 재발급해 주세요</li>
+            <li>본인 계정과 프로그램 연결 정보를 안전하게 관리해 주세요</li>
+            <li>연결 코드는 한 번만 사용할 수 있어요. 노출됐다면 새 코드를 발급해 다시 연결해 주세요</li>
             <li>
               자동화된 무차별 호출, 우리말샘 API의 부정한 우회 사용 등은 금지돼요
             </li>

@@ -173,6 +173,53 @@ export const apiKeys = pgTable(
 export type ApiKey = typeof apiKeys.$inferSelect;
 export type NewApiKey = typeof apiKeys.$inferInsert;
 
+export const desktopConnectionCodes = pgTable(
+  "desktop_connection_codes",
+  {
+    code: text("code").primaryKey(),
+    clerkId: text("clerk_id")
+      .notNull()
+      .references(() => users.clerkId, { onDelete: "cascade" }),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    usedAt: timestamp("used_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("desktop_connection_codes_clerk_id_idx").on(table.clerkId),
+    index("desktop_connection_codes_expires_at_idx").on(table.expiresAt),
+  ]
+);
+
+export const desktopTokens = pgTable(
+  "desktop_tokens",
+  {
+    id: serial("id").primaryKey(),
+    clerkId: text("clerk_id")
+      .notNull()
+      .references(() => users.clerkId, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    prefix: text("prefix").notNull(),
+    hash: text("hash").notNull().unique(),
+    lastUsedAt: timestamp("last_used_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("desktop_tokens_clerk_id_idx").on(table.clerkId),
+    index("desktop_tokens_hash_idx").on(table.hash),
+  ]
+);
+
+export type DesktopConnectionCode =
+  typeof desktopConnectionCodes.$inferSelect;
+export type NewDesktopConnectionCode =
+  typeof desktopConnectionCodes.$inferInsert;
+export type DesktopToken = typeof desktopTokens.$inferSelect;
+export type NewDesktopToken = typeof desktopTokens.$inferInsert;
+
 export const dictionaryCache = pgTable(
   "dictionary_cache",
   {

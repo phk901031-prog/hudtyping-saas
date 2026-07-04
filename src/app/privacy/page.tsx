@@ -40,7 +40,7 @@ export default function PrivacyPage() {
               식별자 — 사용 패턴 분석 및 한도 산정 용도
             </li>
             <li>
-              <strong>API 키 메타</strong>: 키 이름, 마지막 사용 시각, 발급 시각
+              <strong>프로그램 연결 정보</strong>: 연결 이름, 마지막 사용 시각, 발급 시각
               (실제 토큰은 SHA256 해시만 저장)
             </li>
           </ul>
@@ -77,10 +77,10 @@ export default function PrivacyPage() {
           <ul className="list-disc pl-5 flex flex-col gap-1.5">
             <li>본인 정보 열람·수정·삭제를 요청할 수 있어요</li>
             <li>
-              계정 삭제 시 관련된 검색 기록·API 키도 함께 자동 삭제돼요 (DB
+              계정 삭제 시 관련된 검색 기록·프로그램 연결 정보도 함께 자동 삭제돼요 (DB
               cascade)
             </li>
-            <li>API 키는 본인이 직접 언제든 삭제할 수 있어요 (`/api-keys`)</li>
+            <li>프로그램 연결 정보는 본인이 직접 언제든 삭제할 수 있어요 (`/api-keys`)</li>
           </ul>
         </section>
 

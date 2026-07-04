@@ -14,7 +14,7 @@ export default function SignUpPage() {
           </h1>
           <p className="mt-4 leading-7 text-muted">
             HUDTyping은 현재 승인제로 운영합니다. 가입할 때 성명은 실제 이름으로
-            입력해주세요. 관리자가 가입자를 확인한 뒤 앱 사용 권한과 API 키 발급
+            입력해주세요. 관리자가 가입자를 확인한 뒤 앱 사용 권한과 프로그램 연결
             권한을 승인합니다.
           </p>
 

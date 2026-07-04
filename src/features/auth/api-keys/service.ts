@@ -5,7 +5,12 @@
 
 import { eq, and, desc } from "drizzle-orm";
 import { db } from "@/infrastructure/db";
-import { apiKeys, users, type User } from "@/infrastructure/db/schema";
+import {
+  apiKeys,
+  desktopTokens,
+  users,
+  type User,
+} from "@/infrastructure/db/schema";
 import { generateApiKey, hashToken } from "./token";
 import { isOfficialBinary } from "@/features/security/binary-verification";
 
@@ -131,7 +136,9 @@ export async function verifyApiKeyFromHeader(
     .where(eq(apiKeys.hash, hash))
     .limit(1);
 
-  if (rows.length === 0) return null;
+  if (rows.length === 0) {
+    return verifyDesktopTokenHash(hash);
+  }
   const { apiKey, user } = rows[0];
 
   // 보안: 승인된 사용자만 통과
@@ -147,6 +154,30 @@ export async function verifyApiKeyFromHeader(
     .where(eq(apiKeys.id, apiKey.id))
     .catch((err) => {
       console.error("[api-keys] last_used_at 갱신 실패:", err);
+    });
+
+  return user;
+}
+
+export async function verifyDesktopTokenHash(hash: string): Promise<User | null> {
+  const rows = await db
+    .select({ token: desktopTokens, user: users })
+    .from(desktopTokens)
+    .innerJoin(users, eq(users.clerkId, desktopTokens.clerkId))
+    .where(eq(desktopTokens.hash, hash))
+    .limit(1);
+
+  if (rows.length === 0) return null;
+  const { token, user } = rows[0];
+
+  if (user.status !== "approved") return null;
+
+  void db
+    .update(desktopTokens)
+    .set({ lastUsedAt: new Date() })
+    .where(eq(desktopTokens.id, token.id))
+    .catch((err) => {
+      console.error("[desktop-tokens] last_used_at update failed:", err);
     });
 
   return user;
