@@ -82,7 +82,7 @@ export default async function HomePage() {
                   <br />
                   바로 검색되는 사전 HUD.
                 </h1>
-                <p className="max-w-xl text-base leading-7 text-white/72 [word-break:keep-all] sm:text-lg">
+                <p className="max-w-xl text-base leading-7 text-white/78 [word-break:keep-all] sm:text-lg">
                   단어 뒤에 커서를 두고 지정 키를 누르면 HUDTyping이 커서 앞 표현을
                   잡아 우리말샘 결과를 작은 창으로 보여줍니다. 사용자는 한글 문서를
                   벗어나지 않고, 관리자는 검색 실패율과 응답속도까지 확인합니다.
@@ -133,7 +133,7 @@ export default async function HomePage() {
             <h2 className="font-display text-3xl [word-break:keep-all]">
               화려한 검색창보다, 작업 흐름을 지키는 도구가 필요합니다.
             </h2>
-            <p className="leading-7 text-muted">
+            <p className="text-[17px] leading-8 text-muted">
               HUDTyping은 랜딩페이지보다 실제 속기사 업무 화면에서의 반응속도와
               안정성을 우선합니다.
             </p>
@@ -157,14 +157,14 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="border-y border-border bg-gradient-to-b from-panel to-background">
+        <section className="border-y border-border bg-panel">
           <div className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-14 sm:px-8 lg:grid-cols-[0.78fr_1.22fr]">
             <div className="flex flex-col justify-center gap-3">
               <p className="text-sm font-bold text-accent">업무 흐름</p>
               <h2 className="font-display text-3xl [word-break:keep-all]">
                 화면을 바꾸지 않고, 필요한 순간만 검색합니다.
               </h2>
-              <p className="leading-7 text-muted">
+              <p className="text-[17px] leading-8 text-muted">
                 속기사는 한글 문서에 계속 머물러야 합니다. HUDTyping은 브라우저 검색,
                 단어 재입력, Alt+Tab 이동을 줄이는 데 초점을 둔 도구입니다.
               </p>
@@ -195,7 +195,7 @@ export default async function HomePage() {
         </section>
 
         <section className="mx-auto grid w-full max-w-6xl gap-5 px-5 py-14 sm:px-8 lg:grid-cols-[0.9fr_1.1fr]">
-          <div id="support" className="rounded-lg border border-border bg-card p-6 shadow-[0_18px_54px_rgba(9,23,36,0.06)]">
+          <div id="support" className="rounded-lg border border-border bg-card p-6">
             <h2 className="font-display text-2xl">운영 안내</h2>
             <div className="mt-5 divide-y divide-border">
               <Notice title="현재 배포 버전" date="v0.2.4">
@@ -211,7 +211,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="rounded-lg border border-border bg-card p-6 shadow-[0_18px_54px_rgba(9,23,36,0.06)]">
+          <div className="rounded-lg border border-border bg-card p-6">
             <h2 className="font-display text-2xl">지원 채널</h2>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               <SupportLink
@@ -270,7 +270,7 @@ function TrustItem({ label, value }: { label: string; value: string }) {
 
 function ProofCard({ label, value }: { label: string; value: string }) {
   return (
-    <article className="proof-card rounded-lg border border-border bg-card p-5 shadow-[0_18px_48px_rgba(10,26,34,0.09)]">
+    <article className="proof-card rounded-lg border border-border bg-card p-5">
       <p className="font-mono text-[11px] font-bold uppercase tracking-[0.08em] text-accent">
         {label}
       </p>
@@ -399,10 +399,10 @@ function FeatureCard({
   body: string;
 }) {
   return (
-    <article className="feature-card rounded-lg border border-border bg-card p-6 shadow-[0_14px_40px_rgba(17,29,36,0.06)]">
-      <p className="font-mono text-xs font-bold text-signal">{label}</p>
+    <article className="feature-card rounded-lg border border-border bg-card p-6">
+      <p className="font-mono text-xs font-bold text-accent">{label}</p>
       <h2 className="mt-4 text-lg font-bold">{title}</h2>
-      <p className="mt-2 text-sm leading-6 text-muted">{body}</p>
+      <p className="mt-2 text-[15px] leading-7 text-muted">{body}</p>
     </article>
   );
 }
@@ -421,18 +421,18 @@ function GuideStep({
   keycap?: boolean;
 }) {
   return (
-    <article className="rounded-lg border border-border bg-card p-5 shadow-[0_14px_38px_rgba(9,23,36,0.05)]">
+    <article className="rounded-lg border border-border bg-card p-5">
       <div className="flex items-center justify-between">
         <span className="font-mono text-xs font-bold text-accent">STEP {step}</span>
-        <span className="step-dot h-2 w-2 rounded-full bg-signal" />
+        <span className="step-dot h-2 w-2 rounded-full bg-accent" />
       </div>
       <h3 className="mt-4 text-base font-bold">{title}</h3>
-      <p className="mt-2 min-h-12 text-sm leading-6 text-muted">{body}</p>
+      <p className="mt-2 min-h-12 text-[15px] leading-7 text-muted">{body}</p>
       <div
         className={
           keycap
             ? "mt-4 flex h-16 items-center justify-center rounded-md bg-ink text-lg font-bold text-white"
-            : "mt-4 flex h-16 items-center rounded-md bg-muted-bg px-3 text-sm font-semibold text-foreground"
+            : "mt-4 flex h-16 items-center rounded-md border border-border bg-paper px-3 text-sm font-semibold text-foreground"
         }
       >
         {sample}
@@ -455,7 +455,7 @@ function Notice({
       <span className="font-mono text-xs font-bold text-accent">{date}</span>
       <div>
         <h3 className="text-sm font-bold">{title}</h3>
-        <p className="mt-1 text-sm leading-6 text-muted">{children}</p>
+        <p className="mt-1 text-[15px] leading-7 text-muted">{children}</p>
       </div>
     </div>
   );
@@ -475,14 +475,14 @@ function SupportLink({
   return (
     <a
       href={href}
-      className="support-link rounded-lg border border-border p-4"
+      className="support-link rounded-lg border border-transparent bg-muted-bg/70 p-4"
     >
       <div className="flex items-start justify-between gap-3">
         <div>
           <h3 className="text-sm font-bold">{title}</h3>
-          <p className="mt-1 text-sm text-muted">{body}</p>
+          <p className="mt-1 text-[15px] text-muted">{body}</p>
         </div>
-        <span className="shrink-0 rounded bg-muted-bg px-2.5 py-1 text-xs font-semibold text-muted">
+        <span className="shrink-0 rounded bg-card px-2.5 py-1 text-xs font-semibold text-muted">
           {label}
         </span>
       </div>

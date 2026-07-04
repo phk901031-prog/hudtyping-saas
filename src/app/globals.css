@@ -17,20 +17,32 @@
 :root {
   --background: #f7f9fc;
   --foreground: #091724;
-  --muted: #566575;
-  --muted-bg: #eaf0f7;
-  --border: #d8e0ea;
+  --muted: #4f5f70;
+  --muted-bg: #eef3f8;
+  --border: #d9e2ec;
   --card: #ffffff;
-  --panel: #edf3fa;
-  --paper: #f0f7ff;
+  --panel: #f0f4f9;
+  --paper: #f5f9fd;
   --ink: #061827;
   --accent: #096f93;
   --accent-hover: #075a78;
   --accent-soft: #d7f0f7;
-  --signal: #f05f32;
+  --signal: #df6840;
   --success: #0e8f66;
   --warning: #9b6416;
   --danger: #b4313b;
+  --bg-page: var(--background);
+  --bg-section: var(--panel);
+  --surface-primary: var(--card);
+  --surface-secondary: var(--paper);
+  --border-default: var(--border);
+  --border-subtle: #e6edf4;
+  --text-primary: var(--foreground);
+  --text-secondary: var(--muted);
+  --text-muted: #748192;
+  --accent-cyan: var(--accent);
+  --accent-coral: var(--signal);
+  --accent-success: var(--success);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -51,6 +63,18 @@
     --success: #48c79a;
     --warning: #e3a648;
     --danger: #ea6a72;
+    --bg-page: var(--background);
+    --bg-section: var(--panel);
+    --surface-primary: var(--card);
+    --surface-secondary: #15202c;
+    --border-default: var(--border);
+    --border-subtle: #1b2735;
+    --text-primary: var(--foreground);
+    --text-secondary: var(--muted);
+    --text-muted: #748292;
+    --accent-cyan: var(--accent);
+    --accent-coral: var(--signal);
+    --accent-success: var(--success);
   }
 }
 
@@ -208,13 +232,13 @@
   position: absolute;
   inset: 0 0 auto;
   height: 3px;
-  background: linear-gradient(90deg, var(--accent), var(--signal));
-  opacity: 0.9;
+  background: var(--accent);
+  opacity: 0.78;
 }
 
 .feature-card:hover {
   border-color: color-mix(in srgb, var(--accent), var(--border) 35%);
-  box-shadow: 0 22px 58px rgba(9, 23, 36, 0.1);
+  box-shadow: 0 18px 46px rgba(9, 23, 36, 0.08);
   transform: translateY(-2px);
 }
 
@@ -228,8 +252,8 @@
   position: absolute;
   inset: auto 0 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--accent), var(--signal));
-  opacity: 0.86;
+  background: var(--accent);
+  opacity: 0.72;
 }
 
 .support-link {
@@ -241,7 +265,7 @@
 
 .support-link:hover {
   border-color: color-mix(in srgb, var(--accent), var(--border) 45%);
-  background: var(--paper);
+  background: var(--surface-primary);
   transform: translateY(-1px);
 }
 
