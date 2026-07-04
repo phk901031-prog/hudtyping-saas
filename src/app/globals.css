@@ -15,27 +15,27 @@
  * 차가운 검정 배경에 형광 액센트로 도배된 "AI 스타터킷" 느낌 회피.
  */
 :root {
-  --background: #f5f7fb;
-  --foreground: #0b1520;
-  --muted: #5b6675;
-  --muted-bg: #e9eef5;
-  --border: #d5dde8;
+  --background: #f7f9fc;
+  --foreground: #091724;
+  --muted: #566575;
+  --muted-bg: #eaf0f7;
+  --border: #d8e0ea;
   --card: #ffffff;
-  --panel: #eef3f8;
-  --paper: #eef6ff;
-  --ink: #07131f;
-  --accent: #087c91;
-  --accent-hover: #06677a;
-  --accent-soft: #d8f3f8;
-  --signal: #e45f36;
-  --success: #0f8a63;
-  --warning: #a86212;
+  --panel: #edf3fa;
+  --paper: #f0f7ff;
+  --ink: #061827;
+  --accent: #096f93;
+  --accent-hover: #075a78;
+  --accent-soft: #d7f0f7;
+  --signal: #f05f32;
+  --success: #0e8f66;
+  --warning: #9b6416;
   --danger: #b4313b;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0b1118;
+    --background: #09111b;
     --foreground: #f3f7fb;
     --muted: #9aa8b8;
     --muted-bg: #121b26;
@@ -43,8 +43,8 @@
     --card: #111a24;
     --panel: #0f1822;
     --paper: #e8f3ff;
-    --ink: #07131f;
-    --accent: #37c4d8;
+    --ink: #061827;
+    --accent: #3fc7df;
     --accent-hover: #5ed6e6;
     --accent-soft: #0c3340;
     --signal: #f0764d;
@@ -56,17 +56,17 @@
 
 .hero-motion {
   background:
-    radial-gradient(circle at 16% 18%, rgba(18, 204, 219, 0.12), transparent 31%),
-    radial-gradient(circle at 78% 18%, rgba(208, 91, 50, 0.14), transparent 30%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.035), rgba(6, 95, 107, 0.12) 46%, transparent 72%);
+    radial-gradient(circle at 14% 18%, rgba(63, 199, 223, 0.13), transparent 30%),
+    radial-gradient(circle at 78% 20%, rgba(240, 95, 50, 0.14), transparent 29%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(9, 111, 147, 0.13) 48%, transparent 74%);
   animation: hero-breathe 8s ease-in-out infinite;
 }
 
 .circuit-layer {
   background-image:
-    linear-gradient(rgba(168, 255, 244, 0.055) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(168, 255, 244, 0.055) 1px, transparent 1px),
-    linear-gradient(120deg, transparent 0 72%, rgba(208, 91, 50, 0.075) 72.5%, transparent 73%);
+    linear-gradient(rgba(151, 230, 246, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(151, 230, 246, 0.06) 1px, transparent 1px),
+    linear-gradient(120deg, transparent 0 72%, rgba(240, 95, 50, 0.085) 72.5%, transparent 73%);
   background-size: 48px 48px, 48px 48px, 220px 220px;
   mask-image: linear-gradient(90deg, transparent, black 14%, black 86%, transparent);
   animation: circuit-shift 18s linear infinite;
@@ -75,7 +75,7 @@
 .hero-slab {
   box-shadow:
     inset 0 -1px 0 rgba(255, 255, 255, 0.06),
-    inset 0 -80px 120px rgba(0, 0, 0, 0.18);
+    inset 0 -96px 140px rgba(0, 0, 0, 0.24);
 }
 
 .impact-band {
@@ -197,6 +197,10 @@
 .feature-card {
   position: relative;
   overflow: hidden;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
 }
 
 .feature-card::before {
@@ -206,6 +210,39 @@
   height: 3px;
   background: linear-gradient(90deg, var(--accent), var(--signal));
   opacity: 0.9;
+}
+
+.feature-card:hover {
+  border-color: color-mix(in srgb, var(--accent), var(--border) 35%);
+  box-shadow: 0 22px 58px rgba(9, 23, 36, 0.1);
+  transform: translateY(-2px);
+}
+
+.proof-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.proof-card::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--signal));
+  opacity: 0.86;
+}
+
+.support-link {
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.support-link:hover {
+  border-color: color-mix(in srgb, var(--accent), var(--border) 45%);
+  background: var(--paper);
+  transform: translateY(-1px);
 }
 
 .tray-badge {

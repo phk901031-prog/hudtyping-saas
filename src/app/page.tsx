@@ -11,7 +11,7 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-1 flex-col bg-background text-foreground">
-      <nav className="border-b border-border bg-background/92 backdrop-blur-xl">
+      <nav className="sticky top-0 z-40 border-b border-border bg-card/88 backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
           <Link href="/" className="group inline-flex items-center gap-3">
             <span className="keycap h-11 w-11 text-base">H</span>
@@ -65,8 +65,8 @@ export default async function HomePage() {
           <div className="hero-motion absolute inset-0" />
           <div className="circuit-layer absolute inset-0" />
 
-          <div className="relative mx-auto grid w-full max-w-6xl gap-10 px-5 pb-16 pt-10 sm:px-8 lg:grid-cols-[0.88fr_1.12fr] lg:pb-20 lg:pt-16">
-            <div className="flex flex-col justify-center gap-7">
+          <div className="relative mx-auto grid w-full max-w-6xl gap-10 px-5 pb-16 pt-10 sm:px-8 lg:min-h-[610px] lg:grid-cols-[0.82fr_1.18fr] lg:items-center lg:pb-16 lg:pt-12">
+            <div className="flex flex-col justify-center gap-6">
               <div className="flex flex-wrap gap-2">
                 <StatusPill tone="green">서비스 운영 중</StatusPill>
                 <StatusPill tone="dark">Windows v0.2.4</StatusPill>
@@ -77,12 +77,12 @@ export default async function HomePage() {
                 <p className="w-fit rounded-full border border-white/12 bg-white/7 px-3 py-1 text-xs font-bold text-[#a8fff4]">
                   한글 문서 위에서 바로 뜨는 우리말샘 검색 보조 시스템
                 </p>
-                <h1 className="font-display text-3xl leading-tight [word-break:keep-all] sm:text-5xl">
+                <h1 className="font-display text-3xl leading-tight [word-break:keep-all] sm:text-5xl lg:text-[3.25rem]">
                   회의록 작성 화면에서
                   <br />
                   바로 검색되는 사전 HUD.
                 </h1>
-                <p className="text-base leading-8 text-white/72 [word-break:keep-all] sm:text-lg">
+                <p className="max-w-xl text-base leading-7 text-white/72 [word-break:keep-all] sm:text-lg">
                   단어 뒤에 커서를 두고 지정 키를 누르면 HUDTyping이 커서 앞 표현을
                   잡아 우리말샘 결과를 작은 창으로 보여줍니다. 사용자는 한글 문서를
                   벗어나지 않고, 관리자는 검색 실패율과 응답속도까지 확인합니다.
@@ -92,20 +92,20 @@ export default async function HomePage() {
               <div className="flex flex-col gap-3 sm:flex-row">
                 <a
                   href={DOWNLOAD_URL}
-                  className="inline-flex items-center justify-center rounded-lg bg-signal px-5 py-3 text-sm font-bold text-white shadow-[0_18px_42px_rgba(208,91,50,0.28)] transition hover:brightness-110"
+                  className="inline-flex items-center justify-center rounded-lg bg-signal px-6 py-3.5 text-sm font-bold text-white shadow-[0_20px_48px_rgba(240,95,50,0.34)] transition hover:brightness-110"
                 >
                   Windows 앱 다운로드
                 </a>
                 <Link
                   href="/help"
-                  className="inline-flex items-center justify-center rounded-lg border border-white/18 bg-white/8 px-5 py-3 text-sm font-bold text-white transition hover:bg-white/14"
+                  className="inline-flex items-center justify-center rounded-lg border border-white/18 bg-white/8 px-5 py-3.5 text-sm font-bold text-white transition hover:bg-white/14"
                 >
                   사용법 보기
                 </Link>
                 {!isSignedIn && (
                   <Link
                     href="/sign-up"
-                    className="inline-flex items-center justify-center rounded-lg border border-white/18 bg-white/8 px-5 py-3 text-sm font-bold text-white transition hover:bg-white/14"
+                    className="inline-flex items-center justify-center rounded-lg border border-white/18 bg-white/8 px-5 py-3.5 text-sm font-bold text-white transition hover:bg-white/14"
                   >
                     가입 승인 요청
                   </Link>
@@ -119,7 +119,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="relative z-10 border-b border-border">
+        <section className="relative z-10 border-b border-border bg-background">
           <div className="mx-auto grid w-full max-w-6xl gap-3 px-5 py-6 sm:px-8 lg:-mt-10 lg:grid-cols-3 lg:py-0">
             <ProofCard label="운영 관측" value="실패율 · 응답속도 · 앱 버전" />
             <ProofCard label="검색 흐름" value="커서 앞 검색 · 연속 확장" />
@@ -127,7 +127,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="mx-auto grid w-full max-w-6xl gap-7 px-5 py-10 sm:px-8 lg:grid-cols-[0.7fr_1.3fr]">
+        <section className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-14 sm:px-8 lg:grid-cols-[0.68fr_1.32fr]">
           <div className="flex flex-col gap-3">
             <p className="text-sm font-bold text-accent">제품 기준</p>
             <h2 className="font-display text-3xl [word-break:keep-all]">
@@ -157,8 +157,8 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="border-y border-border bg-panel">
-          <div className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-10 sm:px-8 lg:grid-cols-[0.78fr_1.22fr]">
+        <section className="border-y border-border bg-gradient-to-b from-panel to-background">
+          <div className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-14 sm:px-8 lg:grid-cols-[0.78fr_1.22fr]">
             <div className="flex flex-col justify-center gap-3">
               <p className="text-sm font-bold text-accent">업무 흐름</p>
               <h2 className="font-display text-3xl [word-break:keep-all]">
@@ -194,8 +194,8 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="mx-auto grid w-full max-w-6xl gap-5 px-5 py-10 sm:px-8 lg:grid-cols-[0.9fr_1.1fr]">
-          <div id="support" className="rounded-lg border border-border bg-card p-6">
+        <section className="mx-auto grid w-full max-w-6xl gap-5 px-5 py-14 sm:px-8 lg:grid-cols-[0.9fr_1.1fr]">
+          <div id="support" className="rounded-lg border border-border bg-card p-6 shadow-[0_18px_54px_rgba(9,23,36,0.06)]">
             <h2 className="font-display text-2xl">운영 안내</h2>
             <div className="mt-5 divide-y divide-border">
               <Notice title="현재 배포 버전" date="v0.2.4">
@@ -211,7 +211,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="rounded-lg border border-border bg-card p-6">
+          <div className="rounded-lg border border-border bg-card p-6 shadow-[0_18px_54px_rgba(9,23,36,0.06)]">
             <h2 className="font-display text-2xl">지원 채널</h2>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               <SupportLink
@@ -270,11 +270,11 @@ function TrustItem({ label, value }: { label: string; value: string }) {
 
 function ProofCard({ label, value }: { label: string; value: string }) {
   return (
-    <article className="rounded-lg border border-border bg-card p-5 shadow-[0_18px_48px_rgba(10,26,34,0.09)]">
-      <p className="font-mono text-[11px] font-bold uppercase tracking-[0.08em] text-signal">
+    <article className="proof-card rounded-lg border border-border bg-card p-5 shadow-[0_18px_48px_rgba(10,26,34,0.09)]">
+      <p className="font-mono text-[11px] font-bold uppercase tracking-[0.08em] text-accent">
         {label}
       </p>
-      <p className="mt-2 text-sm font-bold">{value}</p>
+      <p className="mt-2 text-base font-bold">{value}</p>
     </article>
   );
 }
@@ -399,9 +399,9 @@ function FeatureCard({
   body: string;
 }) {
   return (
-    <article className="feature-card rounded-lg border border-border bg-card p-5 shadow-[0_14px_40px_rgba(17,29,36,0.06)]">
+    <article className="feature-card rounded-lg border border-border bg-card p-6 shadow-[0_14px_40px_rgba(17,29,36,0.06)]">
       <p className="font-mono text-xs font-bold text-signal">{label}</p>
-      <h2 className="mt-3 text-lg font-bold">{title}</h2>
+      <h2 className="mt-4 text-lg font-bold">{title}</h2>
       <p className="mt-2 text-sm leading-6 text-muted">{body}</p>
     </article>
   );
@@ -421,12 +421,12 @@ function GuideStep({
   keycap?: boolean;
 }) {
   return (
-    <article className="rounded-lg border border-border bg-card p-4">
+    <article className="rounded-lg border border-border bg-card p-5 shadow-[0_14px_38px_rgba(9,23,36,0.05)]">
       <div className="flex items-center justify-between">
         <span className="font-mono text-xs font-bold text-accent">STEP {step}</span>
         <span className="step-dot h-2 w-2 rounded-full bg-signal" />
       </div>
-      <h3 className="mt-4 font-bold">{title}</h3>
+      <h3 className="mt-4 text-base font-bold">{title}</h3>
       <p className="mt-2 min-h-12 text-sm leading-6 text-muted">{body}</p>
       <div
         className={
@@ -475,7 +475,7 @@ function SupportLink({
   return (
     <a
       href={href}
-      className="rounded-lg border border-border p-4 transition hover:bg-muted-bg"
+      className="support-link rounded-lg border border-border p-4"
     >
       <div className="flex items-start justify-between gap-3">
         <div>
