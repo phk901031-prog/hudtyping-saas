@@ -3,7 +3,7 @@ import { UserButton } from "@clerk/nextjs";
 import { auth } from "@/infrastructure/clerk";
 
 const DOWNLOAD_URL =
-  "https://github.com/phk901031-prog/hudtyping-saas/releases/latest/download/hudtyping-Setup-0.2.6.exe";
+  "https://github.com/phk901031-prog/hudtyping-saas/releases/download/v0.2.6/hudtyping-Setup-0.2.6.exe";
 
 export default async function HomePage() {
   const { userId } = await auth();
