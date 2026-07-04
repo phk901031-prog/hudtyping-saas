@@ -114,10 +114,10 @@
 
 .screen-grid {
   background-image:
-    linear-gradient(rgba(168, 255, 244, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(168, 255, 244, 0.07) 1px, transparent 1px);
+    linear-gradient(rgba(168, 255, 244, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168, 255, 244, 0.05) 1px, transparent 1px);
   background-size: 28px 28px;
-  animation: screen-drift 12s linear infinite;
+  animation: screen-drift 18s linear infinite;
 }
 
 .tech-shell::before {
@@ -131,17 +131,17 @@
 
 .scan-line {
   background: linear-gradient(
-    180deg,
+    90deg,
     transparent,
-    rgba(168, 255, 244, 0.11),
+    rgba(168, 255, 244, 0.12),
     transparent
   );
-  animation: scan-line 5.5s ease-in-out infinite;
+  animation: scan-line 7.5s ease-in-out infinite;
   pointer-events: none;
 }
 
 .hud-panel {
-  animation: hud-float 4.2s ease-in-out infinite;
+  animation: hud-float 5.8s ease-in-out infinite;
 }
 
 .query-cycle {
@@ -316,17 +316,17 @@
 @keyframes scan-line {
   0%,
   100% {
-    transform: translateY(-120%);
+    transform: translateX(-45%);
     opacity: 0;
   }
   14% {
-    opacity: 0.85;
-  }
-  58% {
     opacity: 0.55;
   }
+  58% {
+    opacity: 0.35;
+  }
   80% {
-    transform: translateY(520%);
+    transform: translateX(45%);
     opacity: 0;
   }
 }
@@ -337,7 +337,7 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-6px);
+    transform: translateY(-3px);
   }
 }
 

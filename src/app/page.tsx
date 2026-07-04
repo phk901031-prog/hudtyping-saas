@@ -283,10 +283,10 @@ function ProductScreen() {
   return (
     <div className="hud-stage tech-shell relative min-h-[480px] overflow-hidden rounded-xl border border-white/12 bg-ink p-4 text-white shadow-[0_30px_80px_rgba(5,18,26,0.35)] sm:p-5">
       <div className="absolute inset-x-0 top-0 h-1 bg-signal" />
-      <div className="screen-grid absolute inset-0 opacity-35" />
-      <div className="scan-line absolute inset-x-0 top-0 h-24" />
+      <div className="screen-grid absolute inset-0 opacity-25" />
+      <div className="scan-line absolute inset-x-8 top-10 h-14 rounded-full opacity-45" />
 
-      <div className="relative flex h-full flex-col rounded-lg border border-white/10 bg-[#0a1519]/96 p-4">
+      <div className="relative flex min-h-[430px] flex-col rounded-lg border border-white/10 bg-[#0a1519]/96 p-4">
         <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-3">
           <div>
             <p className="text-xs font-semibold text-white/45">HWP DOCUMENT</p>
@@ -297,7 +297,7 @@ function ProductScreen() {
           </span>
         </div>
 
-        <div className="space-y-3 text-sm leading-7 text-white/70">
+        <div className="max-w-[62%] space-y-3 text-sm leading-7 text-white/70">
           <p>제3호 안건은 참석자 의견을 반영하여 다음 회의에서 다시</p>
           <p>
             <span className="select-token select-token-3">회의</span>{" "}
@@ -308,7 +308,7 @@ function ProductScreen() {
           </p>
         </div>
 
-        <div className="system-rail absolute bottom-6 left-5 hidden w-32 rounded-md border border-white/10 bg-white/[0.045] p-3 text-[11px] text-white/58 sm:block">
+        <div className="system-rail absolute bottom-6 left-5 hidden w-32 rounded-md border border-white/10 bg-white/[0.045] p-3 text-[11px] text-white/58 lg:block">
           <p className="font-bold text-white/82">LIVE CHECK</p>
           <div className="mt-3 grid gap-2">
             <RailRow label="AUTH" value="OK" />
@@ -317,7 +317,7 @@ function ProductScreen() {
           </div>
         </div>
 
-        <div className="hud-panel absolute bottom-5 right-5 w-[min(88%,390px)] rounded-lg border border-white/14 bg-[#041012]/96 p-4 shadow-2xl">
+        <div className="hud-panel absolute bottom-5 right-5 w-[min(82%,360px)] rounded-lg border border-white/14 bg-[#041012]/96 p-4 shadow-2xl">
           <div className="mb-4 flex items-center justify-between">
             <span className="text-xs font-bold text-white/50">HUDTyping</span>
             <span className="rounded bg-accent/22 px-2 py-0.5 text-[11px] font-bold text-[#bff6ef]">
