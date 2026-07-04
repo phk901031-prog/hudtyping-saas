@@ -4,7 +4,7 @@
 import type { DictItem, SearchResult } from "@/features/search/types";
 
 const URIMALSAEM_SEARCH_URL = "https://opendict.korean.go.kr/api/search";
-const REQUEST_TIMEOUTS_MS = [3500, 5500] as const;
+const REQUEST_TIMEOUTS_MS = [2500, 3500] as const;
 
 interface RawResponse {
   channel?: {

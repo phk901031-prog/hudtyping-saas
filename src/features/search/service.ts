@@ -11,7 +11,7 @@ import { dictionaryCache } from "@/infrastructure/db/schema";
 import { searchUrimalsaem } from "@/infrastructure/urimalsaem";
 import type { SearchResult, SearchResultWithCacheMeta } from "./types";
 
-const CACHE_TTL_SECONDS = 60 * 60 * 24 * 7;
+const CACHE_TTL_SECONDS = 60 * 60 * 24 * 30;
 
 export async function searchWord(
   query: string
@@ -26,15 +26,19 @@ export async function searchWord(
 
   const dbCached = await getPersistentCache(normalizedQuery);
   if (dbCached) {
-    await redis.set(cacheKey, dbCached, { ex: CACHE_TTL_SECONDS });
+    void redis.set(cacheKey, dbCached, { ex: CACHE_TTL_SECONDS }).catch((err) => {
+      console.error("[search-cache] failed to warm redis:", err);
+    });
     return { ...dbCached, cache: "hit" };
   }
 
   const result = await searchUrimalsaem(normalizedQuery);
-  await Promise.all([
+  void Promise.all([
     redis.set(cacheKey, result, { ex: CACHE_TTL_SECONDS }),
     upsertPersistentCache(normalizedQuery, result),
-  ]);
+  ]).catch((err) => {
+    console.error("[search-cache] failed to store result:", err);
+  });
 
   return { ...result, cache: "miss" };
 }
