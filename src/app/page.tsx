@@ -421,18 +421,18 @@ function GuideStep({
   keycap?: boolean;
 }) {
   return (
-    <article className="rounded-lg border border-border bg-card p-5">
+    <article className="rounded-lg border border-border bg-card p-4 sm:p-5">
       <div className="flex items-center justify-between">
         <span className="font-mono text-xs font-bold text-accent">STEP {step}</span>
         <span className="step-dot h-2 w-2 rounded-full bg-accent" />
       </div>
       <h3 className="mt-4 text-base font-bold">{title}</h3>
-      <p className="mt-2 min-h-12 text-[15px] leading-7 text-muted">{body}</p>
+      <p className="mt-2 text-[15px] leading-7 text-muted sm:min-h-12">{body}</p>
       <div
         className={
           keycap
-            ? "mt-4 flex h-16 items-center justify-center rounded-md bg-ink text-lg font-bold text-white"
-            : "mt-4 flex h-16 items-center rounded-md border border-border bg-paper px-3 text-sm font-semibold text-foreground"
+            ? "mt-3 flex min-h-12 items-center justify-center rounded-md bg-ink px-3 py-3 text-lg font-bold text-white sm:mt-4 sm:min-h-16"
+            : "mt-3 flex min-h-12 items-center rounded-md border border-border bg-paper px-3 py-3 text-sm font-semibold text-foreground sm:mt-4 sm:min-h-16"
         }
       >
         {sample}
