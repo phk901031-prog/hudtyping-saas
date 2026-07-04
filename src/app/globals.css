@@ -15,42 +15,42 @@
  * 차가운 검정 배경에 형광 액센트로 도배된 "AI 스타터킷" 느낌 회피.
  */
 :root {
-  --background: #eef2f0;
-  --foreground: #0b171b;
-  --muted: #526167;
-  --muted-bg: #dfe7e3;
-  --border: #c4d0cd;
+  --background: #f5f7fb;
+  --foreground: #0b1520;
+  --muted: #5b6675;
+  --muted-bg: #e9eef5;
+  --border: #d5dde8;
   --card: #ffffff;
-  --panel: #e2ebe7;
-  --paper: #f4e7c9;
-  --ink: #061217;
-  --accent: #065f6b;
-  --accent-hover: #044b55;
-  --accent-soft: #cbe7e5;
-  --signal: #d05b32;
-  --success: #176b4d;
-  --warning: #9a6718;
-  --danger: #a43435;
+  --panel: #eef3f8;
+  --paper: #eef6ff;
+  --ink: #07131f;
+  --accent: #087c91;
+  --accent-hover: #06677a;
+  --accent-soft: #d8f3f8;
+  --signal: #e45f36;
+  --success: #0f8a63;
+  --warning: #a86212;
+  --danger: #b4313b;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #262624;
-    --foreground: #f5f4ed;
-    --muted: #a3a098;
-    --muted-bg: #2f2d2a;
-    --border: #3d3b37;
-    --card: #2f2d2a;
-    --panel: #2b2e29;
-    --paper: #e8dcc3;
-    --ink: #121713;
-    --accent: #65b8aa;
-    --accent-hover: #7bc9bc;
-    --accent-soft: #203d39;
-    --signal: #e68461;
-    --success: #7eaa7c;
-    --warning: #d9b066;
-    --danger: #d27a6f;
+    --background: #0b1118;
+    --foreground: #f3f7fb;
+    --muted: #9aa8b8;
+    --muted-bg: #121b26;
+    --border: #223041;
+    --card: #111a24;
+    --panel: #0f1822;
+    --paper: #e8f3ff;
+    --ink: #07131f;
+    --accent: #37c4d8;
+    --accent-hover: #5ed6e6;
+    --accent-soft: #0c3340;
+    --signal: #f0764d;
+    --success: #48c79a;
+    --warning: #e3a648;
+    --danger: #ea6a72;
   }
 }
 
