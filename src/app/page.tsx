@@ -432,7 +432,7 @@ function GuideStep({
         className={
           keycap
             ? "mt-3 flex min-h-12 items-center justify-center rounded-md bg-ink px-3 py-3 text-lg font-bold text-white sm:mt-4 sm:min-h-16"
-            : "mt-3 flex min-h-12 items-center rounded-md border border-border bg-paper px-3 py-3 text-sm font-semibold text-foreground sm:mt-4 sm:min-h-16"
+            : "mt-3 flex min-h-12 items-center rounded-md border border-border bg-paper px-3 py-3 text-sm font-semibold text-ink sm:mt-4 sm:min-h-16"
         }
       >
         {sample}
