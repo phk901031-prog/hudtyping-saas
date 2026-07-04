@@ -68,7 +68,7 @@ export default async function HomePage() {
             <div className="flex flex-col justify-center gap-6">
               <div className="flex flex-wrap gap-2">
                 <StatusPill tone="green">서비스 운영 중</StatusPill>
-                <StatusPill tone="dark">Windows v0.2.7</StatusPill>
+                <StatusPill tone="dark">Windows v0.2.8</StatusPill>
                 <StatusPill tone="dark">승인제 운영</StatusPill>
               </div>
 
