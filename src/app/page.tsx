@@ -68,7 +68,7 @@ export default async function HomePage() {
             <div className="flex flex-col justify-center gap-6">
               <div className="flex flex-wrap gap-2">
                 <StatusPill tone="green">서비스 운영 중</StatusPill>
-                <StatusPill tone="dark">Windows v0.2.12</StatusPill>
+                <StatusPill tone="dark">Windows v0.2.13</StatusPill>
                 <StatusPill tone="dark">승인 계정 전용</StatusPill>
               </div>
 
@@ -253,7 +253,7 @@ export default async function HomePage() {
           <div id="support" className="rounded-lg border border-border bg-card p-6">
             <h2 className="font-display text-2xl">운영 안내</h2>
             <div className="mt-5 divide-y divide-border">
-              <Notice title="현재 배포 버전" date="v0.2.12">
+              <Notice title="현재 배포 버전" date="v0.2.13">
                 계정 연결 코드 방식이 반영된 Windows 앱입니다. 앱 설정에 이메일이 아니라 연결 코드를 입력합니다.
               </Notice>
               <Notice title="검색 지연 안내" date="검색">
