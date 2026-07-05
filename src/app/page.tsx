@@ -111,6 +111,12 @@ export default async function HomePage() {
                 )}
               </div>
 
+              <div className="max-w-xl rounded-lg border border-[#a8fff4]/30 bg-[#a8fff4]/10 px-4 py-3 text-sm leading-6 text-white/82">
+                <strong className="text-[#a8fff4]">업데이트 안내</strong>
+                <span className="mx-2 text-white/35">|</span>
+                검색 속도 개선이 반영된 v0.2.13을 권장합니다. v0.2.10 미만 앱은 새 설치가 필요합니다.
+              </div>
+
               <TrustStrip />
             </div>
 
@@ -254,7 +260,10 @@ export default async function HomePage() {
             <h2 className="font-display text-2xl">운영 안내</h2>
             <div className="mt-5 divide-y divide-border">
               <Notice title="현재 배포 버전" date="v0.2.13">
-                계정 연결 코드 방식이 반영된 Windows 앱입니다. 앱 설정에 이메일이 아니라 연결 코드를 입력합니다.
+                검색 속도 개선이 반영된 Windows 앱입니다. 앱 설정에 이메일이 아니라 웹에서 발급한 연결 코드를 입력합니다.
+              </Notice>
+              <Notice title="구버전 지원 안내" date="업데이트">
+                v0.2.10 이상은 앱 실행 시 자동 업데이트 안내를 받을 수 있습니다. v0.2.10 미만 초기 버전은 검색이 제한될 수 있으니 최신 설치 파일로 다시 설치해 주세요.
               </Notice>
               <Notice title="검색 지연 안내" date="검색">
                 우리말샘 또는 서버 응답이 늦으면 앱에 “우리말샘 응답 지연 중”으로 표시합니다.
