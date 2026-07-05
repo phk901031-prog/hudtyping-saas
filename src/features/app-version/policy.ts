@@ -7,7 +7,7 @@ export type AppVersionDecision =
       minVersion: string;
     };
 
-const DEFAULT_MIN_SUPPORTED_VERSION = "0.2.3";
+const DEFAULT_MIN_SUPPORTED_VERSION = "0.2.10";
 
 export function getClientVersionMeta(headers: Headers): {
   appVersion: string | null;
@@ -32,7 +32,7 @@ export function checkAppVersion(
 
   if (!appVersion) {
     const blockLegacy =
-      process.env.BLOCK_LEGACY_APP_WITHOUT_VERSION?.toLowerCase() === "true";
+      process.env.BLOCK_LEGACY_APP_WITHOUT_VERSION?.toLowerCase() !== "false";
     if (!blockLegacy) {
       return { allowed: true, appVersion, clientType };
     }
