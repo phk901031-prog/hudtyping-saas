@@ -10,6 +10,7 @@ import { db } from "@/infrastructure/db";
 import { dictionaryCache } from "@/infrastructure/db/schema";
 import { searchUrimalsaem } from "@/infrastructure/urimalsaem";
 import type { SearchResult, SearchResultWithCacheMeta } from "./types";
+import { findOperatorNotes } from "@/features/admin/operator-dictionary";
 
 const CACHE_TTL_SECONDS = 60 * 60 * 24 * 30;
 
@@ -18,10 +19,11 @@ export async function searchWord(
 ): Promise<SearchResultWithCacheMeta> {
   const normalizedQuery = normalizeQuery(query);
   const cacheKey = `search:${normalizedQuery}`;
+  const operatorNotes = await findOperatorNotes(normalizedQuery);
 
   const redisCached = await redis.get<SearchResult>(cacheKey);
   if (redisCached) {
-    return { ...redisCached, cache: "hit" };
+    return withOperatorNotes(redisCached, operatorNotes, "hit");
   }
 
   const dbCached = await getPersistentCache(normalizedQuery);
@@ -29,7 +31,28 @@ export async function searchWord(
     void redis.set(cacheKey, dbCached, { ex: CACHE_TTL_SECONDS }).catch((err) => {
       console.error("[search-cache] failed to warm redis:", err);
     });
-    return { ...dbCached, cache: "hit" };
+    return withOperatorNotes(dbCached, operatorNotes, "hit");
+  }
+
+  if (operatorNotes.length > 0) {
+    void searchUrimalsaem(normalizedQuery)
+      .then((result) =>
+        Promise.all([
+          redis.set(cacheKey, result, { ex: CACHE_TTL_SECONDS }),
+          upsertPersistentCache(normalizedQuery, result),
+        ])
+      )
+      .catch((err) => {
+        console.warn("[search-cache] failed to warm operator term:", err);
+      });
+
+    return {
+      query: normalizedQuery,
+      total: 0,
+      items: [],
+      operatorNotes,
+      cache: "hit",
+    };
   }
 
   const result = await searchUrimalsaem(normalizedQuery);
@@ -40,7 +63,7 @@ export async function searchWord(
     console.error("[search-cache] failed to store result:", err);
   });
 
-  return { ...result, cache: "miss" };
+  return withOperatorNotes(result, operatorNotes, "miss");
 }
 
 function normalizeQuery(query: string): string {
@@ -97,4 +120,17 @@ async function upsertPersistentCache(
   } catch (err) {
     console.error("[dictionary-cache] failed to persist result:", err);
   }
+}
+
+function withOperatorNotes(
+  result: SearchResult,
+  operatorNotes: SearchResultWithCacheMeta["operatorNotes"],
+  cache: SearchResultWithCacheMeta["cache"]
+): SearchResultWithCacheMeta {
+  return {
+    ...result,
+    operatorNotes:
+      operatorNotes && operatorNotes.length > 0 ? operatorNotes : result.operatorNotes,
+    cache,
+  };
 }

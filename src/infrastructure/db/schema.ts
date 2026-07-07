@@ -242,3 +242,33 @@ export const dictionaryCache = pgTable(
 
 export type DictionaryCache = typeof dictionaryCache.$inferSelect;
 export type NewDictionaryCache = typeof dictionaryCache.$inferInsert;
+
+export const operatorDictionaryEntries = pgTable(
+  "operator_dictionary_entries",
+  {
+    id: serial("id").primaryKey(),
+    term: text("term").notNull(),
+    matchKey: text("match_key").notNull().unique(),
+    label: text("label").notNull().default("운영자 등록 표기"),
+    note: text("note").notNull(),
+    enabled: boolean("enabled").notNull().default(true),
+    createdBy: text("created_by").references(() => users.clerkId, {
+      onDelete: "set null",
+    }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("operator_dictionary_entries_match_key_idx").on(table.matchKey),
+    index("operator_dictionary_entries_enabled_idx").on(table.enabled),
+  ]
+);
+
+export type OperatorDictionaryEntry =
+  typeof operatorDictionaryEntries.$inferSelect;
+export type NewOperatorDictionaryEntry =
+  typeof operatorDictionaryEntries.$inferInsert;

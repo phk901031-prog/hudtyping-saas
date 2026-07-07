@@ -25,6 +25,7 @@ export interface SearchResult {
   query: string;
   total: number;
   items: DictItem[];
+  operatorNotes?: OperatorNote[];
 }
 
 /** 서비스가 응답에 추가하는 캐시 적중 메타 */
@@ -32,4 +33,10 @@ export type CacheStatus = "hit" | "miss";
 
 export interface SearchResultWithCacheMeta extends SearchResult {
   cache: CacheStatus;
+}
+
+export interface OperatorNote {
+  term: string;
+  label: string;
+  note: string;
 }

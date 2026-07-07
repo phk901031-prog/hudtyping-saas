@@ -19,6 +19,8 @@ export async function getGlobalStats() {
       cacheHits: sql<number>`COALESCE(SUM(CASE WHEN ${searchLogs.cacheHit} THEN 1 ELSE 0 END), 0)::int`,
       uniqueUsers: sql<number>`COUNT(DISTINCT ${searchLogs.clerkId})::int`,
       avgResponseMs: sql<number>`COALESCE(ROUND(AVG(${searchLogs.responseMs})), 0)::int`,
+      p95ResponseMs: sql<number>`COALESCE(ROUND(PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY ${searchLogs.responseMs}) FILTER (WHERE ${searchLogs.responseMs} IS NOT NULL)), 0)::int`,
+      p99ResponseMs: sql<number>`COALESCE(ROUND(PERCENTILE_CONT(0.99) WITHIN GROUP (ORDER BY ${searchLogs.responseMs}) FILTER (WHERE ${searchLogs.responseMs} IS NOT NULL)), 0)::int`,
       slowSearches: sql<number>`COALESCE(SUM(CASE WHEN ${searchLogs.responseMs} >= 5000 THEN 1 ELSE 0 END), 0)::int`,
     })
     .from(searchLogs);
@@ -94,6 +96,22 @@ export async function getGlobalStats() {
     .orderBy(desc(searchLogs.createdAt))
     .limit(12);
 
+  const slowRecentSearches = await db
+    .select({
+      query: searchLogs.query,
+      cacheHit: searchLogs.cacheHit,
+      status: searchLogs.status,
+      errorCode: searchLogs.errorCode,
+      responseMs: searchLogs.responseMs,
+      appVersion: searchLogs.appVersion,
+      createdAt: searchLogs.createdAt,
+      clerkId: searchLogs.clerkId,
+    })
+    .from(searchLogs)
+    .where(sql`${searchLogs.responseMs} >= 3000`)
+    .orderBy(desc(searchLogs.responseMs), desc(searchLogs.createdAt))
+    .limit(15);
+
   return {
     userCounts,
     searchSummary: searchSummary ?? {
@@ -103,6 +121,8 @@ export async function getGlobalStats() {
       cacheHits: 0,
       uniqueUsers: 0,
       avgResponseMs: 0,
+      p95ResponseMs: 0,
+      p99ResponseMs: 0,
       slowSearches: 0,
     },
     popular,
@@ -115,5 +135,6 @@ export async function getGlobalStats() {
       lastUpdated: null,
     },
     recentSearches,
+    slowRecentSearches,
   };
 }

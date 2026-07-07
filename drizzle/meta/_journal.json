@@ -71,6 +71,13 @@
       "when": 1783169407531,
       "tag": "0009_clean_shen",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1783439130886,
+      "tag": "0010_soft_legion",
+      "breakpoints": true
     }
   ]
 }
