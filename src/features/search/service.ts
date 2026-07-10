@@ -22,7 +22,7 @@ export async function searchWord(
   const operatorNotes = await findOperatorNotes(normalizedQuery);
 
   const redisCached = await redis.get<SearchResult>(cacheKey);
-  if (redisCached) {
+  if (redisCached && !isStaleSchema(redisCached)) {
     return withOperatorNotes(redisCached, operatorNotes, "hit");
   }
 
@@ -81,6 +81,12 @@ async function getPersistentCache(
 
   if (!row) return null;
 
+  const cached = row.result as SearchResult;
+
+  // 이전 스키마(targetCode 없음)로 저장된 엔트리는 miss 취급 → 재조회 후
+  // upsert가 새 스키마로 덮어써서 자연 마이그레이션. HUD 예문 조회를 뚫어놓는 목적.
+  if (isStaleSchema(cached)) return null;
+
   void db
     .update(dictionaryCache)
     .set({
@@ -92,7 +98,14 @@ async function getPersistentCache(
       console.error("[dictionary-cache] failed to update usage:", err);
     });
 
-  return row.result as SearchResult;
+  return cached;
+}
+
+/** targetCode 필드가 하나라도 빠진 아이템이 있으면 이전 스키마. */
+function isStaleSchema(result: SearchResult): boolean {
+  return (result.items ?? []).some(
+    (it) => typeof it.targetCode !== "string"
+  );
 }
 
 async function upsertPersistentCache(

@@ -17,6 +17,8 @@ export interface Sense {
 /** 같은 글자라도 한자 다르면 별도 item (예: 사과(沙果)/사과(謝過)) */
 export interface DictItem {
   word: string;
+  /** 우리말샘 API의 target_code — /api/view 로 예문 상세 조회할 때 사용. */
+  targetCode: string;
   senses: Sense[];
 }
 

@@ -243,6 +243,33 @@ export const dictionaryCache = pgTable(
 export type DictionaryCache = typeof dictionaryCache.$inferSelect;
 export type NewDictionaryCache = typeof dictionaryCache.$inferInsert;
 
+// word_detail_cache — 우리말샘 view API 응답(예문 포함) 영구 캐시.
+// dictionary_cache가 "검색 결과 목록"이라면 여기는 "특정 target_code의 상세".
+// 별도 테이블인 이유: key 형태(target_code) · payload 구조가 완전히 달라서
+// 하나에 섞으면 관리 복잡. 3-tier 캐시 정책은 동일 (Redis → 이 테이블 → API).
+export const wordDetailCache = pgTable(
+  "word_detail_cache",
+  {
+    targetCode: text("target_code").primaryKey(),
+    result: jsonb("result").notNull(),
+    hitCount: integer("hit_count").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    lastUsedAt: timestamp("last_used_at", { withTimezone: true }),
+  },
+  (table) => [
+    index("word_detail_cache_updated_at_idx").on(table.updatedAt),
+    index("word_detail_cache_hit_count_idx").on(table.hitCount),
+  ]
+);
+
+export type WordDetailCache = typeof wordDetailCache.$inferSelect;
+export type NewWordDetailCache = typeof wordDetailCache.$inferInsert;
+
 export const operatorDictionaryEntries = pgTable(
   "operator_dictionary_entries",
   {
