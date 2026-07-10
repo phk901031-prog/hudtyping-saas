@@ -30,24 +30,28 @@ interface RawSearchResponse {
   };
 }
 
-// /api/view 응답 형태 — 실제 필드가 살짝 다를 수 있어 optional 로 방어적으로 파싱.
+// /api/view?method=target_code 응답 형태.
+// - channel.item 은 **object** (search와 달리 array 아님)
+// - wordInfo / senseInfo 는 camelCase, senseInfo 는 **object 1개** (target_code당 뜻풀이 1개)
+// - example_info[].example 원문에 "{단어}" 중괄호 마커가 붙어 있어 화면 표시 시 그대로 보임.
 interface RawViewResponse {
   channel?: {
-    item?: Array<{
-      word_info?: {
+    item?: {
+      wordInfo?: {
         word?: string;
-        sense_info?: Array<{
-          sense_no?: string | number;
-          definition?: string;
-          pos?: string;
-          cat?: string;
-          example_info?: Array<{
-            example?: string;
-            source?: string;
-          }>;
+      };
+      senseInfo?: {
+        sense_no?: string | number;
+        definition?: string;
+        pos?: string;
+        cat?: string;
+        example_info?: Array<{
+          example?: string;
+          source?: string;
         }>;
       };
-    }>;
+      target_code?: string | number;
+    };
   };
 }
 
@@ -175,12 +179,19 @@ function normalizeViewResponse(
   targetCode: string,
   raw: RawViewResponse
 ): WordDetail {
-  const wordInfo = raw.channel?.item?.[0]?.word_info;
-  if (!wordInfo) {
+  const item = raw.channel?.item;
+  if (!item) {
     return { targetCode, word: "", senses: [] };
   }
 
-  const senses: WordDetailSense[] = (wordInfo.sense_info ?? []).map((s) => ({
+  const word = item.wordInfo?.word ?? "";
+  const s = item.senseInfo;
+
+  if (!s) {
+    return { targetCode, word, senses: [] };
+  }
+
+  const sense: WordDetailSense = {
     senseNo: s.sense_no == null ? "" : String(s.sense_no),
     definition: s.definition ?? "",
     pos: s.pos ?? "",
@@ -191,11 +202,11 @@ function normalizeViewResponse(
         source: ex.source?.trim() || undefined,
       }))
       .filter((ex) => ex.text.length > 0),
-  }));
+  };
 
   return {
     targetCode,
-    word: wordInfo.word ?? "",
-    senses,
+    word,
+    senses: [sense],
   };
 }

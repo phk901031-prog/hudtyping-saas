@@ -17,7 +17,7 @@ export async function getWordDetail(
   const key = redisKey(targetCode);
 
   const redisCached = await redis.get<WordDetail>(key);
-  if (redisCached) {
+  if (redisCached && !isStaleDetail(redisCached)) {
     return { ...redisCached, cache: "hit" };
   }
 
@@ -55,6 +55,11 @@ async function getPersistentCache(
 
   if (!row) return null;
 
+  // 이전 잘못된 파서(view 응답 스키마 오해)로 저장된 엔트리는 word=""·senses=[]
+  // 상태로 남아있음. miss 취급 → API 재조회 → upsert가 덮어씀.
+  const cached = row.result as WordDetail;
+  if (isStaleDetail(cached)) return null;
+
   // 사용 카운트/시각 갱신 — 실패해도 응답엔 영향 없게 fire-and-forget.
   void db
     .update(wordDetailCache)
@@ -67,7 +72,12 @@ async function getPersistentCache(
       console.error("[word-detail-cache] failed to update usage:", err);
     });
 
-  return row.result as WordDetail;
+  return cached;
+}
+
+/** view API는 늘 word와 sense를 채워 반환. 빈 값이면 이전 잘못된 스키마 → 재조회 필요. */
+function isStaleDetail(detail: WordDetail): boolean {
+  return !detail.word || (detail.senses ?? []).length === 0;
 }
 
 async function upsertPersistentCache(
