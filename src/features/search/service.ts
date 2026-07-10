@@ -101,10 +101,12 @@ async function getPersistentCache(
   return cached;
 }
 
-/** targetCode 필드가 하나라도 빠진 아이템이 있으면 이전 스키마. */
+/** sense.targetCode 필드가 하나라도 빠진 sense가 있으면 이전 스키마.
+ *  구엔트리는 (1) targetCode 없거나 (2) item 레벨에 있던 이전 잘못된 위치.
+ *  둘 다 여기서 miss로 처리해 자연 마이그레이션. */
 function isStaleSchema(result: SearchResult): boolean {
-  return (result.items ?? []).some(
-    (it) => typeof it.targetCode !== "string"
+  return (result.items ?? []).some((it) =>
+    (it.senses ?? []).some((s) => typeof s.targetCode !== "string")
   );
 }
 

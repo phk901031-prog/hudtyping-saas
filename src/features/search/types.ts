@@ -12,13 +12,14 @@ export interface Sense {
   origin: string; // 어원/한자 — 빈 문자열일 수 있음
   link: string; // 우리말샘 웹 페이지 링크
   senseNo: string; // 뜻풀이 번호 (camelCase 정규화 후)
+  /** 우리말샘 target_code — 이 뜻풀이 하나의 상세(예문 포함) 조회 키.
+   *  뜻풀이마다 서로 다른 값을 가짐 (한-번 명사 vs 부사 각각 별개 target_code). */
+  targetCode: string;
 }
 
 /** 같은 글자라도 한자 다르면 별도 item (예: 사과(沙果)/사과(謝過)) */
 export interface DictItem {
   word: string;
-  /** 우리말샘 API의 target_code — /api/view 로 예문 상세 조회할 때 사용. */
-  targetCode: string;
   senses: Sense[];
 }
 

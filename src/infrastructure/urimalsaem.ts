@@ -15,8 +15,8 @@ interface RawSearchResponse {
   channel?: {
     total: number;
     item?: Array<{
-      target_code?: string | number;
       word: string;
+      // target_code는 sense 안에 있음(뜻풀이별로 다름). item 레벨엔 없음.
       sense?: Array<{
         definition: string;
         pos: string;
@@ -24,6 +24,7 @@ interface RawSearchResponse {
         origin: string;
         link: string;
         sense_no: string;
+        target_code?: string | number;
       }>;
     }>;
   };
@@ -152,8 +153,6 @@ function normalizeSearchResponse(
 
   const items: DictItem[] = (channel.item ?? []).map((it) => ({
     word: it.word,
-    targetCode:
-      it.target_code == null ? "" : String(it.target_code),
     senses: (it.sense ?? []).map((s) => ({
       definition: s.definition ?? "",
       pos: s.pos ?? "",
@@ -161,6 +160,7 @@ function normalizeSearchResponse(
       origin: s.origin ?? "",
       link: s.link ?? "",
       senseNo: s.sense_no ?? "",
+      targetCode: s.target_code == null ? "" : String(s.target_code),
     })),
   }));
 
