@@ -1,22 +1,24 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 
 const DOWNLOAD_URL =
   "https://github.com/phk901031-prog/hudtyping-saas/releases/download/v0.2.19/hudtyping-Setup-0.2.19.exe";
 
 export default function WindowsDownloadPage() {
-  useEffect(() => {
-    const iframe = document.createElement("iframe");
-    iframe.src = DOWNLOAD_URL;
-    iframe.hidden = true;
-    iframe.title = "HUDTyping Windows installer download";
-    document.body.appendChild(iframe);
+  // StrictMode(dev) 또는 다른 이유로 effect가 두 번 실행되어도 다운로드는 1회만 시작.
+  const startedRef = useRef(false);
 
-    return () => {
-      iframe.remove();
-    };
+  useEffect(() => {
+    if (startedRef.current) return;
+    startedRef.current = true;
+
+    const link = document.createElement("a");
+    link.href = DOWNLOAD_URL;
+    link.rel = "noopener noreferrer";
+    // <a> 클릭은 브라우저에 통상 다운로드로 취급됨(Content-Disposition 헤더 있음).
+    link.click();
   }, []);
 
   return (
