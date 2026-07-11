@@ -72,7 +72,7 @@ export default function TermsPage() {
         <section>
           <h2 className="font-display text-xl mb-3">5. 책임의 한계</h2>
           <p>
-            서비스는 "있는 그대로(as-is)" 제공돼요. 베타 단계의 특성상 데이터
+            서비스는 ‘있는 그대로(as-is)’ 제공돼요. 베타 단계의 특성상 데이터
             손실·서비스 중단·검색 결과 부정확 등이 발생할 수 있고, 이에 따른 직간접
             손해에 대해서는 책임지지 않아요. 우리말샘 사전 데이터는{" "}
             <a

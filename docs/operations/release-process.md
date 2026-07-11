@@ -1,5 +1,7 @@
 # 새 .exe Release 절차
 
+> Windows 공개 버전과 다운로드 URL의 애플리케이션 기준점은 `src/config/release.ts`입니다. GitHub Release 생성 후 이 파일의 `version`, `downloadUrl`, 필요 시 `minimumFreshInstallVersion`을 갱신하고 lint/build를 통과시킵니다.
+
 > SaaS 코드 변경(웹)은 `git push`로 Vercel 자동 배포.
 > 이 문서는 **로컬 HUD .exe**의 새 버전 출시 절차.
 

@@ -10,10 +10,15 @@ import { viewUrimalsaem } from "@/infrastructure/urimalsaem";
 import type { WordDetail, WordDetailWithCacheMeta } from "./types";
 
 const CACHE_TTL_SECONDS = 60 * 60 * 24 * 30;
+const NOT_FOUND_CACHE_TTL_SECONDS = 60 * 60;
 
 export async function getWordDetail(
   targetCode: string
 ): Promise<WordDetailWithCacheMeta> {
+  // 서비스가 다른 호출 경로에서도 재사용되므로 route 검증에만 의존하지 않는다.
+  if (!/^\d{1,20}$/.test(targetCode)) {
+    throw new Error("Invalid target_code");
+  }
   const key = redisKey(targetCode);
 
   const redisCached = await redis.get<WordDetail>(key);
@@ -23,7 +28,7 @@ export async function getWordDetail(
 
   const dbCached = await getPersistentCache(targetCode);
   if (dbCached) {
-    void redis.set(key, dbCached, { ex: CACHE_TTL_SECONDS }).catch((err) => {
+    void redis.set(key, dbCached, { ex: cacheTtl(dbCached) }).catch((err) => {
       console.error("[word-detail-cache] failed to warm redis:", err);
     });
     return { ...dbCached, cache: "hit" };
@@ -31,7 +36,7 @@ export async function getWordDetail(
 
   const result = await viewUrimalsaem(targetCode);
   void Promise.all([
-    redis.set(key, result, { ex: CACHE_TTL_SECONDS }),
+    redis.set(key, result, { ex: cacheTtl(result) }),
     upsertPersistentCache(targetCode, result),
   ]).catch((err) => {
     console.error("[word-detail-cache] failed to store result:", err);
@@ -75,9 +80,17 @@ async function getPersistentCache(
   return cached;
 }
 
-/** view API는 늘 word와 sense를 채워 반환. 빈 값이면 이전 잘못된 스키마 → 재조회 필요. */
+/** found가 없는 과거 캐시만 무효화한다. 정상적인 미검색 결과(found=false)는 negative cache한다. */
 function isStaleDetail(detail: WordDetail): boolean {
-  return !detail.word || (detail.senses ?? []).length === 0;
+  return (
+    typeof detail.found !== "boolean" ||
+    detail.targetCode === "" ||
+    !Array.isArray(detail.senses)
+  );
+}
+
+function cacheTtl(detail: WordDetail): number {
+  return detail.found ? CACHE_TTL_SECONDS : NOT_FOUND_CACHE_TTL_SECONDS;
 }
 
 async function upsertPersistentCache(

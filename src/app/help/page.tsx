@@ -54,7 +54,7 @@ export default function HelpPage() {
         <ol className="flex list-decimal flex-col gap-1.5 pl-5">
           <li>메인 화면의 Windows 앱 다운로드 버튼으로 설치 파일을 받습니다.</li>
           <li>설치 파일을 실행합니다.</li>
-          <li>Windows Defender 경고가 나오면 "추가 정보"를 누른 뒤 실행합니다.</li>
+          <li>Windows Defender 경고가 나오면 ‘추가 정보’를 누른 뒤 게시자와 파일 출처를 확인하고 실행합니다.</li>
           <li>백신이 차단하면 <Link href="/install-help" className="text-accent underline">설치 문제 해결</Link>을 확인합니다.</li>
         </ol>
       </section>
@@ -74,8 +74,8 @@ export default function HelpPage() {
           <p className="font-semibold">예시</p>
           <p className="mt-2 leading-relaxed text-muted">
             <code className="rounded bg-card px-1.5 py-0.5 text-xs">회의 안건 정리|</code> 에서
-            한 번 누르면 <strong>"정리"</strong>, 두 번 누르면 <strong>"안건 정리"</strong>,
-            세 번 누르면 <strong>"회의 안건 정리"</strong>로 확장됩니다.
+            한 번 누르면 <strong>‘정리’</strong>, 두 번 누르면 <strong>‘안건 정리’</strong>,
+            세 번 누르면 <strong>‘회의 안건 정리’</strong>로 확장됩니다.
           </p>
         </div>
       </section>

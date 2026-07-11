@@ -7,6 +7,7 @@
 //   - `Pool` — 전통적 TCP 연결, 트랜잭션·LISTEN/NOTIFY 지원. 장기 실행 서버용.
 // Vercel 배포 + Next.js API 라우트 환경에선 HTTP 방식이 표준이라 그걸로 간다.
 
+import "server-only";
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import * as schema from "./schema";

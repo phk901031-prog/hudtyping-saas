@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { auth } from "@/infrastructure/clerk";
+import { WINDOWS_RELEASE } from "@/config/release";
 
 const DOWNLOAD_URL = "/download/windows";
 
@@ -68,7 +69,7 @@ export default async function HomePage() {
             <div className="flex flex-col justify-center gap-6">
               <div className="flex flex-wrap gap-2">
                 <StatusPill tone="green">서비스 운영 중</StatusPill>
-                <StatusPill tone="dark">Windows v0.2.19</StatusPill>
+                <StatusPill tone="dark">Windows v{WINDOWS_RELEASE.version}</StatusPill>
                 <StatusPill tone="dark">승인 계정 전용</StatusPill>
               </div>
 
@@ -114,7 +115,7 @@ export default async function HomePage() {
               <div className="max-w-xl rounded-lg border border-[#a8fff4]/30 bg-[#a8fff4]/10 px-4 py-3 text-sm leading-6 text-white/82">
                 <strong className="text-[#a8fff4]">업데이트 안내</strong>
                 <span className="mx-2 text-white/35">|</span>
-                뜻풀이 클릭 시 예문을 보여주는 별도 창이 추가된 v0.2.19를 권장합니다. 업데이트 적용 후에는 앱 상단 배너를 통해 새 소식을 이 페이지에서 확인하실 수 있습니다. v0.2.10 미만 앱은 새 설치가 필요합니다.
+                뜻풀이 클릭 시 예문을 보여주는 별도 창이 추가된 v{WINDOWS_RELEASE.version}를 권장합니다. 업데이트 적용 후에는 앱 상단 배너를 통해 새 소식을 이 페이지에서 확인하실 수 있습니다. v{WINDOWS_RELEASE.minimumFreshInstallVersion} 미만 앱은 새 설치가 필요합니다.
               </div>
 
               <TrustStrip />
@@ -259,14 +260,14 @@ export default async function HomePage() {
           <div id="support" className="rounded-lg border border-border bg-card p-6">
             <h2 className="font-display text-2xl">운영 안내</h2>
             <div className="mt-5 divide-y divide-border">
-              <Notice title="현재 배포 버전" date="v0.2.19">
+              <Notice title="현재 배포 버전" date={`v${WINDOWS_RELEASE.version}`}>
                 뜻풀이 클릭 시 예문 창이 뜨고, HUD 옆에 붙이거나(위·아래·좌·우) 자유롭게 옮길 수 있습니다.
                 글자 크기와 배경 밝기도 조절 가능합니다. 새 버전이 적용되면 앱 상단에
                 &ldquo;홈페이지 열기&rdquo; 배너가 뜨니 여기로 다시 오시면 변경 사항을 확인할 수 있습니다.
                 앱 설정에 이메일이 아니라 웹에서 발급한 연결 코드를 입력합니다.
               </Notice>
               <Notice title="구버전 지원 안내" date="업데이트">
-                v0.2.10 이상은 앱 실행 시 자동 업데이트 안내를 받을 수 있습니다. v0.2.10 미만 초기 버전은 검색이 제한될 수 있으니 최신 설치 파일로 다시 설치해 주세요.
+                v{WINDOWS_RELEASE.minimumFreshInstallVersion} 이상은 앱 실행 시 자동 업데이트 안내를 받을 수 있습니다. v{WINDOWS_RELEASE.minimumFreshInstallVersion} 미만 초기 버전은 검색이 제한될 수 있으니 최신 설치 파일로 다시 설치해 주세요.
               </Notice>
               <Notice title="검색 지연 안내" date="검색">
                 우리말샘 또는 서버 응답이 늦으면 앱에 “우리말샘 응답 지연 중”으로 표시합니다.

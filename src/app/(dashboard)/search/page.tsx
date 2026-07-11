@@ -7,6 +7,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
+import { WordExamples } from "@/components/search/word-examples";
 
 // 서버에서 반환하는 응답 모양 (lib/dictionary-api.ts의 SearchResult + cache 메타)
 interface Sense {
@@ -16,6 +17,7 @@ interface Sense {
   origin: string;
   link: string;
   senseNo: string;
+  targetCode: string;
 }
 interface DictItem {
   word: string;
@@ -60,16 +62,20 @@ export default function SearchPage() {
   }
 
   return (
-    <main className="flex flex-1 flex-col px-6 py-8 gap-6 max-w-3xl w-full mx-auto">
+    <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 px-5 py-8 sm:px-8">
       {/* 헤더: 홈 링크 + 사용자 버튼 */}
       <header className="flex items-center justify-between">
-        <Link href="/dashboard" className="text-sm text-zinc-500 hover:underline">
+        <Link href="/dashboard" className="text-sm font-medium text-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
           ← 대시보드
         </Link>
         <UserButton />
       </header>
 
-      <h1 className="text-2xl font-bold">우리말샘 사전 검색</h1>
+      <div>
+        <p className="text-sm font-bold text-accent">사전 검색</p>
+        <h1 className="mt-1 font-display text-3xl">우리말샘 검색</h1>
+        <p className="mt-2 text-sm text-muted">뜻풀이를 확인하고 필요한 항목의 예문을 바로 펼쳐보세요.</p>
+      </div>
 
       {/* 검색 폼 */}
       <form
@@ -85,12 +91,13 @@ export default function SearchPage() {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="검색어 입력 후 Enter"
           autoFocus
-          className="flex-1 rounded-full border border-zinc-300 dark:border-zinc-700 bg-transparent px-5 py-3 text-base outline-none focus:border-zinc-500"
+          aria-label="우리말샘 검색어"
+          className="min-w-0 flex-1 rounded-lg border border-border bg-card px-5 py-3 text-base outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
         />
         <button
           type="submit"
           disabled={loading || !query.trim()}
-          className="rounded-full bg-foreground text-background px-6 py-3 text-sm font-medium disabled:opacity-50 hover:opacity-90 transition"
+          className="rounded-lg bg-foreground px-6 py-3 text-sm font-bold text-background transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50"
         >
           {loading ? "검색 중…" : "검색"}
         </button>
@@ -105,17 +112,7 @@ export default function SearchPage() {
 
       {result && (
         <section className="flex flex-col gap-4">
-          {/* 메타 정보: 총 결과 수 + 캐시 적중 표시 (학습/디버그용) */}
-          <p className="text-xs text-zinc-500">
-            “{result.query}” 총 {result.total}건 ·{" "}
-            <span
-              className={
-                result.cache === "hit" ? "text-green-600" : "text-amber-600"
-              }
-            >
-              캐시 {result.cache === "hit" ? "✓ 적중" : "× 새로 조회"}
-            </span>
-          </p>
+          <p className="text-sm text-muted">“{result.query}” 총 {result.total}건</p>
 
           {result.items.length === 0 ? (
             <p className="text-zinc-500 text-sm">결과가 없어요.</p>
@@ -123,7 +120,7 @@ export default function SearchPage() {
             result.items.map((item, idx) => (
               <article
                 key={idx}
-                className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-5 flex flex-col gap-3"
+                className="feature-card flex flex-col gap-3 rounded-xl border border-border bg-card p-5"
               >
                 <h2 className="text-xl font-semibold">
                   {item.word}
@@ -136,7 +133,7 @@ export default function SearchPage() {
 
                 <ol className="flex flex-col gap-2 list-decimal pl-5">
                   {item.senses.map((sense, i) => (
-                    <li key={i} className="text-sm">
+                    <li key={`${sense.targetCode}-${i}`} className="text-sm leading-6">
                       <span className="inline-flex gap-1.5 items-center mr-2 align-middle">
                         {sense.pos && (
                           <span className="rounded bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 text-xs">
@@ -150,6 +147,9 @@ export default function SearchPage() {
                         )}
                       </span>
                       {sense.definition}
+                      {/^\d+$/.test(sense.targetCode) && (
+                        <WordExamples targetCode={sense.targetCode} />
+                      )}
                     </li>
                   ))}
                 </ol>

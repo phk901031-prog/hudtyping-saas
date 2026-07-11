@@ -11,10 +11,23 @@
 //   - 공격자가 SaaS API에 무차별 hash 보내며 brute force 시도해도 의미 없음 (2^256 공간)
 
 import { isOfficialBinary } from "@/features/security/binary-verification";
+import { checkRateLimit, getRequestSubject } from "@/features/security/rate-limit";
 
 export const runtime = "edge";
 
 export async function POST(req: Request) {
+  const rateLimit = await checkRateLimit({
+    scope: "binary-verify",
+    subject: getRequestSubject(req),
+    limit: 60,
+  });
+  if (!rateLimit.allowed) {
+    return Response.json(
+      { error: "Too many requests" },
+      { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } }
+    );
+  }
+
   let body: { sha256?: unknown; version?: unknown };
   try {
     body = (await req.json()) as typeof body;
@@ -23,8 +36,8 @@ export async function POST(req: Request) {
   }
 
   const sha256 = typeof body.sha256 === "string" ? body.sha256 : null;
-  if (!sha256) {
-    return Response.json({ error: "sha256 required" }, { status: 400 });
+  if (!sha256 || !/^[a-fA-F0-9]{64}$/.test(sha256)) {
+    return Response.json({ error: "valid sha256 required" }, { status: 400 });
   }
 
   const verified = await isOfficialBinary(sha256);

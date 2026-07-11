@@ -106,7 +106,7 @@ async function getPersistentCache(
  *  둘 다 여기서 miss로 처리해 자연 마이그레이션. */
 function isStaleSchema(result: SearchResult): boolean {
   return (result.items ?? []).some((it) =>
-    (it.senses ?? []).some((s) => typeof s.targetCode !== "string")
+    (it.senses ?? []).some((s) => !/^\d+$/.test(s.targetCode ?? ""))
   );
 }
 

@@ -18,6 +18,7 @@ export interface WordDetail {
   targetCode: string;
   word: string;
   senses: WordDetailSense[];
+  found: boolean;
 }
 
 export type CacheStatus = "hit" | "miss";

@@ -9,11 +9,24 @@ import {
   createApiKey,
   listApiKeys,
 } from "@/features/auth/api-keys/service";
+import { checkRateLimit } from "@/features/security/rate-limit";
 
 export async function GET() {
   const { userId } = await auth();
   if (!userId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const rateLimit = await checkRateLimit({
+    scope: "api-key-read",
+    subject: userId,
+    limit: 60,
+  });
+  if (!rateLimit.allowed) {
+    return Response.json(
+      { error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요.", code: "RATE_LIMITED" },
+      { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } }
+    );
   }
 
   const keys = await listApiKeys(userId);
@@ -24,6 +37,18 @@ export async function POST(req: Request) {
   const user = await getOrCreateCurrentUser();
   if (!user) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const rateLimit = await checkRateLimit({
+    scope: "api-key-write",
+    subject: user.clerkId,
+    limit: 10,
+  });
+  if (!rateLimit.allowed) {
+    return Response.json(
+      { error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요.", code: "RATE_LIMITED" },
+      { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } }
+    );
   }
 
   if (user.status !== "approved") {

@@ -50,10 +50,10 @@ export async function activateDesktopConnection(
   const code = normalizeConnectionCode(codeInput);
   if (!code) return null;
 
-  const rows = await db
-    .select({ connection: desktopConnectionCodes, user: users })
-    .from(desktopConnectionCodes)
-    .innerJoin(users, eq(users.clerkId, desktopConnectionCodes.clerkId))
+  // 조건부 UPDATE가 코드 선점을 원자적으로 수행하므로 동시 요청 중 하나만 성공한다.
+  const claimed = await db
+    .update(desktopConnectionCodes)
+    .set({ usedAt: new Date() })
     .where(
       and(
         eq(desktopConnectionCodes.code, code),
@@ -61,11 +61,16 @@ export async function activateDesktopConnection(
         gt(desktopConnectionCodes.expiresAt, new Date())
       )
     )
+    .returning({ clerkId: desktopConnectionCodes.clerkId });
+
+  if (claimed.length === 0) return null;
+
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.clerkId, claimed[0].clerkId))
     .limit(1);
-
-  if (rows.length === 0) return null;
-
-  const { connection, user } = rows[0];
+  if (!user) return null;
   if (user.status !== "approved") return null;
 
   const token = await generateApiKey();
@@ -77,11 +82,6 @@ export async function activateDesktopConnection(
     prefix: token.prefix,
     hash: token.hash,
   });
-
-  await db
-    .update(desktopConnectionCodes)
-    .set({ usedAt: new Date() })
-    .where(eq(desktopConnectionCodes.code, connection.code));
 
   return {
     token: token.plain,

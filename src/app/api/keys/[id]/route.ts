@@ -3,6 +3,7 @@
 
 import { auth } from "@/infrastructure/clerk";
 import { revokeApiKey } from "@/features/auth/api-keys/service";
+import { checkRateLimit } from "@/features/security/rate-limit";
 
 export async function DELETE(
   _req: Request,
@@ -13,11 +14,23 @@ export async function DELETE(
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const rateLimit = await checkRateLimit({
+    scope: "api-key-write",
+    subject: userId,
+    limit: 20,
+  });
+  if (!rateLimit.allowed) {
+    return Response.json(
+      { error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요.", code: "RATE_LIMITED" },
+      { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } }
+    );
+  }
+
   const { id: idStr } = await params;
-  const id = parseInt(idStr, 10);
-  if (Number.isNaN(id)) {
+  if (!/^\d{1,10}$/.test(idStr)) {
     return Response.json({ error: "Invalid key id" }, { status: 400 });
   }
+  const id = Number(idStr);
 
   const ok = await revokeApiKey(userId, id);
   if (!ok) {

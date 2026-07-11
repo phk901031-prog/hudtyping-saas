@@ -5,6 +5,7 @@
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { getOrCreateCurrentUser } from "@/features/users/service";
+import { DashboardCard } from "@/components/dashboard/dashboard-card";
 
 export default async function DashboardPage() {
   // (dashboard) layout에서 이미 검증했으므로 여기선 단순 조회
@@ -12,7 +13,7 @@ export default async function DashboardPage() {
   const isAdmin = user?.role === "admin";
 
   return (
-    <main className="flex flex-1 flex-col items-center justify-center px-6 py-16 gap-10 relative">
+    <main className="relative flex flex-1 flex-col items-center justify-center gap-10 px-5 py-20 sm:px-8">
       <header className="absolute top-4 left-4 right-4 flex items-center justify-between">
         <Link
           href="/"
@@ -25,73 +26,22 @@ export default async function DashboardPage() {
         <UserButton />
       </header>
 
-      <div className="max-w-xl text-center flex flex-col gap-8">
+      <div className="flex w-full max-w-4xl flex-col gap-8 text-center">
         <div className="flex flex-col gap-3">
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
-            환영해요 👋
-          </h1>
-          <p className="text-lg text-zinc-600 dark:text-zinc-400">
-            무엇을 하시겠어요?
-          </p>
+          <p className="text-sm font-bold text-accent">HUDTYPING WORKSPACE</p>
+          <h1 className="font-display text-3xl sm:text-4xl">환영합니다</h1>
+          <p className="text-lg text-muted">필요한 작업을 선택하세요.</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Link
-            href="/search"
-            className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 flex flex-col gap-2 hover:border-zinc-400 dark:hover:border-zinc-600 transition text-left"
-          >
-            <span className="text-2xl">🔍</span>
-            <span className="font-semibold">우리말샘 검색</span>
-            <span className="text-sm text-zinc-500">
-              단어를 빠르게 찾아보세요.
-            </span>
-          </Link>
-
-          <Link
-            href="/api-keys"
-            className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 flex flex-col gap-2 hover:border-zinc-400 dark:hover:border-zinc-600 transition text-left"
-          >
-            <span className="text-2xl">🔗</span>
-            <span className="font-semibold">프로그램 연결</span>
-            <span className="text-sm text-zinc-500">
-              HUDTyping 앱에 승인 계정 연결
-            </span>
-          </Link>
-
-          <Link
-            href="/stats"
-            className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 flex flex-col gap-2 hover:border-zinc-400 dark:hover:border-zinc-600 transition text-left"
-          >
-            <span className="text-2xl">📊</span>
-            <span className="font-semibold">내 검색 통계</span>
-            <span className="text-sm text-zinc-500">
-              총 검색 횟수, 캐시 적중률, 자주 찾은 단어
-            </span>
-          </Link>
-
-          <Link
-            href="/help"
-            className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 flex flex-col gap-2 hover:border-zinc-400 dark:hover:border-zinc-600 transition text-left"
-          >
-            <span className="text-2xl">📖</span>
-            <span className="font-semibold">사용 가이드</span>
-            <span className="text-sm text-zinc-500">
-              처음 사용하시면 여기부터
-            </span>
-          </Link>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <DashboardCard href="/search" eyebrow="SEARCH" title="우리말샘 검색" description="뜻풀이와 예문을 웹에서도 빠르게 확인합니다." />
+          <DashboardCard href="/api-keys" eyebrow="CONNECT" title="프로그램 연결" description="일회용 연결 코드로 HUDTyping 앱을 안전하게 연결합니다." />
+          <DashboardCard href="/stats" eyebrow="STATS" title="내 검색 통계" description="사용량, 최근 검색어와 자주 찾은 단어를 확인합니다." />
+          <DashboardCard href="/help" eyebrow="GUIDE" title="사용 가이드" description="설치부터 단축키와 문제 해결 방법까지 살펴봅니다." />
 
           {/* admin만 보이는 카드 */}
           {isAdmin && (
-            <Link
-              href="/admin"
-              className="rounded-2xl border border-purple-200 bg-purple-50/50 dark:bg-purple-950/20 dark:border-purple-800 p-6 flex flex-col gap-2 hover:border-purple-400 dark:hover:border-purple-600 transition text-left"
-            >
-              <span className="text-2xl">🛠</span>
-              <span className="font-semibold">관리자</span>
-              <span className="text-sm text-zinc-500">
-                회원 관리, 전체 통계
-              </span>
-            </Link>
+            <DashboardCard href="/admin" eyebrow="ADMIN" title="관리자" description="회원 승인, 운영 사전과 전체 통계를 관리합니다." tone="admin" />
           )}
         </div>
       </div>

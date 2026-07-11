@@ -1,5 +1,26 @@
 # 아키텍처 — 레이어 정의
 
+## 변경 시 지켜야 할 모듈 경계
+
+```text
+app route/page
+  -> components (표현 및 작은 상호작용)
+  -> features/<domain> (유스케이스와 정책)
+  -> infrastructure (DB, Redis, Clerk, 외부 API)
+```
+
+- API route는 입력 검증, 인증/인가, rate limit, HTTP 응답 변환만 담당한다.
+- 페이지와 컴포넌트는 Drizzle·Redis·우리말샘을 직접 호출하지 않는다.
+- 외부 응답은 식별자와 스키마를 검증한 뒤 캐시한다.
+- 정상적인 빈 결과는 짧은 TTL의 negative cache로 표현하고 손상된 캐시와 구분한다.
+- 브라우저 상태가 필요한 부분만 Client Component로 분리한다.
+- 공개 릴리스 정보는 `src/config/release.ts`를 단일 기준으로 사용한다.
+- 순간 호출 제한과 월간 사용량 정책은 각각 `features/security`, `features/quota`가 담당한다.
+- 인증된 mutation API(키 발급/폐기, 관리자 변경)는 route에서 인증한 사용자 ID를 `features/security/rate-limit`의 subject로 사용한다.
+- 브라우저 쿠키 기반 mutation을 추가할 때는 Clerk 세션 인증과 함께 Origin/CSRF 방어 여부를 검토하고, Bearer 기반 데스크톱 API와 정책을 섞지 않는다.
+
+새 기능은 원칙적으로 `types → service → route → interactive component → page composition` 순서로 추가한다. 이 흐름을 벗어나야 한다면 이 문서에 이유와 새로운 경계를 기록한다.
+
 ## 왜 레이어인가
 
 코드가 커지면 한 파일이 여러 책임(인증·DB·외부 API·UI)을 동시에 진다. 결과:

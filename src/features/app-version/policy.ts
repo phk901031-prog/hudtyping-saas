@@ -1,3 +1,5 @@
+import { WINDOWS_RELEASE } from "@/config/release";
+
 export type AppVersionDecision =
   | { allowed: true; appVersion: string | null; clientType: string }
   | {
@@ -7,7 +9,7 @@ export type AppVersionDecision =
       minVersion: string;
     };
 
-const DEFAULT_MIN_SUPPORTED_VERSION = "0.2.10";
+const DEFAULT_MIN_SUPPORTED_VERSION = WINDOWS_RELEASE.minimumFreshInstallVersion;
 
 export function getClientVersionMeta(headers: Headers): {
   appVersion: string | null;

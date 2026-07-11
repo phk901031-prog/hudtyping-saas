@@ -1,6 +1,7 @@
 // src/infrastructure/urimalsaem.ts
 // Server-side client for the Urimalsaem Open API.
 
+import "server-only";
 import type { DictItem, SearchResult } from "@/features/search/types";
 import type {
   WordDetail,
@@ -181,14 +182,14 @@ function normalizeViewResponse(
 ): WordDetail {
   const item = raw.channel?.item;
   if (!item) {
-    return { targetCode, word: "", senses: [] };
+    return { targetCode, word: "", senses: [], found: false };
   }
 
   const word = item.wordInfo?.word ?? "";
   const s = item.senseInfo;
 
   if (!s) {
-    return { targetCode, word, senses: [] };
+    return { targetCode, word, senses: [], found: false };
   }
 
   const sense: WordDetailSense = {
@@ -208,5 +209,7 @@ function normalizeViewResponse(
     targetCode,
     word,
     senses: [sense],
+    // 외부 응답이 일부만 내려온 경우도 정상 상세로 캐시하지 않는다.
+    found: Boolean(word && (sense.definition || sense.examples.length > 0)),
   };
 }

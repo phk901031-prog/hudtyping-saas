@@ -46,14 +46,14 @@ export default function InstallHelpPage() {
           </h2>
           <ol className="list-decimal pl-5 flex flex-col gap-1.5">
             <li>트레이 안랩 아이콘 우클릭 → 메인 화면 열기</li>
-            <li>좌측 메뉴 <strong>"격리실"</strong> 또는 <strong>"보안 검사 결과"</strong></li>
+            <li>좌측 메뉴 <strong>‘격리실’</strong> 또는 <strong>‘보안 검사 결과’</strong></li>
             <li>
               <code className="bg-muted-bg px-1.5 py-0.5 rounded text-xs">
                 hudtyping-Setup-0.1.0.exe
               </code>{" "}
               찾아서 선택
             </li>
-            <li><strong>"복원"</strong> 또는 <strong>"신뢰 처리"</strong> 클릭</li>
+            <li><strong>‘복원’</strong> 또는 <strong>‘신뢰 처리’</strong> 클릭</li>
             <li>
               (재발 방지) 환경설정 → <strong>검사 예외</strong> → .exe 경로
               추가
@@ -74,11 +74,11 @@ export default function InstallHelpPage() {
         <section>
           <h2 className="font-display text-xl mb-3">3. Windows Defender / SmartScreen</h2>
           <ol className="list-decimal pl-5 flex flex-col gap-1.5">
-            <li>.exe 실행 시 "Windows의 PC 보호" 파란 창</li>
+            <li>.exe 실행 시 ‘Windows의 PC 보호’ 파란 창</li>
             <li>
-              <strong>"추가 정보"</strong> 글자 클릭 (오른쪽 위 작게 표시됨)
+              <strong>‘추가 정보’</strong> 글자 클릭 (오른쪽 위 작게 표시됨)
             </li>
-            <li>"실행" 버튼이 새로 나타남 → 클릭</li>
+            <li>파일 출처와 이름을 확인한 뒤 ‘실행’ 버튼 클릭</li>
           </ol>
         </section>
 
@@ -86,8 +86,7 @@ export default function InstallHelpPage() {
           <h2 className="font-display text-xl mb-3">4. 그래도 안 되면</h2>
           <ul className="list-disc pl-5 flex flex-col gap-1.5">
             <li>
-              백신을 잠시 일시 정지 → 설치 → 다시 활성화 (보안상 비권장이지만
-              빠름)
+              백신을 끄지 말고 격리 내역과 탐지명을 확인한 뒤 관리자에게 문의
             </li>
             <li>
               회사 PC라 백신 정책을 못 바꾸는 경우, IT 부서에 화이트리스트

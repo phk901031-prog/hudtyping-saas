@@ -12,6 +12,7 @@ import {
   updateUserStatus,
 } from "@/features/admin/users";
 import type { UserRole, UserStatus } from "@/infrastructure/db/schema";
+import { checkRateLimit } from "@/features/security/rate-limit";
 
 const VALID_STATUSES: UserStatus[] = ["pending", "approved", "rejected"];
 const VALID_ROLES: UserRole[] = ["user", "admin"];
@@ -33,6 +34,18 @@ export async function PATCH(
       return Response.json({ error: err.message }, { status: 403 });
     }
     throw err;
+  }
+
+  const rateLimit = await checkRateLimit({
+    scope: "admin-write",
+    subject: me.clerkId,
+    limit: 60,
+  });
+  if (!rateLimit.allowed) {
+    return Response.json(
+      { error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요.", code: "RATE_LIMITED" },
+      { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } }
+    );
   }
 
   const { id: targetClerkId } = await params;

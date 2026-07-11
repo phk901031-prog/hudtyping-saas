@@ -11,6 +11,7 @@ import { checkAppVersion, getClientVersionMeta } from "@/features/app-version/po
 import { authenticate } from "@/features/auth/service";
 import { getWordDetail } from "@/features/word-detail/service";
 import { UrimalsaemUnavailableError } from "@/infrastructure/urimalsaem";
+import { checkRateLimit } from "@/features/security/rate-limit";
 
 export const runtime = "edge";
 
@@ -41,16 +42,42 @@ export async function GET(
     );
   }
 
-  if (!/^\d+$/.test(targetCode)) {
+  if (!/^\d{1,20}$/.test(targetCode)) {
     return Response.json(
       { error: "target_code 형식이 잘못됐습니다.", code: "INVALID_TARGET_CODE" },
       { status: 400 }
     );
   }
 
+  const rateLimit = await checkRateLimit({
+    scope: "word-detail",
+    subject: user.clerkId,
+    limit: 120,
+  });
+  if (!rateLimit.allowed) {
+    return Response.json(
+      { error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요.", code: "RATE_LIMITED" },
+      {
+        status: 429,
+        headers: { "Retry-After": String(rateLimit.retryAfterSeconds) },
+      }
+    );
+  }
+
   try {
     const result = await getWordDetail(targetCode);
     const responseMs = Date.now() - startedAt;
+
+    if (!result.found) {
+      return Response.json(
+        {
+          error: "해당 뜻풀이의 상세 정보를 찾지 못했습니다.",
+          code: "WORD_DETAIL_NOT_FOUND",
+          meta: { appVersion, responseMs },
+        },
+        { status: 404 }
+      );
+    }
 
     return Response.json({
       ...result,
