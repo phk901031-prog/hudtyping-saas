@@ -19,9 +19,12 @@ export async function searchWord(
 ): Promise<SearchResultWithCacheMeta> {
   const normalizedQuery = normalizeQuery(query);
   const cacheKey = `search:${normalizedQuery}`;
-  const operatorNotes = await findOperatorNotes(normalizedQuery);
-
-  const redisCached = await redis.get<SearchResult>(cacheKey);
+  // 운영자 표기와 검색 캐시는 서로 독립적이다. 캐시 hit도 DB 조회가
+  // 끝난 뒤 Redis를 확인하던 직렬 네트워크 왕복을 병렬화한다.
+  const [operatorNotes, redisCached] = await Promise.all([
+    findOperatorNotes(normalizedQuery),
+    redis.get<SearchResult>(cacheKey),
+  ]);
   if (redisCached && !isStaleSchema(redisCached)) {
     return withOperatorNotes(redisCached, operatorNotes, "hit");
   }

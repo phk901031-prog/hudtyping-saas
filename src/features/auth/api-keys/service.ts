@@ -120,56 +120,54 @@ export async function verifyApiKeyFromHeader(
   // v0.3.0에서 asar 파일 기반 검증(NSIS·백신 영향 거의 없음)으로 교체 → strict 복원.
   //
   // TODO(v0.3.0): asar hash 기반 검증 + strict 복원
+  const hash = await hashToken(plain);
+  const binaryCheck = clientHash
+    ? isOfficialBinary(clientHash)
+    : Promise.resolve(false);
+
+  // 바이너리 확인, 구형 API 키, 데스크톱 연결 토큰은 서로 독립적이다.
+  // 병렬 조회해 데스크톱 토큰이 api_keys miss 뒤에야 조회되던 왕복을 제거한다.
+  const [officialBinary, apiKeyRows, desktopTokenRows] = await Promise.all([
+    binaryCheck,
+    db
+      .select({ apiKey: apiKeys, user: users })
+      .from(apiKeys)
+      .innerJoin(users, eq(users.clerkId, apiKeys.clerkId))
+      .where(eq(apiKeys.hash, hash))
+      .limit(1),
+    db
+      .select({ token: desktopTokens, user: users })
+      .from(desktopTokens)
+      .innerJoin(users, eq(users.clerkId, desktopTokens.clerkId))
+      .where(eq(desktopTokens.hash, hash))
+      .limit(1),
+  ]);
+
   if (!clientHash) {
     console.warn("[binary-verify monitoring] hash 헤더 누락");
-  } else if (!(await isOfficialBinary(clientHash))) {
+  } else if (!officialBinary) {
     console.warn(
       `[binary-verify monitoring] hash 매치 실패: ${clientHash.slice(0, 12)}...`
     );
   }
 
-  const hash = await hashToken(plain);
-  const rows = await db
-    .select({ apiKey: apiKeys, user: users })
-    .from(apiKeys)
-    .innerJoin(users, eq(users.clerkId, apiKeys.clerkId))
-    .where(eq(apiKeys.hash, hash))
-    .limit(1);
+  if (apiKeyRows.length > 0) {
+    const { apiKey, user } = apiKeyRows[0];
+    if (user.status !== "approved") return null;
 
-  if (rows.length === 0) {
-    return verifyDesktopTokenHash(hash);
+    void db
+      .update(apiKeys)
+      .set({ lastUsedAt: new Date() })
+      .where(eq(apiKeys.id, apiKey.id))
+      .catch((err) => {
+        console.error("[api-keys] last_used_at 갱신 실패:", err);
+      });
+
+    return user;
   }
-  const { apiKey, user } = rows[0];
 
-  // 보안: 승인된 사용자만 통과
-  if (user.status !== "approved") return null;
-
-  // last_used_at 갱신은 fire-and-forget — await 안 해서 응답에 ~50ms 절약.
-  // 메타데이터 성격이라 어쩌다 한 번 누락돼도 critical 아님.
-  // (Vercel serverless에서 함수 종료 후 promise가 drop될 가능성은 있지만
-  //  보통 짧은 UPDATE는 무사히 실행됨.)
-  void db
-    .update(apiKeys)
-    .set({ lastUsedAt: new Date() })
-    .where(eq(apiKeys.id, apiKey.id))
-    .catch((err) => {
-      console.error("[api-keys] last_used_at 갱신 실패:", err);
-    });
-
-  return user;
-}
-
-export async function verifyDesktopTokenHash(hash: string): Promise<User | null> {
-  const rows = await db
-    .select({ token: desktopTokens, user: users })
-    .from(desktopTokens)
-    .innerJoin(users, eq(users.clerkId, desktopTokens.clerkId))
-    .where(eq(desktopTokens.hash, hash))
-    .limit(1);
-
-  if (rows.length === 0) return null;
-  const { token, user } = rows[0];
-
+  if (desktopTokenRows.length === 0) return null;
+  const { token, user } = desktopTokenRows[0];
   if (user.status !== "approved") return null;
 
   void db

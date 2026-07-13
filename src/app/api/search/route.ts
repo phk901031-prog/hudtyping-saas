@@ -50,11 +50,16 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const rateLimit = await checkRateLimit({
-    scope: "search",
-    subject: user.clerkId,
-    limit: 120,
-  });
+  // 두 정책은 같은 인증 사용자만 필요하고 서로 의존하지 않는다.
+  // Redis 왕복을 직렬로 기다리지 않도록 동시에 확인한다.
+  const [rateLimit, quotaDecision] = await Promise.all([
+    checkRateLimit({
+      scope: "search",
+      subject: user.clerkId,
+      limit: 120,
+    }),
+    checkQuota(user),
+  ]);
   if (!rateLimit.allowed) {
     after(() =>
       logSearchAttempt({
@@ -75,7 +80,7 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const { allowed, quota } = await checkQuota(user);
+  const { allowed, quota } = quotaDecision;
   if (!allowed) {
     after(() =>
       logSearchAttempt({
