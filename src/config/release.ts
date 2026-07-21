@@ -3,8 +3,8 @@
  * 새 Windows 버전 배포 시 이 파일만 변경한다.
  */
 export const WINDOWS_RELEASE = {
-  version: "0.2.22",
+  version: "0.2.23",
   minimumFreshInstallVersion: "0.2.10",
   downloadUrl:
-    "https://github.com/phk901031-prog/hudtyping-saas/releases/download/v0.2.22/hudtyping-Setup-0.2.22.exe",
+    "https://github.com/phk901031-prog/hudtyping-saas/releases/download/v0.2.23/hudtyping-Setup-0.2.23.exe",
 } as const;
