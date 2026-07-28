@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(command -v magick convert)",
+      "Bash(node \"C:/Users/바다/AppData/Local/Temp/claude/c--app-new-hudtyping-saas/442d64d4-4109-46ba-b245-37b41a7fb800/scratchpad/logo.mjs\")",
+      "Bash(node scripts/generate-openchat-logo.mjs)",
+      "Bash(npm install *)",
+      "Bash(node scripts/generate-openchat-qr.mjs)",
+      "Bash(git commit -m ' *)"
+    ]
+  }
+}

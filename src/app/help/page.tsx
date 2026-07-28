@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { OPENCHAT } from "@/config/community";
 
 export const metadata: Metadata = {
   title: "사용 가이드 | hudtyping",
@@ -31,8 +32,16 @@ export default function HelpPage() {
         <h2 className="font-display text-2xl">1. 가입 승인</h2>
         <p className="leading-relaxed">
           <Link href="/sign-up" className="text-accent underline">회원가입</Link> 후 관리자가
-          가입자를 확인하면 서비스를 사용할 수 있습니다. 빠른 승인이 필요하면 카카오톡
-          <strong> papawheels</strong> 친구 추가 후 가입한 이메일과 성명을 보내주세요.
+          가입자를 확인하면 서비스를 사용할 수 있습니다. 빠른 승인이 필요하면 카카오톡{" "}
+          <a
+            href={OPENCHAT.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent underline"
+          >
+            오픈톡방
+          </a>
+          에서 가입한 이메일과 성명을 알려주세요.
         </p>
       </section>
 
@@ -97,7 +106,16 @@ export default function HelpPage() {
         <details className="rounded-lg border border-border p-4">
           <summary className="cursor-pointer font-semibold">문의는 어디로 하나요?</summary>
           <p className="mt-2 text-sm text-muted">
-            승인 요청, 오류 제보, 기능 건의는 카카오톡 <strong>papawheels</strong>로 보내주세요.
+            승인 요청, 사용량 문의, 오류 제보, 기능 건의는 카카오톡{" "}
+            <a
+              href={OPENCHAT.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent underline"
+            >
+              오픈톡방
+            </a>
+            으로 보내주세요.
           </p>
         </details>
       </section>

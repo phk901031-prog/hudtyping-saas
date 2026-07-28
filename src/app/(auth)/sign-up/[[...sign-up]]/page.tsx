@@ -21,7 +21,7 @@ export default function SignUpPage() {
           <div className="mt-6 grid gap-3">
             <InfoRow title="성명" body="실명 입력이 필요합니다. 관리자가 가입자를 확인하는 기준입니다." />
             <InfoRow title="이메일" body="로그인과 안내 수신에 사용됩니다." />
-            <InfoRow title="승인 요청" body="빠른 승인이 필요하면 카카오톡 papawheels로 연락해주세요." />
+            <InfoRow title="승인 요청" body="빠른 승인이 필요하면 카카오톡 오픈톡방으로 연락해주세요." />
           </div>
 
           <Link

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { auth } from "@/infrastructure/clerk";
 import { WINDOWS_RELEASE } from "@/config/release";
+import { OPENCHAT } from "@/config/community";
 
 const DOWNLOAD_URL = "/download/windows";
 
@@ -148,7 +149,7 @@ export default async function HomePage() {
             <FeatureCard
               label="01"
               title="가입 승인"
-              body="회원가입 후 관리자가 실명과 이메일을 확인합니다. 빠른 승인은 카카오톡 papawheels로 요청할 수 있습니다."
+              body="회원가입 후 관리자가 실명과 이메일을 확인합니다. 빠른 승인은 카카오톡 오픈톡방으로 요청할 수 있습니다."
             />
             <FeatureCard
               label="02"
@@ -208,7 +209,7 @@ export default async function HomePage() {
             </h2>
             <p className="text-[17px] leading-8 text-muted">
               관리자 화면에서 가입 승인, 월 검색 한도, 사용자별 검색 기록, 인기 검색어, 시간대별
-              사용량을 확인할 수 있습니다. 문제 제보와 승인 요청은 카카오톡 papawheels로 모읍니다.
+              사용량을 확인할 수 있습니다. 문제 제보와 승인 요청은 카카오톡 오픈톡방으로 모읍니다.
             </p>
           </div>
 
@@ -230,8 +231,8 @@ export default async function HomePage() {
             />
             <FeatureCard
               label="SUPPORT"
-              title="카카오톡 문의 창구"
-              body="가입 승인, 설치 차단, 오류 제보, 기능 건의는 papawheels 친구 추가 후 메시지로 받습니다."
+              title="카카오톡 오픈톡방"
+              body="가입 승인, 설치 차단, 사용량 문의, 오류 제보, 기능 건의는 오픈톡방에서 모두 받습니다."
             />
           </div>
         </section>
@@ -256,8 +257,12 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="mx-auto grid w-full max-w-6xl gap-5 px-5 py-14 sm:px-8 lg:grid-cols-[0.9fr_1.1fr]">
-          <div id="support" className="rounded-lg border border-border bg-card p-6">
+        <section id="support" className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-8">
+          <OpenChatCard />
+        </section>
+
+        <section className="mx-auto grid w-full max-w-6xl gap-5 px-5 pb-14 sm:px-8 lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="rounded-lg border border-border bg-card p-6">
             <h2 className="font-display text-2xl">운영 안내</h2>
             <div className="mt-5 divide-y divide-border">
               <Notice title="현재 배포 버전" date={`v${WINDOWS_RELEASE.version}`}>
@@ -274,7 +279,16 @@ export default async function HomePage() {
                 반복 검색어는 캐시를 통해 더 빠르게 응답하도록 운영합니다.
               </Notice>
               <Notice title="문의 창구" date="상시">
-                가입 승인, 설치 오류, 기능 건의는 카카오톡 <strong>papawheels</strong> 친구 추가 후 보내주세요.
+                가입 승인, 설치 오류, 사용량 문의, 기능 건의는 카카오톡{" "}
+                <a
+                  href={OPENCHAT.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-bold text-accent underline underline-offset-2 hover:opacity-80"
+                >
+                  오픈톡방
+                </a>
+                에서 받고 있습니다.
               </Notice>
             </div>
           </div>
@@ -528,6 +542,60 @@ function FlowRow({
         <p className="mt-1 text-sm leading-6 text-white/68">{body}</p>
       </div>
     </article>
+  );
+}
+
+function OpenChatCard() {
+  return (
+    <div className="grid gap-6 rounded-xl border border-border bg-card p-6 sm:p-8 md:grid-cols-[1fr_auto] md:items-center">
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="rounded-full bg-accent/12 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-accent">
+            문의 창구
+          </span>
+          <span className="text-xs font-medium text-muted">상시 응답</span>
+        </div>
+        <h2 className="font-display text-2xl leading-snug [word-break:keep-all] sm:text-3xl">
+          문의는 카카오톡 오픈톡방으로 받고 있습니다.
+        </h2>
+        <p className="text-[15px] leading-7 text-muted [word-break:keep-all]">
+          사용량 문의, 가입 승인, 설치 오류, 기능 건의 등 모든 커뮤니케이션은
+          오픈톡방 한 곳에서 확인합니다. 참여하시면 새 버전 공지와 팁도 함께 받아보실 수 있습니다.
+        </p>
+        <div className="flex flex-wrap gap-3">
+          <a
+            href={OPENCHAT.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-signal px-5 py-3 text-sm font-bold text-white shadow-[0_18px_36px_rgba(240,95,50,0.28)] transition hover:brightness-110"
+          >
+            오픈톡방 열기
+            <span aria-hidden="true">→</span>
+          </a>
+          <a
+            href={OPENCHAT.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center break-all rounded-lg border border-border bg-panel px-4 py-3 font-mono text-xs font-medium text-muted transition hover:text-foreground sm:text-sm"
+          >
+            open.kakao.com/o/skntmeGi
+          </a>
+        </div>
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <div className="rounded-xl border border-border bg-background p-3 shadow-sm">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={OPENCHAT.qrSrc}
+            alt="카카오톡 오픈톡방 QR 코드"
+            width={168}
+            height={168}
+            className="block h-[168px] w-[168px]"
+          />
+        </div>
+        <p className="text-[11px] font-medium text-muted">QR 스캔으로 바로 입장</p>
+      </div>
+    </div>
   );
 }
 

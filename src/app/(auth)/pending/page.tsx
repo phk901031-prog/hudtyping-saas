@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LogoutButton } from "@/components/logout-button";
 import { getOrCreateCurrentUser } from "@/features/users/service";
+import { OPENCHAT } from "@/config/community";
 
 export default async function PendingPage() {
   const user = await getOrCreateCurrentUser();
@@ -34,8 +35,16 @@ export default async function PendingPage() {
         <h1 className="mt-3 font-display text-3xl">가입 요청이 접수됐습니다</h1>
         <p className="mt-4 leading-7 text-muted">
           관리자가 성명과 가입 정보를 확인한 뒤 사용 권한을 열어드립니다.
-          빠른 승인이 필요하면 카카오톡 <strong>papawheels</strong>로 가입 이메일과
-          성명을 보내주세요.
+          빠른 승인이 필요하면 카카오톡{" "}
+          <a
+            href={OPENCHAT.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-bold text-accent underline"
+          >
+            오픈톡방
+          </a>
+          에 가입 이메일과 성명을 남겨주세요.
         </p>
 
         <div className="mt-6 grid gap-3 text-left sm:grid-cols-2">
@@ -45,7 +54,14 @@ export default async function PendingPage() {
           </div>
           <div className="rounded-lg border border-border bg-muted-bg/55 p-4">
             <p className="text-sm font-bold">문의 채널</p>
-            <p className="mt-1 text-sm text-muted">카카오톡 papawheels</p>
+            <a
+              href={OPENCHAT.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-1 block text-sm text-accent underline underline-offset-2 hover:opacity-80"
+            >
+              카카오톡 오픈톡방 →
+            </a>
           </div>
         </div>
 

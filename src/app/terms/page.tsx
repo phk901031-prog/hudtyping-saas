@@ -3,6 +3,7 @@
 
 import Link from "next/link";
 import type { Metadata } from "next";
+import { OPENCHAT } from "@/config/community";
 
 export const metadata: Metadata = {
   title: "이용약관 — hudtyping",
@@ -98,8 +99,16 @@ export default function TermsPage() {
         <section>
           <h2 className="font-display text-xl mb-3">7. 문의</h2>
           <p>
-            문의는 카카오톡 <strong>papawheels</strong> 친구 추가 후 메시지
-            주세요.
+            문의는 카카오톡{" "}
+            <a
+              href={OPENCHAT.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-bold text-accent underline"
+            >
+              오픈톡방
+            </a>
+            에 남겨주세요.
           </p>
         </section>
       </div>

@@ -6,6 +6,7 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
+import { OPENCHAT } from "@/config/community";
 
 export default function ErrorPage({
   error,
@@ -28,7 +29,15 @@ export default function ErrorPage({
       </h1>
       <p className="text-muted leading-relaxed max-w-md">
         잠시 후 다시 시도해주세요. 같은 문제가 반복되면 카카오톡{" "}
-        <strong>papawheels</strong>로 알려주세요.
+        <a
+          href={OPENCHAT.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-bold text-accent underline"
+        >
+          오픈톡방
+        </a>
+        에 알려주세요.
       </p>
       {error.digest && (
         <code className="text-xs text-muted bg-muted-bg px-3 py-1 rounded">

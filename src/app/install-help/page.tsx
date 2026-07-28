@@ -4,6 +4,7 @@
 
 import Link from "next/link";
 import type { Metadata } from "next";
+import { OPENCHAT } from "@/config/community";
 
 export const metadata: Metadata = {
   title: "설치 도움말 — hudtyping",
@@ -93,8 +94,16 @@ export default function InstallHelpPage() {
               요청
             </li>
             <li>
-              그래도 안 되면 카카오톡 <strong>papawheels</strong>로 친구 추가 후
-              알려주세요. 안랩 등 백신사에 진단 오류 신고하고 며칠 안에
+              그래도 안 되면 카카오톡{" "}
+              <a
+                href={OPENCHAT.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold text-accent underline"
+              >
+                오픈톡방
+              </a>
+              에 알려주세요. 안랩 등 백신사에 진단 오류 신고하고 며칠 안에
               해제되도록 처리해 드릴게요.
             </li>
           </ul>
