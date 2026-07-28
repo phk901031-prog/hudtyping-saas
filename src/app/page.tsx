@@ -134,6 +134,10 @@ export default async function HomePage() {
           </div>
         </section>
 
+        <section id="support" className="mx-auto w-full max-w-6xl px-5 pt-12 pb-6 sm:px-8">
+          <OpenChatCard />
+        </section>
+
         <section className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-14 sm:px-8 lg:grid-cols-[0.72fr_1.28fr]">
           <div className="flex flex-col gap-3">
             <p className="text-sm font-bold text-accent">계정 연결 방식</p>
@@ -257,11 +261,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section id="support" className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-8">
-          <OpenChatCard />
-        </section>
-
-        <section className="mx-auto grid w-full max-w-6xl gap-5 px-5 pb-14 sm:px-8 lg:grid-cols-[0.9fr_1.1fr]">
+        <section className="mx-auto grid w-full max-w-6xl gap-5 px-5 py-14 sm:px-8 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="rounded-lg border border-border bg-card p-6">
             <h2 className="font-display text-2xl">운영 안내</h2>
             <div className="mt-5 divide-y divide-border">
