@@ -147,6 +147,11 @@ export default async function AdminUsersPage({
                           </span>
                           <StatusBadge status={user.status} />
                           {user.role === "admin" && <RoleBadge />}
+                          <UnlimitedBadge
+                            role={user.role}
+                            unlimitedUntil={user.unlimitedUntil}
+                            unlimitedPermanent={user.unlimitedPermanent}
+                          />
                         </span>
                         <span className="truncate text-sm text-zinc-500">
                           {user.email}
@@ -202,6 +207,8 @@ export default async function AdminUsersPage({
                       currentStatus={user.status}
                       currentRole={user.role}
                       currentMonthlyLimit={user.monthlyLimit}
+                      currentUnlimitedUntil={user.unlimitedUntil}
+                      currentUnlimitedPermanent={user.unlimitedPermanent}
                       isSelf={user.clerkId === me.clerkId}
                     />
                   </div>
@@ -235,6 +242,45 @@ function MetricCard({
       {hint && <p className="mt-1 text-xs text-zinc-500">{hint}</p>}
     </div>
   );
+}
+
+function UnlimitedBadge({
+  role,
+  unlimitedUntil,
+  unlimitedPermanent,
+}: {
+  role: "user" | "admin";
+  unlimitedUntil: Date | null;
+  unlimitedPermanent: boolean;
+}) {
+  // admin은 이미 무제한이라 배지 중복 필요 없음
+  if (role === "admin") return null;
+
+  if (unlimitedPermanent) {
+    return (
+      <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300">
+        무제한
+      </span>
+    );
+  }
+  if (unlimitedUntil && unlimitedUntil.getTime() > Date.now()) {
+    return (
+      <span
+        className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300"
+        title={`${unlimitedUntil.toLocaleString("ko-KR")} 만료`}
+      >
+        무제한 · {formatShortDate(unlimitedUntil)}까지
+      </span>
+    );
+  }
+  return null;
+}
+
+function formatShortDate(d: Date): string {
+  return d.toLocaleDateString("ko-KR", {
+    month: "2-digit",
+    day: "2-digit",
+  });
 }
 
 function StatusBadge({ status }: { status: UserStatus }) {

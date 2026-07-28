@@ -55,6 +55,14 @@ export const users = pgTable("users", {
   // - admin은 role='admin'으로 한도 체크 자체를 스킵 (이 컬럼 값과 무관하게 무제한).
   monthlyLimit: integer("monthly_limit").notNull().default(500),
 
+  // 기간제 무제한 만료 시각(UTC). NULL이면 부여 안 됨. 이 시각 이전에는 monthly_limit
+  // 을 무시하고 무제한 검색 허용. 만료되면 자동으로 원래 한도로 복귀 — 별도 크론 불필요.
+  unlimitedUntil: timestamp("unlimited_until", { withTimezone: true }),
+
+  // 영구 무제한 플래그. true 면 unlimited_until 값과 무관하게 항상 무제한.
+  // admin 이 아닌 VIP 사용자에게 "기간 없이" 무제한을 부여할 때 사용.
+  unlimitedPermanent: boolean("unlimited_permanent").notNull().default(false),
+
   // 생성/수정 시각 — 'with timezone'으로 UTC 기준 저장.
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()

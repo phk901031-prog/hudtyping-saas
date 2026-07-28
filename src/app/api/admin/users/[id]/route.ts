@@ -10,6 +10,7 @@ import {
   updateUserMonthlyLimit,
   updateUserRole,
   updateUserStatus,
+  updateUserUnlimited,
 } from "@/features/admin/users";
 import type { UserRole, UserStatus } from "@/infrastructure/db/schema";
 import { checkRateLimit } from "@/features/security/rate-limit";
@@ -53,6 +54,10 @@ export async function PATCH(
     status?: string;
     role?: string;
     monthlyLimit?: number;
+    unlimited?:
+      | { mode: "until"; until: string }
+      | { mode: "permanent" }
+      | { mode: "clear" };
   };
 
   // 자기 자신 admin 해제는 차단 (lock-out 방지)
@@ -94,9 +99,36 @@ export async function PATCH(
       );
     }
     updated = await updateUserMonthlyLimit(targetClerkId, body.monthlyLimit);
+  } else if (body.unlimited !== undefined) {
+    const grant = body.unlimited;
+    if (grant.mode === "until") {
+      const parsed = new Date(grant.until);
+      if (Number.isNaN(parsed.getTime())) {
+        return Response.json(
+          { error: "unlimited.until 이 유효한 날짜가 아니에요." },
+          { status: 400 }
+        );
+      }
+      if (parsed.getTime() <= Date.now()) {
+        return Response.json(
+          { error: "만료 시각은 현재보다 미래여야 해요." },
+          { status: 400 }
+        );
+      }
+      updated = await updateUserUnlimited(targetClerkId, { until: parsed });
+    } else if (grant.mode === "permanent") {
+      updated = await updateUserUnlimited(targetClerkId, { permanent: true });
+    } else if (grant.mode === "clear") {
+      updated = await updateUserUnlimited(targetClerkId, { clear: true });
+    } else {
+      return Response.json(
+        { error: "unlimited.mode 는 until/permanent/clear 중 하나여야 해요." },
+        { status: 400 }
+      );
+    }
   } else {
     return Response.json(
-      { error: "status, role, monthlyLimit 중 하나는 필요해요." },
+      { error: "status, role, monthlyLimit, unlimited 중 하나는 필요해요." },
       { status: 400 }
     );
   }

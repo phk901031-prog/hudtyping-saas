@@ -184,6 +184,61 @@ export async function updateUserMonthlyLimit(
   return updated ?? null;
 }
 
+// ──────────────────────────────────────────────────────────────────────
+// 무제한 부여/해제
+// ──────────────────────────────────────────────────────────────────────
+/**
+ * 회원에게 무제한 검색을 부여하거나 해제.
+ *
+ * 세 가지 모드:
+ *   - { until: Date }    — 특정 시각까지 (캘린더/N일 UI 공통 저장 방식)
+ *   - { permanent: true }— 기간 없이 영구 무제한
+ *   - { clear: true }    — 부여 해제, 원래 monthlyLimit 로 복귀
+ *
+ * 세 값은 서로 배타적 — permanent 를 켜면 until 은 NULL 로, until 을 켜면 permanent 는 false 로.
+ */
+export type UnlimitedGrant =
+  | { until: Date }
+  | { permanent: true }
+  | { clear: true };
+
+export async function updateUserUnlimited(
+  clerkId: string,
+  grant: UnlimitedGrant
+): Promise<User | null> {
+  let patch: {
+    unlimitedUntil: Date | null;
+    unlimitedPermanent: boolean;
+    updatedAt: Date;
+  };
+  if ("clear" in grant) {
+    patch = {
+      unlimitedUntil: null,
+      unlimitedPermanent: false,
+      updatedAt: new Date(),
+    };
+  } else if ("permanent" in grant) {
+    patch = {
+      unlimitedUntil: null,
+      unlimitedPermanent: true,
+      updatedAt: new Date(),
+    };
+  } else {
+    patch = {
+      unlimitedUntil: grant.until,
+      unlimitedPermanent: false,
+      updatedAt: new Date(),
+    };
+  }
+
+  const [updated] = await db
+    .update(users)
+    .set(patch)
+    .where(eq(users.clerkId, clerkId))
+    .returning();
+  return updated ?? null;
+}
+
 // ──────────────────────────────────────────────────────────────────
 // 사용자 상세 조회 (관리자가 "누가 뭘 검색했는지" 보는 화면용)
 // ──────────────────────────────────────────────────────────────────

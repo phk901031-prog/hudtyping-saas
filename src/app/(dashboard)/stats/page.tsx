@@ -59,7 +59,15 @@ export default async function StatsPage() {
         <div className="flex items-baseline justify-between gap-3">
           <span className="text-sm font-semibold">이번 달 사용량</span>
           {quota.unlimited ? (
-            <span className="text-xs text-accent">무제한 (관리자)</span>
+            <span className="text-xs text-accent">
+              {quota.unlimitedReason === "admin"
+                ? "무제한 (관리자)"
+                : quota.unlimitedReason === "permanent"
+                  ? "무제한 (기간 없음)"
+                  : quota.unlimitedUntil
+                    ? `무제한 · ${new Date(quota.unlimitedUntil).toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" })}까지`
+                    : "무제한"}
+            </span>
           ) : (
             <span className="text-xs text-zinc-500">
               리셋 {quota.resetAt.slice(0, 10)}

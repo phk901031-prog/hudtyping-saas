@@ -19,14 +19,20 @@ import { db } from "@/infrastructure/db";
 import { redis } from "@/infrastructure/redis";
 import { searchLogs, type User } from "@/infrastructure/db/schema";
 
+export type UnlimitedReason = "admin" | "permanent" | "timed";
+
 export interface QuotaInfo {
   /** 이번 달(UTC 기준) 검색 횟수 */
   usage: number;
   /** 월 한도 */
   limit: number;
-  /** 무제한 여부 (admin) */
+  /** 무제한 여부 (admin · 영구 무제한 · 기간제 무제한 중 하나) */
   unlimited: boolean;
-  /** 다음 리셋 시각 ISO 8601 */
+  /** 무제한 사유 — 클라이언트가 배지 표시할 때 참고 */
+  unlimitedReason?: UnlimitedReason;
+  /** 기간제 무제한일 경우 만료 시각 ISO 8601 */
+  unlimitedUntil?: string;
+  /** 다음 리셋 시각 ISO 8601 (월 한도 기준) */
   resetAt: string;
 }
 
@@ -70,6 +76,28 @@ export async function getQuota(user: User): Promise<QuotaInfo> {
       usage: 0,
       limit: user.monthlyLimit,
       unlimited: true,
+      unlimitedReason: "admin",
+      resetAt,
+    };
+  }
+
+  if (user.unlimitedPermanent) {
+    return {
+      usage: 0,
+      limit: user.monthlyLimit,
+      unlimited: true,
+      unlimitedReason: "permanent",
+      resetAt,
+    };
+  }
+
+  if (user.unlimitedUntil && user.unlimitedUntil.getTime() > Date.now()) {
+    return {
+      usage: 0,
+      limit: user.monthlyLimit,
+      unlimited: true,
+      unlimitedReason: "timed",
+      unlimitedUntil: user.unlimitedUntil.toISOString(),
       resetAt,
     };
   }
