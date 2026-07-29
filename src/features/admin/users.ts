@@ -4,6 +4,7 @@
 
 import { eq, desc, sql, gte, and, inArray } from "drizzle-orm";
 import { db } from "@/infrastructure/db";
+import { clerkClient } from "@/infrastructure/clerk";
 import {
   users,
   searchLogs,
@@ -201,6 +202,54 @@ export type UnlimitedGrant =
   | { until: Date }
   | { permanent: true }
   | { clear: true };
+
+// ──────────────────────────────────────────────────────────────────────
+// 하드 딜리트 (완전 탈퇴 처리)
+//
+// 순서: Clerk 계정 삭제 → Neon users row 삭제
+//   - Clerk 삭제 실패면 abort (Neon 은 손대지 않음 — 롤백 안전).
+//   - Clerk 성공 후 Neon 이 실패하는 극단 케이스에선 orphan row 가 남지만,
+//     Clerk 이 없으므로 그 사용자는 다시 로그인 못 함. 로그로 남겨 수동 정리.
+//   - Neon FK CASCADE 로 search_logs · api_keys · desktop_tokens ·
+//     desktop_connection_codes 자동 삭제. operator_dictionary_entries.created_by
+//     는 SET NULL 이라 운영자 사전 항목은 유지 (익명 처리).
+//
+// 결과 코드:
+//   - "deleted": 정상 완료
+//   - "not-found": 이미 없음 (idempotent 성공)
+//   - "clerk-failed": Clerk 삭제 실패 (Neon 은 그대로)
+// ──────────────────────────────────────────────────────────────────────
+export type HardDeleteResult =
+  | { status: "deleted" }
+  | { status: "not-found" }
+  | { status: "clerk-failed"; message: string };
+
+export async function deleteUserHard(clerkId: string): Promise<HardDeleteResult> {
+  // Clerk 계정 삭제 (없으면 404 → not-found 로 처리)
+  try {
+    const clerk = await clerkClient();
+    await clerk.users.deleteUser(clerkId);
+  } catch (err) {
+    const status = (err as { status?: number })?.status;
+    if (status !== 404) {
+      console.error("[admin/users/hard-delete] Clerk 삭제 실패:", err);
+      const message =
+        err instanceof Error ? err.message : "Clerk 계정 삭제 실패";
+      return { status: "clerk-failed", message };
+    }
+    // 404 → Clerk 에 이미 없음. 계속 진행해 Neon 정리.
+  }
+
+  const deleted = await db
+    .delete(users)
+    .where(eq(users.clerkId, clerkId))
+    .returning({ clerkId: users.clerkId });
+
+  if (deleted.length === 0) {
+    return { status: "not-found" };
+  }
+  return { status: "deleted" };
+}
 
 export async function updateUserUnlimited(
   clerkId: string,

@@ -18,7 +18,9 @@ interface Props {
   currentMonthlyLimit: number;
   currentUnlimitedUntil: Date | null;
   currentUnlimitedPermanent: boolean;
-  isSelf: boolean; // 본인이면 admin 해제 버튼 비활성화 (lock-out 방지)
+  /** 탈퇴 확인 시 입력 대조용 표시 이름 (실명 우선, 없으면 이메일) */
+  displayName: string;
+  isSelf: boolean; // 본인이면 admin 해제 · 탈퇴 버튼 비활성화 (lock-out 방지)
 }
 
 export function UserActionButtons({
@@ -28,6 +30,7 @@ export function UserActionButtons({
   currentMonthlyLimit,
   currentUnlimitedUntil,
   currentUnlimitedPermanent,
+  displayName,
   isSelf,
 }: Props) {
   const router = useRouter();
@@ -46,6 +49,36 @@ export function UserActionButtons({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         }
+      );
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? `요청 실패 (${res.status})`);
+      }
+      router.refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "알 수 없는 오류");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function hardDelete() {
+    // 이중 확인 — 실명 그대로 입력해야 진행
+    const typed = prompt(
+      `이 사용자를 완전 탈퇴 처리할까요?\n\n- Clerk 계정 삭제\n- 검색 기록·API 키·데스크톱 토큰 전부 삭제 (복구 불가)\n\n계속하려면 아래에 사용자 이름을 그대로 입력해주세요:\n\n"${displayName}"`
+    );
+    if (typed === null) return;
+    if (typed.trim() !== displayName.trim()) {
+      alert("입력한 이름이 표시 이름과 일치하지 않아요. 취소합니다.");
+      return;
+    }
+
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await fetch(
+        `/api/admin/users/${encodeURIComponent(clerkId)}`,
+        { method: "DELETE" }
       );
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -164,6 +197,20 @@ export function UserActionButtons({
             {hasUnlimitedGrant ? "무제한 변경" : "무제한 부여"}
           </button>
         )}
+        {/* 완전 탈퇴 — 본인 제외. 실명 입력 이중 확인. */}
+        <button
+          type="button"
+          disabled={busy || isSelf}
+          title={
+            isSelf
+              ? "본인 계정은 탈퇴 처리할 수 없어요"
+              : "Clerk 계정 + 검색 기록 · API 키까지 모두 삭제 (되돌릴 수 없음)"
+          }
+          onClick={hardDelete}
+          className="text-xs px-3 py-1 rounded border border-rose-300 text-rose-700 dark:border-rose-800 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/30 disabled:opacity-50 transition"
+        >
+          탈퇴 처리
+        </button>
       </div>
       {error && <span className="text-xs text-red-600">{error}</span>}
       {unlimitedOpen && (

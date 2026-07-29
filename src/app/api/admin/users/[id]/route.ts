@@ -7,6 +7,7 @@
 import { getOrCreateCurrentUser } from "@/features/users/service";
 import { AdminPermissionError, assertAdmin } from "@/features/admin/permissions";
 import {
+  deleteUserHard,
   updateUserMonthlyLimit,
   updateUserRole,
   updateUserStatus,
@@ -141,4 +142,79 @@ export async function PATCH(
   }
 
   return Response.json(updated);
+}
+
+/**
+ * DELETE /api/admin/users/:clerkId
+ * 완전 탈퇴 처리 — Clerk 계정 + Neon row 모두 삭제. CASCADE로 검색 로그·API 키
+ * ·데스크톱 토큰·연결 코드 함께 사라짐. 되돌릴 수 없음.
+ *
+ * 본인 자신은 삭제 불가 (lock-out 방지).
+ */
+export async function DELETE(
+  _req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const me = await getOrCreateCurrentUser();
+  if (!me) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    assertAdmin(me);
+  } catch (err) {
+    if (err instanceof AdminPermissionError) {
+      return Response.json({ error: err.message }, { status: 403 });
+    }
+    throw err;
+  }
+
+  const rateLimit = await checkRateLimit({
+    scope: "admin-write",
+    subject: me.clerkId,
+    limit: 60,
+  });
+  if (!rateLimit.allowed) {
+    return Response.json(
+      {
+        error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요.",
+        code: "RATE_LIMITED",
+      },
+      {
+        status: 429,
+        headers: { "Retry-After": String(rateLimit.retryAfterSeconds) },
+      }
+    );
+  }
+
+  const { id: targetClerkId } = await params;
+
+  if (targetClerkId === me.clerkId) {
+    return Response.json(
+      { error: "본인 계정은 탈퇴 처리할 수 없어요." },
+      { status: 400 }
+    );
+  }
+
+  const result = await deleteUserHard(targetClerkId);
+
+  if (result.status === "clerk-failed") {
+    return Response.json(
+      {
+        error:
+          "Clerk 계정 삭제에 실패했어요. Neon 은 그대로 유지됐습니다. 잠시 후 다시 시도해주세요.",
+        detail: result.message,
+      },
+      { status: 502 }
+    );
+  }
+
+  if (result.status === "not-found") {
+    return Response.json(
+      { error: "사용자를 찾을 수 없어요." },
+      { status: 404 }
+    );
+  }
+
+  return Response.json({ deleted: true });
 }

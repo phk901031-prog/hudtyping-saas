@@ -209,6 +209,7 @@ export default async function AdminUsersPage({
                       currentMonthlyLimit={user.monthlyLimit}
                       currentUnlimitedUntil={user.unlimitedUntil}
                       currentUnlimitedPermanent={user.unlimitedPermanent}
+                      displayName={displayName(user)}
                       isSelf={user.clerkId === me.clerkId}
                     />
                   </div>
