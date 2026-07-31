@@ -10,7 +10,9 @@ import type {
 
 const URIMALSAEM_SEARCH_URL = "https://opendict.korean.go.kr/api/search";
 const URIMALSAEM_VIEW_URL = "https://opendict.korean.go.kr/api/view";
-const REQUEST_TIMEOUTS_MS = [2500, 3500] as const;
+// 3회 재시도. 짧은 첫 시도 → 중간 → 마지막은 넉넉히.
+// 총합 ≤ 11s (HUD fetch abort 12s 안쪽으로 유지).
+const REQUEST_TIMEOUTS_MS = [2500, 3500, 5000] as const;
 
 interface RawSearchResponse {
   channel?: {
