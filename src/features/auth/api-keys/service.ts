@@ -5,6 +5,7 @@
 
 import { eq, and, desc } from "drizzle-orm";
 import { db } from "@/infrastructure/db";
+import { redis } from "@/infrastructure/redis";
 import {
   apiKeys,
   desktopTokens,
@@ -13,6 +14,14 @@ import {
 } from "@/infrastructure/db/schema";
 import { generateApiKey, hashToken } from "./token";
 import { isOfficialBinary } from "@/features/security/binary-verification";
+
+// Auth 결과 캐시 — 매 검색마다 Neon 2회 병렬 쿼리(≈60-100ms)를 Redis 1회(≈20-30ms)로 단축.
+// TTL 60초: 관리자가 status/role/한도 등을 바꿔도 최대 60초 안에 반영. 하드 딜리트도
+// 같은 창 안에서 grace 됨(허용 위험 낮음 — 토큰은 CASCADE 로 이미 사라진 상태).
+const AUTH_CACHE_TTL_SECONDS = 60;
+function authCacheKey(hash: string): string {
+  return `authv1:${hash}`;
+}
 
 /** 사용자가 이미 키를 가진 상태에서 새 발급 시도 시 throw */
 export class ApiKeyAlreadyExistsError extends Error {
@@ -121,6 +130,16 @@ export async function verifyApiKeyFromHeader(
   //
   // TODO(v0.3.0): asar hash 기반 검증 + strict 복원
   const hash = await hashToken(plain);
+  const cacheKey = authCacheKey(hash);
+
+  // Redis 캐시 hit — 즉시 반환 (Neon 왕복 회피)
+  //   staleness 60초 허용 (관리자 액션이 있으면 그 시간만 뒤늦게 반영).
+  const cached = await redis.get<User>(cacheKey).catch(() => null);
+  if (cached) {
+    if (cached.status !== "approved") return null;
+    return cached;
+  }
+
   const binaryCheck = clientHash
     ? isOfficialBinary(clientHash)
     : Promise.resolve(false);
@@ -155,6 +174,11 @@ export async function verifyApiKeyFromHeader(
     const { apiKey, user } = apiKeyRows[0];
     if (user.status !== "approved") return null;
 
+    // 다음 요청부터 Neon 왕복 회피
+    void redis
+      .set(cacheKey, user, { ex: AUTH_CACHE_TTL_SECONDS })
+      .catch((err) => console.error("[auth-cache] set 실패:", err));
+
     void db
       .update(apiKeys)
       .set({ lastUsedAt: new Date() })
@@ -169,6 +193,10 @@ export async function verifyApiKeyFromHeader(
   if (desktopTokenRows.length === 0) return null;
   const { token, user } = desktopTokenRows[0];
   if (user.status !== "approved") return null;
+
+  void redis
+    .set(cacheKey, user, { ex: AUTH_CACHE_TTL_SECONDS })
+    .catch((err) => console.error("[auth-cache] set 실패:", err));
 
   void db
     .update(desktopTokens)
