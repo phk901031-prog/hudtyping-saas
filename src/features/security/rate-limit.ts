@@ -15,6 +15,7 @@ export async function checkRateLimit(input: {
   scope:
     | "search"
     | "word-detail"
+    | "log"
     | "connection-create"
     | "connection-activate"
     | "binary-verify"
