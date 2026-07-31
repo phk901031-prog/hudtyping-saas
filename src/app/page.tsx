@@ -74,28 +74,34 @@ export default async function HomePage() {
           <div className="hero-motion absolute inset-0" />
           <div className="circuit-layer absolute inset-0" />
 
-          <div className="relative mx-auto grid w-full max-w-6xl gap-10 px-5 pb-16 pt-12 sm:px-8 lg:min-h-[600px] lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:pt-14">
-            <div className="flex flex-col justify-center gap-6">
-              <div className="flex flex-wrap gap-2">
-                <StatusPill tone="green">서비스 운영 중</StatusPill>
-                <StatusPill tone="dark">Windows v{WINDOWS_RELEASE.version}</StatusPill>
+          <div className="relative mx-auto grid w-full max-w-6xl gap-12 px-5 pb-20 pt-16 sm:px-8 lg:min-h-[640px] lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:pt-20">
+            <div className="flex flex-col justify-center gap-7">
+              <div className="flex flex-wrap items-center gap-2 text-xs">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 font-bold text-emerald-100">
+                  <span className="status-led" />
+                  서비스 운영 중
+                </span>
+                <span className="text-white/45">·</span>
+                <span className="font-mono text-white/70">
+                  Windows v{WINDOWS_RELEASE.version}
+                </span>
               </div>
 
-              <h1 className="font-display text-4xl leading-[1.15] [word-break:keep-all] sm:text-5xl lg:text-[3.4rem]">
-                한글 문서에서 벗어나지 않고
+              <h1 className="font-display text-4xl font-bold leading-[1.1] tracking-tight [word-break:keep-all] sm:text-5xl lg:text-[3.75rem]">
+                한글 문서에서 벗어나지 않고,
                 <br />
                 <span className="text-[#a8fff4]">커서 앞 단어</span>를 바로 검색.
               </h1>
 
-              <p className="max-w-xl text-lg leading-8 text-white/78 [word-break:keep-all]">
-                Alt+Tab, 브라우저 검색, 복사·붙여넣기 없이 지정 키만 누르면
-                우리말샘 결과가 작은 HUD로 뜹니다.
+              <p className="max-w-xl text-lg leading-8 text-white/76 [word-break:keep-all]">
+                Alt+Tab, 브라우저 검색, 복사·붙여넣기 없이 지정 키 한 번이면
+                우리말샘 결과가 작은 HUD 창에 뜹니다.
               </p>
 
               <div className="flex flex-col gap-3 sm:flex-row">
                 <a
                   href={DOWNLOAD_URL}
-                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-signal px-6 py-3.5 text-base font-bold text-white shadow-[0_20px_48px_rgba(240,95,50,0.34)] transition hover:brightness-110"
+                  className="inline-flex items-center justify-center gap-2 rounded-md bg-signal px-7 py-4 text-base font-bold text-white transition hover:brightness-110"
                 >
                   Windows 앱 다운로드
                   <span aria-hidden="true">↓</span>
@@ -103,7 +109,7 @@ export default async function HomePage() {
                 {!isSignedIn && (
                   <Link
                     href="/sign-up"
-                    className="inline-flex items-center justify-center rounded-lg border border-white/20 bg-white/10 px-6 py-3.5 text-base font-bold text-white transition hover:bg-white/16"
+                    className="inline-flex items-center justify-center rounded-md border border-white/25 bg-white/8 px-7 py-4 text-base font-bold text-white transition hover:bg-white/14"
                   >
                     가입 승인 요청
                   </Link>
@@ -111,15 +117,15 @@ export default async function HomePage() {
                 {isSignedIn && (
                   <Link
                     href="/api-keys"
-                    className="inline-flex items-center justify-center rounded-lg border border-white/20 bg-white/10 px-6 py-3.5 text-base font-bold text-white transition hover:bg-white/16"
+                    className="inline-flex items-center justify-center rounded-md border border-white/25 bg-white/8 px-7 py-4 text-base font-bold text-white transition hover:bg-white/14"
                   >
                     연결 코드 발급
                   </Link>
                 )}
               </div>
 
-              <p className="text-sm text-white/56">
-                승인 계정 전용 · v{WINDOWS_RELEASE.minimumFreshInstallVersion} 미만은 새 설치 필요
+              <p className="text-sm text-white/50">
+                승인 계정 전용 · v{WINDOWS_RELEASE.minimumFreshInstallVersion} 미만 앱은 새 설치 필요
               </p>
             </div>
 
@@ -128,20 +134,20 @@ export default async function HomePage() {
         </section>
 
         {/* ─────────────  2. GETTING STARTED  ───────────── */}
-        <section id="start" className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8">
-          <div className="flex flex-col items-center gap-3 text-center">
-            <p className="text-sm font-bold uppercase tracking-[0.14em] text-accent">
-              Start
+        <section id="start" className="mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 lg:py-28">
+          <div className="flex flex-col items-center gap-4 text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent">
+              Get started
             </p>
-            <h2 className="font-display text-3xl sm:text-4xl">
+            <h2 className="font-display text-4xl leading-tight sm:text-5xl">
               3단계로 시작합니다
             </h2>
-            <p className="max-w-2xl text-base leading-7 text-muted">
+            <p className="max-w-2xl text-lg leading-8 text-muted">
               가입 승인부터 앱 연결까지 이 순서만 따라오면 됩니다.
             </p>
           </div>
 
-          <div className="mt-10 grid gap-4 md:grid-cols-3">
+          <div className="mt-14 grid gap-6 md:grid-cols-3">
             <StartStepCard
               number="01"
               title="가입 승인"
@@ -172,17 +178,21 @@ export default async function HomePage() {
 
         {/* ─────────────  3. HOW IT WORKS  ───────────── */}
         <section className="border-y border-border bg-ink text-white">
-          <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8">
-            <div className="flex flex-col items-center gap-3 text-center">
-              <p className="text-sm font-bold uppercase tracking-[0.14em] text-[#a8fff4]">
+          <div className="mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 lg:py-28">
+            <div className="flex flex-col items-center gap-4 text-center">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#a8fff4]">
                 How it works
               </p>
-              <h2 className="font-display text-3xl sm:text-4xl">
-                한글 문서에서, 지정 키 한 번.
+              <h2 className="font-display text-4xl leading-tight sm:text-5xl">
+                한글 문서에서, 키 한 번.
               </h2>
+              <p className="max-w-2xl text-lg leading-8 text-white/68">
+                편집기와 통신하지 않습니다. 커서 앞 어절을 잡아 검색한 뒤
+                결과만 HUD 창에 표시합니다.
+              </p>
             </div>
 
-            <div className="mt-12 grid gap-4 md:grid-cols-3">
+            <div className="mt-14 grid gap-8 md:grid-cols-3">
               <HowStep
                 index="1"
                 title="커서 두기"
@@ -200,13 +210,15 @@ export default async function HomePage() {
               </HowStep>
               <HowStep
                 index="2"
-                title="지정 키 누르기"
-                caption="F3 · Insert 등 사용자가 지정한 키"
+                title="지정 키 한 번"
+                caption="F3 · Insert · Pause · F4 등 원하는 키를 설정에서 자유롭게 지정"
               >
-                <div className="flex items-center justify-center rounded-lg border border-white/12 bg-white/[0.04] py-6">
-                  <span className="rounded-md border-2 border-white/40 bg-white/10 px-5 py-2 font-mono text-2xl font-bold text-white shadow-[0_4px_0_rgba(255,255,255,0.15)]">
-                    F3
-                  </span>
+                <div className="flex flex-wrap items-center justify-center gap-2 rounded-lg border border-white/12 bg-white/[0.04] py-6">
+                  <KeyCap>F3</KeyCap>
+                  <span className="text-xs text-white/40">or</span>
+                  <KeyCap>Insert</KeyCap>
+                  <span className="text-xs text-white/40">or</span>
+                  <KeyCap dim>내가 정한 키</KeyCap>
                 </div>
               </HowStep>
               <HowStep
@@ -234,17 +246,20 @@ export default async function HomePage() {
         </section>
 
         {/* ─────────────  4. FEATURES  ───────────── */}
-        <section id="features" className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8">
-          <div className="flex flex-col items-center gap-3 text-center">
-            <p className="text-sm font-bold uppercase tracking-[0.14em] text-accent">
+        <section id="features" className="mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 lg:py-28">
+          <div className="flex flex-col items-center gap-4 text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent">
               Features
             </p>
-            <h2 className="font-display text-3xl sm:text-4xl">
+            <h2 className="font-display text-4xl leading-tight sm:text-5xl">
               작지만 매일 쓰기 좋은 것들
             </h2>
+            <p className="max-w-2xl text-lg leading-8 text-muted">
+              반복해서 찾는 단어일수록 더 빨라지도록 만들어졌습니다.
+            </p>
           </div>
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             <FeatureCard
               icon="⌘"
               title="커서 앞 자동 검색"
@@ -280,23 +295,23 @@ export default async function HomePage() {
 
         {/* ─────────────  5. COMMUNITY  ───────────── */}
         <section id="support" className="border-y border-border bg-panel">
-          <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8">
+          <div className="mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 lg:py-28">
             <OpenChatCard />
           </div>
         </section>
 
         {/* ─────────────  6. FAQ  ───────────── */}
-        <section className="mx-auto w-full max-w-4xl px-5 py-16 sm:px-8">
-          <div className="flex flex-col items-center gap-3 text-center">
-            <p className="text-sm font-bold uppercase tracking-[0.14em] text-accent">
+        <section className="mx-auto w-full max-w-4xl px-5 py-24 sm:px-8 lg:py-28">
+          <div className="flex flex-col items-center gap-4 text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent">
               FAQ
             </p>
-            <h2 className="font-display text-3xl sm:text-4xl">
+            <h2 className="font-display text-4xl leading-tight sm:text-5xl">
               자주 묻는 질문
             </h2>
           </div>
 
-          <div className="mt-10 flex flex-col gap-3">
+          <div className="mt-14 flex flex-col gap-3">
             <FaqItem question="어떤 편집기에서 되나요?">
               한글(HWP), MS Word, 텍스트 편집기 등 커서가 있는 대부분의 문서 앱에서 동작합니다.
               앱이 특정 편집기와 통신하지 않고 커서 앞 단어를 캡처하는 방식이라 범용적으로 쓸 수 있습니다.
@@ -390,24 +405,45 @@ function StartStepCard({
       ? "bg-signal text-white hover:brightness-110"
       : "bg-foreground text-background hover:opacity-90";
   return (
-    <article className="flex flex-col gap-4 rounded-xl border border-border bg-card p-6">
-      <div className="flex items-baseline justify-between">
-        <span className="font-mono text-3xl font-bold text-accent">
-          {number}
-        </span>
-      </div>
-      <div className="flex flex-col gap-2">
-        <h3 className="font-display text-xl">{title}</h3>
-        <p className="text-sm leading-6 text-muted [word-break:keep-all]">{body}</p>
+    <article className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-8 transition hover:border-accent/40">
+      <span className="font-mono text-4xl font-bold text-accent">
+        {number}
+      </span>
+      <div className="flex flex-col gap-3">
+        <h3 className="font-display text-2xl leading-tight">{title}</h3>
+        <p className="text-[15px] leading-7 text-muted [word-break:keep-all]">
+          {body}
+        </p>
       </div>
       <Link
         href={cta.href}
-        className={`mt-auto inline-flex items-center justify-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-bold transition ${ctaClass}`}
+        className={`mt-auto inline-flex items-center justify-center gap-1.5 rounded-md px-5 py-3 text-sm font-bold transition ${ctaClass}`}
       >
         {cta.label}
         <span aria-hidden="true">→</span>
       </Link>
     </article>
+  );
+}
+
+function KeyCap({
+  children,
+  dim,
+}: {
+  children: React.ReactNode;
+  dim?: boolean;
+}) {
+  return (
+    <span
+      className={
+        "rounded-md border-2 px-4 py-2 font-mono text-base font-bold shadow-[0_3px_0_rgba(255,255,255,0.12)] " +
+        (dim
+          ? "border-white/25 bg-white/[0.06] text-white/60"
+          : "border-white/40 bg-white/10 text-white")
+      }
+    >
+      {children}
+    </span>
   );
 }
 
@@ -446,15 +482,15 @@ function FeatureCard({
   body: string;
 }) {
   return (
-    <article className="flex flex-col gap-3 rounded-xl border border-border bg-card p-6 transition hover:border-accent/40 hover:shadow-[0_12px_28px_rgba(9,111,147,0.08)]">
+    <article className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-8 transition hover:border-accent/40 hover:shadow-[0_20px_40px_rgba(9,23,36,0.06)]">
       <span
         aria-hidden="true"
-        className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-accent-soft text-2xl"
+        className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-accent-soft text-2xl"
       >
         {icon}
       </span>
-      <h3 className="font-display text-lg">{title}</h3>
-      <p className="text-sm leading-6 text-muted [word-break:keep-all]">{body}</p>
+      <h3 className="font-display text-xl leading-tight">{title}</h3>
+      <p className="text-[15px] leading-7 text-muted [word-break:keep-all]">{body}</p>
     </article>
   );
 }
@@ -523,17 +559,17 @@ function FaqItem({
   children: React.ReactNode;
 }) {
   return (
-    <details className="group rounded-xl border border-border bg-card p-5 transition open:shadow-[0_10px_28px_rgba(9,23,36,0.06)]">
-      <summary className="flex cursor-pointer items-center justify-between gap-4 text-base font-bold [&::-webkit-details-marker]:hidden">
+    <details className="group rounded-2xl border border-border bg-card p-6 transition open:shadow-[0_10px_28px_rgba(9,23,36,0.06)]">
+      <summary className="flex cursor-pointer items-center justify-between gap-4 text-lg font-bold [&::-webkit-details-marker]:hidden">
         {question}
         <span
           aria-hidden="true"
-          className="shrink-0 rounded-full border border-border px-2 text-lg leading-none text-muted transition group-open:rotate-45"
+          className="shrink-0 rounded-full border border-border px-2.5 py-0.5 text-xl leading-none text-muted transition group-open:rotate-45"
         >
           +
         </span>
       </summary>
-      <div className="mt-3 text-[15px] leading-7 text-muted [word-break:keep-all]">
+      <div className="mt-4 text-[15px] leading-7 text-muted [word-break:keep-all]">
         {children}
       </div>
     </details>

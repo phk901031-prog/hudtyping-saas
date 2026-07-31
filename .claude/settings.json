@@ -8,7 +8,8 @@
       "Bash(node scripts/generate-openchat-qr.mjs)",
       "Bash(git commit -m ' *)",
       "Bash(node scripts/register-binary.mjs \"C:\\\\\\\\app\\\\\\\\hudtyping\\\\\\\\dist\\\\\\\\win-unpacked\\\\\\\\hudtyping.exe\" 0.2.25 \"센티넬 방식 클립보드 감지 \\(이전 Ctrl+C 내용 오검색 방지\\) + 우리말샘 타임아웃 3회 확장\")",
-      "Bash(node scripts/register-binary.mjs \"C:\\\\\\\\app\\\\\\\\hudtyping\\\\\\\\dist\\\\\\\\win-unpacked\\\\\\\\hudtyping.exe\" 0.2.26 \"HUD disk cache \\(30일 500 LRU\\) + POST /api/log 카운트 통보\")"
+      "Bash(node scripts/register-binary.mjs \"C:\\\\\\\\app\\\\\\\\hudtyping\\\\\\\\dist\\\\\\\\win-unpacked\\\\\\\\hudtyping.exe\" 0.2.26 \"HUD disk cache \\(30일 500 LRU\\) + POST /api/log 카운트 통보\")",
+      "WebFetch(domain:business.classum.com)"
     ]
   }
 }
