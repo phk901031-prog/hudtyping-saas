@@ -1,14 +1,38 @@
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
+import {
+  ArrowRight,
+  BellRing,
+  BookOpen,
+  Command,
+  KeyRound,
+  LineChart,
+  Sparkles,
+  TrendingUp,
+  Zap,
+  type LucideIcon,
+} from "lucide-react";
 import { auth } from "@/infrastructure/clerk";
 import { WINDOWS_RELEASE } from "@/config/release";
 import { OPENCHAT } from "@/config/community";
+import { fetchReleases } from "@/features/updates/releases";
+import { fetchTrendTop } from "@/features/trends/service";
 
 const DOWNLOAD_URL = "/download/windows";
+
+// 홈은 30분 캐시 — releases · trends 데이터도 이 창 안에서 신선.
+export const revalidate = 1800;
 
 export default async function HomePage() {
   const { userId } = await auth();
   const isSignedIn = !!userId;
+
+  // 홈페이지에 살짝 노출할 최신 릴리스 · 이번 주 top 8
+  const [releases, weeklyTrend] = await Promise.all([
+    fetchReleases().catch(() => []),
+    fetchTrendTop({ days: 7, limit: 8 }).catch(() => []),
+  ]);
+  const latestRelease = releases[0] ?? null;
 
   return (
     <div className="flex flex-1 flex-col bg-background text-foreground">
@@ -38,6 +62,18 @@ export default async function HomePage() {
             >
               기능
             </a>
+            <Link
+              href="/updates"
+              className="hidden text-sm font-medium text-muted transition hover:text-foreground sm:inline"
+            >
+              업데이트
+            </Link>
+            <Link
+              href="/trends"
+              className="hidden text-sm font-medium text-muted transition hover:text-foreground sm:inline"
+            >
+              인기 검색어
+            </Link>
             {isSignedIn ? (
               <>
                 <Link
@@ -70,9 +106,12 @@ export default async function HomePage() {
 
       <main className="flex flex-1 flex-col">
         {/* ─────────────  1. HERO  ───────────── */}
-        <section className="hero-slab relative overflow-hidden bg-ink text-white">
-          <div className="hero-motion absolute inset-0" />
-          <div className="circuit-layer absolute inset-0" />
+        <section className="relative overflow-hidden bg-ink text-white">
+          {/* 절제된 그라디언트 하나만 유지 — 회로 애니메이션 등 노이즈 제거 */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-[radial-gradient(120%_80%_at_20%_0%,rgba(56,189,248,0.10),transparent_60%),radial-gradient(90%_60%_at_100%_100%,rgba(240,95,50,0.08),transparent_60%)]"
+          />
 
           <div className="relative mx-auto grid w-full max-w-6xl gap-12 px-5 pb-20 pt-16 sm:px-8 lg:min-h-[640px] lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:pt-20">
             <div className="flex flex-col justify-center gap-7">
@@ -261,32 +300,32 @@ export default async function HomePage() {
 
           <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             <FeatureCard
-              icon="⌘"
+              Icon={Command}
               title="커서 앞 자동 검색"
               body="F3 한 번으로 커서 앞 어절을 잡아 검색. 연속으로 누르면 앞 단어까지 확장."
             />
             <FeatureCard
-              icon="📖"
+              Icon={BookOpen}
               title="뜻풀이별 예문 창"
               body="뜻풀이를 클릭하면 별도 창에 예문. 창 위·아래·좌·우 자유 부착."
             />
             <FeatureCard
-              icon="⚡"
+              Icon={Zap}
               title="즉시 재검색"
               body="한 번 찾은 단어는 앱 안에 저장돼 재검색 시 네트워크 없이 0ms 응답."
             />
             <FeatureCard
-              icon="🔔"
+              Icon={BellRing}
               title="자동 업데이트 알림"
               body="새 버전이 나오면 앱 상단에 배너로 안내. 홈페이지에서 변경 내용 확인."
             />
             <FeatureCard
-              icon="🔐"
+              Icon={KeyRound}
               title="안전한 계정 연결"
               body="API 키 노출 없이 10분짜리 1회용 연결 코드로 앱 계정 연결."
             />
             <FeatureCard
-              icon="📊"
+              Icon={LineChart}
               title="사용량 대시보드"
               body="내 이번 달 검색 수, 최근 검색어, 자주 찾은 단어를 웹에서 바로 확인."
             />
@@ -297,6 +336,26 @@ export default async function HomePage() {
         <section id="support" className="border-y border-border bg-panel">
           <div className="mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 lg:py-28">
             <OpenChatCard />
+          </div>
+        </section>
+
+        {/* ─────────────  5.5 LIVE — Updates + Trends  ───────────── */}
+        <section className="mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 lg:py-28">
+          <div className="flex flex-col items-center gap-4 text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent">
+              Live
+            </p>
+            <h2 className="font-display text-4xl leading-tight sm:text-5xl">
+              지금 이 순간 벌어지는 일
+            </h2>
+            <p className="max-w-2xl text-lg leading-8 text-muted">
+              최근 업데이트와 사용자들이 자주 찾은 단어를 한눈에 확인합니다.
+            </p>
+          </div>
+
+          <div className="mt-14 grid gap-5 lg:grid-cols-2">
+            <LatestReleaseCard release={latestRelease} />
+            <WeeklyTrendCard rows={weeklyTrend} />
           </div>
         </section>
 
@@ -350,6 +409,8 @@ export default async function HomePage() {
 
           <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm sm:grid-cols-3">
             <FooterLink href={DOWNLOAD_URL}>Windows 다운로드</FooterLink>
+            <FooterLink href="/updates">업데이트 로그</FooterLink>
+            <FooterLink href="/trends">인기 검색어</FooterLink>
             <FooterLink href="/help">사용 가이드</FooterLink>
             <FooterLink href="/install-help">설치 도움말</FooterLink>
             <FooterLink href="/terms">이용약관</FooterLink>
@@ -473,11 +534,11 @@ function HowStep({
 }
 
 function FeatureCard({
-  icon,
+  Icon,
   title,
   body,
 }: {
-  icon: string;
+  Icon: LucideIcon;
   title: string;
   body: string;
 }) {
@@ -485,9 +546,9 @@ function FeatureCard({
     <article className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-8 transition hover:border-accent/40 hover:shadow-[0_20px_40px_rgba(9,23,36,0.06)]">
       <span
         aria-hidden="true"
-        className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-accent-soft text-2xl"
+        className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-accent-soft text-accent"
       >
-        {icon}
+        <Icon size={22} strokeWidth={2} />
       </span>
       <h3 className="font-display text-xl leading-tight">{title}</h3>
       <p className="text-[15px] leading-7 text-muted [word-break:keep-all]">{body}</p>
@@ -549,6 +610,137 @@ function OpenChatCard() {
       </div>
     </div>
   );
+}
+
+function LatestReleaseCard({
+  release,
+}: {
+  release: Awaited<ReturnType<typeof fetchReleases>>[number] | null;
+}) {
+  return (
+    <article className="flex flex-col rounded-2xl border border-border bg-card p-8">
+      <div className="mb-4 flex items-center gap-2">
+        <span
+          aria-hidden="true"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-accent-soft text-accent"
+        >
+          <Sparkles size={16} strokeWidth={2.2} />
+        </span>
+        <span className="text-xs font-bold uppercase tracking-[0.14em] text-accent">
+          Latest release
+        </span>
+      </div>
+      {release ? (
+        <>
+          <h3 className="font-display text-2xl leading-tight">{release.title}</h3>
+          <p className="mt-2 font-mono text-xs text-muted">
+            {formatShortDate(release.publishedAt)} · {release.tag}
+          </p>
+          <p className="mt-4 line-clamp-4 text-[15px] leading-7 text-muted [word-break:keep-all]">
+            {stripMarkdown(release.bodyMarkdown)}
+          </p>
+        </>
+      ) : (
+        <>
+          <h3 className="font-display text-2xl leading-tight">
+            곧 새 소식을 만나보세요
+          </h3>
+          <p className="mt-2 text-[15px] text-muted">
+            아직 표시할 릴리스가 없습니다.
+          </p>
+        </>
+      )}
+      <div className="mt-auto pt-6">
+        <Link
+          href="/updates"
+          className="inline-flex items-center gap-1.5 text-sm font-bold text-accent transition hover:opacity-80"
+        >
+          업데이트 로그 전체 보기
+          <ArrowRight size={14} strokeWidth={2.4} />
+        </Link>
+      </div>
+    </article>
+  );
+}
+
+function WeeklyTrendCard({
+  rows,
+}: {
+  rows: Array<{ query: string; count: number }>;
+}) {
+  return (
+    <article className="flex flex-col rounded-2xl border border-border bg-card p-8">
+      <div className="mb-4 flex items-center gap-2">
+        <span
+          aria-hidden="true"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-accent-soft text-accent"
+        >
+          <TrendingUp size={16} strokeWidth={2.2} />
+        </span>
+        <span className="text-xs font-bold uppercase tracking-[0.14em] text-accent">
+          This week
+        </span>
+      </div>
+      <h3 className="font-display text-2xl leading-tight">이번 주 인기 검색어</h3>
+      <p className="mt-2 font-mono text-xs text-muted">지난 7일 · top 8</p>
+
+      {rows.length === 0 ? (
+        <p className="mt-6 rounded-xl border border-dashed border-border px-4 py-8 text-center text-sm text-muted">
+          아직 집계할 검색 기록이 부족합니다.
+        </p>
+      ) : (
+        <ol className="mt-5 flex flex-col divide-y divide-border">
+          {rows.map((row, i) => (
+            <li
+              key={row.query}
+              className="flex items-baseline gap-3 py-2 text-sm"
+            >
+              <span className="w-5 shrink-0 font-mono text-[11px] font-bold text-muted">
+                {i + 1}
+              </span>
+              <span className="min-w-0 flex-1 truncate font-medium">
+                {row.query}
+              </span>
+              <span className="shrink-0 font-mono text-[11px] text-muted">
+                {row.count.toLocaleString()}회
+              </span>
+            </li>
+          ))}
+        </ol>
+      )}
+
+      <div className="mt-auto pt-6">
+        <Link
+          href="/trends"
+          className="inline-flex items-center gap-1.5 text-sm font-bold text-accent transition hover:opacity-80"
+        >
+          top 30 전체 보기
+          <ArrowRight size={14} strokeWidth={2.4} />
+        </Link>
+      </div>
+    </article>
+  );
+}
+
+/** markdown 에서 헤딩·리스트 마커 제거해 미리보기 텍스트로. */
+function stripMarkdown(md: string): string {
+  return md
+    .replace(/^#+\s*/gm, "")
+    .replace(/^[-*]\s+/gm, "· ")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\r?\n{2,}/g, "\n")
+    .trim();
+}
+
+function formatShortDate(iso: string): string {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleDateString("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
 }
 
 function FaqItem({
