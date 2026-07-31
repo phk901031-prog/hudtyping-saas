@@ -4,6 +4,6 @@
  */
 export const OPENCHAT = {
   name: "카카오톡 오픈톡방",
-  url: "https://open.kakao.com/o/skntmeGi",
+  url: "https://open.kakao.com/o/pmT0WGGi",
   qrSrc: "/openchat-qr.svg",
 } as const;

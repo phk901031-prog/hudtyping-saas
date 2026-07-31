@@ -12,6 +12,7 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-1 flex-col bg-background text-foreground">
+      {/* ─────────────  NAV  ───────────── */}
       <nav className="sticky top-0 z-40 border-b border-border bg-card/90 backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
           <Link href="/" className="group inline-flex items-center gap-3">
@@ -25,12 +26,18 @@ export default async function HomePage() {
           </Link>
 
           <div className="flex items-center gap-2 sm:gap-3">
-            <Link
-              href="/help"
+            <a
+              href="#start"
               className="hidden text-sm font-medium text-muted transition hover:text-foreground sm:inline"
             >
-              사용 가이드
-            </Link>
+              시작하기
+            </a>
+            <a
+              href="#features"
+              className="hidden text-sm font-medium text-muted transition hover:text-foreground sm:inline"
+            >
+              기능
+            </a>
             {isSignedIn ? (
               <>
                 <Link
@@ -62,304 +69,509 @@ export default async function HomePage() {
       </nav>
 
       <main className="flex flex-1 flex-col">
+        {/* ─────────────  1. HERO  ───────────── */}
         <section className="hero-slab relative overflow-hidden bg-ink text-white">
           <div className="hero-motion absolute inset-0" />
           <div className="circuit-layer absolute inset-0" />
 
-          <div className="relative mx-auto grid w-full max-w-6xl gap-10 px-5 pb-16 pt-10 sm:px-8 lg:min-h-[640px] lg:grid-cols-[0.86fr_1.14fr] lg:items-center lg:pb-16 lg:pt-12">
+          <div className="relative mx-auto grid w-full max-w-6xl gap-10 px-5 pb-16 pt-12 sm:px-8 lg:min-h-[600px] lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:pt-14">
             <div className="flex flex-col justify-center gap-6">
               <div className="flex flex-wrap gap-2">
                 <StatusPill tone="green">서비스 운영 중</StatusPill>
                 <StatusPill tone="dark">Windows v{WINDOWS_RELEASE.version}</StatusPill>
-                <StatusPill tone="dark">승인 계정 전용</StatusPill>
               </div>
 
-              <div className="flex max-w-2xl flex-col gap-4">
-                <p className="w-fit rounded-full border border-white/12 bg-white/7 px-3 py-1 text-xs font-bold text-[#a8fff4]">
-                  계정 승인 후 연결 코드로 Windows 앱을 연결합니다
-                </p>
-                <h1 className="font-display text-3xl leading-tight [word-break:keep-all] sm:text-5xl lg:text-[3.25rem]">
-                  한글 문서에서 벗어나지 않고
-                  <br />
-                  커서 앞 단어를 바로 검색합니다.
-                </h1>
-                <p className="max-w-xl text-base leading-7 text-white/78 [word-break:keep-all] sm:text-lg">
-                  HUDTyping은 속기사 업무 중 Alt+Tab, 브라우저 검색, 단어 복사 과정을 줄이기 위한
-                  Windows HUD입니다. 웹에서 승인된 계정으로 연결 코드를 발급하고, 앱에 한 번 입력하면
-                  이후에는 지정 키만 눌러 우리말샘 검색 결과를 확인할 수 있습니다.
-                </p>
-              </div>
+              <h1 className="font-display text-4xl leading-[1.15] [word-break:keep-all] sm:text-5xl lg:text-[3.4rem]">
+                한글 문서에서 벗어나지 않고
+                <br />
+                <span className="text-[#a8fff4]">커서 앞 단어</span>를 바로 검색.
+              </h1>
+
+              <p className="max-w-xl text-lg leading-8 text-white/78 [word-break:keep-all]">
+                Alt+Tab, 브라우저 검색, 복사·붙여넣기 없이 지정 키만 누르면
+                우리말샘 결과가 작은 HUD로 뜹니다.
+              </p>
 
               <div className="flex flex-col gap-3 sm:flex-row">
                 <a
                   href={DOWNLOAD_URL}
-                  className="inline-flex items-center justify-center rounded-lg bg-signal px-6 py-3.5 text-sm font-bold text-white shadow-[0_20px_48px_rgba(240,95,50,0.34)] transition hover:brightness-110"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-signal px-6 py-3.5 text-base font-bold text-white shadow-[0_20px_48px_rgba(240,95,50,0.34)] transition hover:brightness-110"
                 >
                   Windows 앱 다운로드
+                  <span aria-hidden="true">↓</span>
                 </a>
-                <Link
-                  href={isSignedIn ? "/api-keys" : "/sign-in"}
-                  className="inline-flex items-center justify-center rounded-lg border border-white/18 bg-white/8 px-5 py-3.5 text-sm font-bold text-white transition hover:bg-white/14"
-                >
-                  연결 코드 발급
-                </Link>
                 {!isSignedIn && (
                   <Link
                     href="/sign-up"
-                    className="inline-flex items-center justify-center rounded-lg border border-white/18 bg-white/8 px-5 py-3.5 text-sm font-bold text-white transition hover:bg-white/14"
+                    className="inline-flex items-center justify-center rounded-lg border border-white/20 bg-white/10 px-6 py-3.5 text-base font-bold text-white transition hover:bg-white/16"
                   >
                     가입 승인 요청
                   </Link>
                 )}
+                {isSignedIn && (
+                  <Link
+                    href="/api-keys"
+                    className="inline-flex items-center justify-center rounded-lg border border-white/20 bg-white/10 px-6 py-3.5 text-base font-bold text-white transition hover:bg-white/16"
+                  >
+                    연결 코드 발급
+                  </Link>
+                )}
               </div>
 
-              <div className="max-w-xl rounded-lg border border-[#a8fff4]/30 bg-[#a8fff4]/10 px-4 py-3 text-sm leading-6 text-white/82">
-                <strong className="text-[#a8fff4]">업데이트 안내</strong>
-                <span className="mx-2 text-white/35">|</span>
-                뜻풀이 클릭 시 예문을 보여주는 별도 창이 추가된 v{WINDOWS_RELEASE.version}를 권장합니다. 업데이트 적용 후에는 앱 상단 배너를 통해 새 소식을 이 페이지에서 확인하실 수 있습니다. v{WINDOWS_RELEASE.minimumFreshInstallVersion} 미만 앱은 새 설치가 필요합니다.
-              </div>
-
-              <TrustStrip />
+              <p className="text-sm text-white/56">
+                승인 계정 전용 · v{WINDOWS_RELEASE.minimumFreshInstallVersion} 미만은 새 설치 필요
+              </p>
             </div>
 
             <ProductScreen />
           </div>
         </section>
 
-        <section className="relative z-10 border-b border-border bg-background">
-          <div className="mx-auto grid w-full max-w-6xl gap-3 px-5 py-6 sm:px-8 lg:-mt-10 lg:grid-cols-3 lg:py-0">
-            <ProofCard label="AUTH" value="승인 계정 + 1회용 연결 코드" />
-            <ProofCard label="FLOW" value="설치 후 계정 연결, 이후 자동 인증" />
-            <ProofCard label="OPS" value="사용량, 통계, 버전 관리를 웹에서 확인" />
-          </div>
-        </section>
-
-        <section id="support" className="mx-auto w-full max-w-6xl px-5 pt-12 pb-6 sm:px-8">
-          <OpenChatCard />
-        </section>
-
-        <section className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-14 sm:px-8 lg:grid-cols-[0.72fr_1.28fr]">
-          <div className="flex flex-col gap-3">
-            <p className="text-sm font-bold text-accent">계정 연결 방식</p>
-            <h2 className="font-display text-3xl [word-break:keep-all]">
-              API 키를 복사하지 않습니다. 웹에서 발급한 연결 코드만 입력합니다.
+        {/* ─────────────  2. GETTING STARTED  ───────────── */}
+        <section id="start" className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8">
+          <div className="flex flex-col items-center gap-3 text-center">
+            <p className="text-sm font-bold uppercase tracking-[0.14em] text-accent">
+              Start
+            </p>
+            <h2 className="font-display text-3xl sm:text-4xl">
+              3단계로 시작합니다
             </h2>
-            <p className="text-[17px] leading-8 text-muted">
-              사용자는 우리말샘 API 키를 직접 발급하거나 관리하지 않습니다. 관리자가 승인한 계정만
-              프로그램 연결 코드를 만들 수 있고, 코드는 10분 동안 한 번만 사용할 수 있습니다.
+            <p className="max-w-2xl text-base leading-7 text-muted">
+              가입 승인부터 앱 연결까지 이 순서만 따라오면 됩니다.
             </p>
           </div>
-          <div className="grid gap-4 md:grid-cols-3">
-            <FeatureCard
-              label="01"
+
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            <StartStepCard
+              number="01"
               title="가입 승인"
-              body="회원가입 후 관리자가 실명과 이메일을 확인합니다. 빠른 승인은 카카오톡 오픈톡방으로 요청할 수 있습니다."
+              body="이메일과 실명으로 가입하면 관리자가 승인합니다."
+              cta={
+                isSignedIn
+                  ? { label: "대시보드", href: "/dashboard" }
+                  : { label: "가입 승인 요청", href: "/sign-up" }
+              }
             />
-            <FeatureCard
-              label="02"
-              title="연결 코드 발급"
-              body="승인된 계정으로 로그인한 뒤 대시보드의 프로그램 연결에서 10분짜리 1회용 코드를 발급합니다."
+            <StartStepCard
+              number="02"
+              title="Windows 앱 다운로드"
+              body="최신 설치 파일을 받아 실행합니다."
+              cta={{ label: "다운로드", href: DOWNLOAD_URL, tone: "signal" }}
             />
-            <FeatureCard
-              label="03"
-              title="앱에 코드 입력"
-              body="Windows 앱 설정의 계정 연결 칸에 이메일이 아니라 연결 코드를 입력합니다. 완료 후에는 다시 입력하지 않아도 됩니다."
-            />
-          </div>
-        </section>
-
-        <section className="border-y border-border bg-panel">
-          <div className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-14 sm:px-8 lg:grid-cols-[0.78fr_1.22fr]">
-            <div className="flex flex-col justify-center gap-3">
-              <p className="text-sm font-bold text-accent">사용 흐름</p>
-              <h2 className="font-display text-3xl [word-break:keep-all]">
-                한글 문서에 커서를 두고, 지정 키만 누르면 됩니다.
-              </h2>
-              <p className="text-[17px] leading-8 text-muted">
-                블록 지정 기능은 덜어내고 커서 앞 검색에 집중했습니다. 단축키를 연속으로 누르면
-                띄어쓰기를 넘어 검색어가 확장되어 더 긴 표현을 빠르게 확인할 수 있습니다.
-              </p>
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-3">
-              <GuideStep
-                step="01"
-                title="커서 두기"
-                body="한글 문서에서 검색할 단어 또는 표현 바로 뒤에 커서를 둡니다."
-                sample="회의 의견 정리|"
-              />
-              <GuideStep
-                step="02"
-                title="단축키 입력"
-                body="기본 F3 또는 사용자가 지정한 Insert 같은 키를 누릅니다."
-                sample="Insert"
-                keycap
-              />
-              <GuideStep
-                step="03"
-                title="HUD 확인"
-                body="작은 HUD 창에서 우리말샘 결과를 확인하고 바로 문서 작성으로 돌아갑니다."
-                sample="우리말샘 응답 지연 중"
-              />
-            </div>
-          </div>
-        </section>
-
-        <section className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-14 sm:px-8 lg:grid-cols-[0.82fr_1.18fr]">
-          <div className="flex flex-col gap-3">
-            <p className="text-sm font-bold text-accent">운영 관리</p>
-            <h2 className="font-display text-3xl [word-break:keep-all]">
-              개인용 유틸이 아니라, 운영 가능한 SaaS로 관리합니다.
-            </h2>
-            <p className="text-[17px] leading-8 text-muted">
-              관리자 화면에서 가입 승인, 월 검색 한도, 사용자별 검색 기록, 인기 검색어, 시간대별
-              사용량을 확인할 수 있습니다. 문제 제보와 승인 요청은 카카오톡 오픈톡방으로 모읍니다.
-            </p>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <FeatureCard
-              label="ADMIN"
-              title="사용자 승인과 한도 관리"
-              body="관리자를 제외한 사용자는 기본 월 500회로 운영하고, 필요하면 사용자별 한도를 조정할 수 있습니다."
-            />
-            <FeatureCard
-              label="STATS"
-              title="검색 기록과 사용량 통계"
-              body="누가 많이 쓰는지, 어떤 단어가 많이 검색되는지, 어느 시간대에 사용량이 몰리는지 확인합니다."
-            />
-            <FeatureCard
-              label="VERSION"
-              title="버전 배포와 업데이트"
-              body="Windows 설치 파일은 릴리스 버전으로 관리하고, 홈페이지 다운로드는 최신 안내 페이지를 거쳐 제공합니다."
-            />
-            <FeatureCard
-              label="SUPPORT"
-              title="카카오톡 오픈톡방"
-              body="가입 승인, 설치 차단, 사용량 문의, 오류 제보, 기능 건의는 오픈톡방에서 모두 받습니다."
+            <StartStepCard
+              number="03"
+              title="연결 코드로 앱 연결"
+              body="대시보드에서 10분짜리 코드를 받아 앱 설정에 붙여넣으면 끝."
+              cta={{
+                label: isSignedIn ? "연결 코드 발급" : "로그인",
+                href: isSignedIn ? "/api-keys" : "/sign-in",
+              }}
             />
           </div>
         </section>
 
+        {/* ─────────────  3. HOW IT WORKS  ───────────── */}
         <section className="border-y border-border bg-ink text-white">
-          <div className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-14 sm:px-8 lg:grid-cols-[0.88fr_1.12fr] lg:items-center">
-            <div>
-              <p className="text-sm font-bold text-[#a8fff4]">시작 순서</p>
-              <h2 className="mt-3 font-display text-3xl [word-break:keep-all]">
-                처음 사용하는 사람은 이 순서대로 진행하면 됩니다.
-              </h2>
-              <p className="mt-4 text-[17px] leading-8 text-white/72">
-                앱에는 이메일을 입력하지 않습니다. 반드시 웹에서 발급한 연결 코드를 입력해야 합니다.
+          <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8">
+            <div className="flex flex-col items-center gap-3 text-center">
+              <p className="text-sm font-bold uppercase tracking-[0.14em] text-[#a8fff4]">
+                How it works
               </p>
+              <h2 className="font-display text-3xl sm:text-4xl">
+                한글 문서에서, 지정 키 한 번.
+              </h2>
             </div>
-            <div className="grid gap-3">
-              <FlowRow number="1" title="가입 승인 요청" body="실명과 이메일로 가입 후 관리자 승인을 기다립니다." />
-              <FlowRow number="2" title="Windows 앱 설치" body="홈페이지의 다운로드 버튼으로 최신 설치 파일을 받습니다." />
-              <FlowRow number="3" title="연결 코드 발급" body="승인 후 대시보드의 프로그램 연결에서 10분짜리 코드를 만듭니다." />
-              <FlowRow number="4" title="앱 계정 연결" body="앱 설정의 계정 연결 칸에 연결 코드를 입력하고 검색을 시작합니다." />
+
+            <div className="mt-12 grid gap-4 md:grid-cols-3">
+              <HowStep
+                index="1"
+                title="커서 두기"
+                caption="검색할 단어 바로 뒤에 커서를 두고"
+              >
+                <div className="rounded-lg border border-white/12 bg-white/[0.04] p-4">
+                  <p className="text-xs font-bold uppercase tracking-wider text-white/40">
+                    HWP
+                  </p>
+                  <p className="mt-3 font-mono text-sm text-white/80">
+                    회의 안건 정리
+                    <span className="typing-caret ml-0.5 inline-block h-4 w-[2px] translate-y-0.5 bg-signal" />
+                  </p>
+                </div>
+              </HowStep>
+              <HowStep
+                index="2"
+                title="지정 키 누르기"
+                caption="F3 · Insert 등 사용자가 지정한 키"
+              >
+                <div className="flex items-center justify-center rounded-lg border border-white/12 bg-white/[0.04] py-6">
+                  <span className="rounded-md border-2 border-white/40 bg-white/10 px-5 py-2 font-mono text-2xl font-bold text-white shadow-[0_4px_0_rgba(255,255,255,0.15)]">
+                    F3
+                  </span>
+                </div>
+              </HowStep>
+              <HowStep
+                index="3"
+                title="HUD로 결과 확인"
+                caption="작은 창에 뜻·품사·예문이 즉시"
+              >
+                <div className="rounded-lg border border-white/12 bg-[#041012]/95 p-3">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                    <span className="text-[10px] font-bold text-white/50">
+                      HUDTyping
+                    </span>
+                    <span className="rounded bg-accent/22 px-1.5 py-0.5 text-[9px] font-bold text-[#bff6ef]">
+                      정리
+                    </span>
+                  </div>
+                  <p className="mt-2 text-sm font-bold text-white">정리</p>
+                  <p className="mt-1 text-xs leading-5 text-white/70">
+                    일정한 기준에 따라 내용을 가지런히 바로잡음.
+                  </p>
+                </div>
+              </HowStep>
             </div>
           </div>
         </section>
 
-        <section className="mx-auto grid w-full max-w-6xl gap-5 px-5 py-14 sm:px-8 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="rounded-lg border border-border bg-card p-6">
-            <h2 className="font-display text-2xl">운영 안내</h2>
-            <div className="mt-5 divide-y divide-border">
-              <Notice title="현재 배포 버전" date={`v${WINDOWS_RELEASE.version}`}>
-                뜻풀이 클릭 시 예문 창이 뜨고, HUD 옆에 붙이거나(위·아래·좌·우) 자유롭게 옮길 수 있습니다.
-                글자 크기와 배경 밝기도 조절 가능합니다. 새 버전이 적용되면 앱 상단에
-                &ldquo;홈페이지 열기&rdquo; 배너가 뜨니 여기로 다시 오시면 변경 사항을 확인할 수 있습니다.
-                앱 설정에 이메일이 아니라 웹에서 발급한 연결 코드를 입력합니다.
-              </Notice>
-              <Notice title="구버전 지원 안내" date="업데이트">
-                v{WINDOWS_RELEASE.minimumFreshInstallVersion} 이상은 앱 실행 시 자동 업데이트 안내를 받을 수 있습니다. v{WINDOWS_RELEASE.minimumFreshInstallVersion} 미만 초기 버전은 검색이 제한될 수 있으니 최신 설치 파일로 다시 설치해 주세요.
-              </Notice>
-              <Notice title="검색 지연 안내" date="검색">
-                우리말샘 또는 서버 응답이 늦으면 앱에 “우리말샘 응답 지연 중”으로 표시합니다.
-                반복 검색어는 캐시를 통해 더 빠르게 응답하도록 운영합니다.
-              </Notice>
-              <Notice title="문의 창구" date="상시">
-                가입 승인, 설치 오류, 사용량 문의, 기능 건의는 카카오톡{" "}
-                <a
-                  href={OPENCHAT.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-bold text-accent underline underline-offset-2 hover:opacity-80"
-                >
-                  오픈톡방
-                </a>
-                에서 받고 있습니다.
-              </Notice>
-            </div>
+        {/* ─────────────  4. FEATURES  ───────────── */}
+        <section id="features" className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8">
+          <div className="flex flex-col items-center gap-3 text-center">
+            <p className="text-sm font-bold uppercase tracking-[0.14em] text-accent">
+              Features
+            </p>
+            <h2 className="font-display text-3xl sm:text-4xl">
+              작지만 매일 쓰기 좋은 것들
+            </h2>
           </div>
 
-          <div className="rounded-lg border border-border bg-card p-6">
-            <h2 className="font-display text-2xl">바로 가기</h2>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <SupportLink
-                title="프로그램 연결"
-                body="승인 계정으로 연결 코드 발급"
-                href={isSignedIn ? "/api-keys" : "/sign-in"}
-                label={isSignedIn ? "발급" : "로그인"}
-              />
-              <SupportLink
-                title="사용 가이드"
-                body="설치부터 커서 앞 검색까지"
-                href="/help"
-                label="가이드"
-              />
-              <SupportLink
-                title="설치 문제 해결"
-                body="백신 차단, Defender 경고"
-                href="/install-help"
-                label="해결법"
-              />
-              <SupportLink
-                title="대시보드"
-                body="사용량과 연결 상태 확인"
-                href={isSignedIn ? "/dashboard" : "/sign-in"}
-                label={isSignedIn ? "열기" : "로그인"}
-              />
-            </div>
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <FeatureCard
+              icon="⌘"
+              title="커서 앞 자동 검색"
+              body="F3 한 번으로 커서 앞 어절을 잡아 검색. 연속으로 누르면 앞 단어까지 확장."
+            />
+            <FeatureCard
+              icon="📖"
+              title="뜻풀이별 예문 창"
+              body="뜻풀이를 클릭하면 별도 창에 예문. 창 위·아래·좌·우 자유 부착."
+            />
+            <FeatureCard
+              icon="⚡"
+              title="즉시 재검색"
+              body="한 번 찾은 단어는 앱 안에 저장돼 재검색 시 네트워크 없이 0ms 응답."
+            />
+            <FeatureCard
+              icon="🔔"
+              title="자동 업데이트 알림"
+              body="새 버전이 나오면 앱 상단에 배너로 안내. 홈페이지에서 변경 내용 확인."
+            />
+            <FeatureCard
+              icon="🔐"
+              title="안전한 계정 연결"
+              body="API 키 노출 없이 10분짜리 1회용 연결 코드로 앱 계정 연결."
+            />
+            <FeatureCard
+              icon="📊"
+              title="사용량 대시보드"
+              body="내 이번 달 검색 수, 최근 검색어, 자주 찾은 단어를 웹에서 바로 확인."
+            />
+          </div>
+        </section>
+
+        {/* ─────────────  5. COMMUNITY  ───────────── */}
+        <section id="support" className="border-y border-border bg-panel">
+          <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8">
+            <OpenChatCard />
+          </div>
+        </section>
+
+        {/* ─────────────  6. FAQ  ───────────── */}
+        <section className="mx-auto w-full max-w-4xl px-5 py-16 sm:px-8">
+          <div className="flex flex-col items-center gap-3 text-center">
+            <p className="text-sm font-bold uppercase tracking-[0.14em] text-accent">
+              FAQ
+            </p>
+            <h2 className="font-display text-3xl sm:text-4xl">
+              자주 묻는 질문
+            </h2>
+          </div>
+
+          <div className="mt-10 flex flex-col gap-3">
+            <FaqItem question="어떤 편집기에서 되나요?">
+              한글(HWP), MS Word, 텍스트 편집기 등 커서가 있는 대부분의 문서 앱에서 동작합니다.
+              앱이 특정 편집기와 통신하지 않고 커서 앞 단어를 캡처하는 방식이라 범용적으로 쓸 수 있습니다.
+            </FaqItem>
+            <FaqItem question="단축키가 안 눌리면?">
+              다른 프로그램이 같은 키를 쓰고 있을 수 있어요. HUD 설정에서 Insert · Pause 같은
+              평소 잘 안 쓰는 키로 바꾸면 대부분 해결됩니다.
+            </FaqItem>
+            <FaqItem question="설치할 때 백신이 막아요">
+              코드 서명 인증서 확보 전이라 일부 백신·SmartScreen에서 경고가 뜰 수 있습니다.{" "}
+              <Link href="/install-help" className="text-accent underline">
+                설치 문제 해결 가이드
+              </Link>
+              에 케이스별 우회 방법을 정리해 뒀습니다.
+            </FaqItem>
+            <FaqItem question="문의는 어디로?">
+              가입 승인 · 사용 문의 · 기능 요청 · 오류 제보 모두 아래 카카오톡 오픈톡방으로
+              보내주세요. 관리자만 공지하는 채널이라 알림 소음 없이 새 소식도 함께 받습니다.
+            </FaqItem>
           </div>
         </section>
       </main>
+
+      {/* ─────────────  FOOTER  ───────────── */}
+      <footer className="border-t border-border bg-card">
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-5 py-10 sm:px-8 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex items-start gap-3">
+            <span className="keycap h-10 w-10 text-sm">H</span>
+            <div>
+              <p className="font-display text-lg">HUDTyping</p>
+              <p className="mt-1 text-xs text-muted">
+                한글 문서 위에서 쓰는 우리말샘 HUD · Windows v{WINDOWS_RELEASE.version}
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm sm:grid-cols-3">
+            <FooterLink href={DOWNLOAD_URL}>Windows 다운로드</FooterLink>
+            <FooterLink href="/help">사용 가이드</FooterLink>
+            <FooterLink href="/install-help">설치 도움말</FooterLink>
+            <FooterLink href="/terms">이용약관</FooterLink>
+            <FooterLink href="/privacy">개인정보 처리방침</FooterLink>
+            <FooterLink external href={OPENCHAT.url}>
+              오픈톡방
+            </FooterLink>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
 
-function TrustStrip() {
+// ═════════════════════════════════════════════════════════════════
+// SECTION HELPERS
+// ═════════════════════════════════════════════════════════════════
+
+function StatusPill({
+  tone,
+  children,
+}: {
+  tone: "green" | "dark";
+  children: React.ReactNode;
+}) {
+  const color =
+    tone === "green"
+      ? "border-emerald-400/40 bg-emerald-400/12 text-emerald-100"
+      : "border-white/16 bg-white/8 text-white/85";
   return (
-    <div className="grid gap-2 rounded-xl border border-white/12 bg-white/8 p-3 shadow-[0_18px_48px_rgba(0,0,0,0.18)] backdrop-blur sm:grid-cols-3">
-      <TrustItem label="AUTH" value="승인 계정 전용" />
-      <TrustItem label="CODE" value="10분 1회용 연결" />
-      <TrustItem label="CACHE" value="반복 검색 최적화" />
-    </div>
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold ${color}`}
+    >
+      {tone === "green" && <span className="status-led" />}
+      {children}
+    </span>
   );
 }
 
-function TrustItem({ label, value }: { label: string; value: string }) {
+function StartStepCard({
+  number,
+  title,
+  body,
+  cta,
+}: {
+  number: string;
+  title: string;
+  body: string;
+  cta: { label: string; href: string; tone?: "signal" };
+}) {
+  const ctaClass =
+    cta.tone === "signal"
+      ? "bg-signal text-white hover:brightness-110"
+      : "bg-foreground text-background hover:opacity-90";
   return (
-    <div className="flex items-center gap-3 rounded-lg bg-white/8 px-3 py-2">
-      <span className="status-led" />
-      <div className="min-w-0">
-        <p className="font-mono text-[10px] font-bold text-[#a8fff4]">{label}</p>
-        <p className="truncate text-xs font-bold text-white">{value}</p>
+    <article className="flex flex-col gap-4 rounded-xl border border-border bg-card p-6">
+      <div className="flex items-baseline justify-between">
+        <span className="font-mono text-3xl font-bold text-accent">
+          {number}
+        </span>
+      </div>
+      <div className="flex flex-col gap-2">
+        <h3 className="font-display text-xl">{title}</h3>
+        <p className="text-sm leading-6 text-muted [word-break:keep-all]">{body}</p>
+      </div>
+      <Link
+        href={cta.href}
+        className={`mt-auto inline-flex items-center justify-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-bold transition ${ctaClass}`}
+      >
+        {cta.label}
+        <span aria-hidden="true">→</span>
+      </Link>
+    </article>
+  );
+}
+
+function HowStep({
+  index,
+  title,
+  caption,
+  children,
+}: {
+  index: string;
+  title: string;
+  caption: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <article className="flex flex-col gap-4">
+      <div className="flex items-baseline gap-3">
+        <span className="font-mono text-lg font-bold text-[#a8fff4]">
+          {index}
+        </span>
+        <h3 className="text-lg font-bold text-white">{title}</h3>
+      </div>
+      {children}
+      <p className="text-sm text-white/56 [word-break:keep-all]">{caption}</p>
+    </article>
+  );
+}
+
+function FeatureCard({
+  icon,
+  title,
+  body,
+}: {
+  icon: string;
+  title: string;
+  body: string;
+}) {
+  return (
+    <article className="flex flex-col gap-3 rounded-xl border border-border bg-card p-6 transition hover:border-accent/40 hover:shadow-[0_12px_28px_rgba(9,111,147,0.08)]">
+      <span
+        aria-hidden="true"
+        className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-accent-soft text-2xl"
+      >
+        {icon}
+      </span>
+      <h3 className="font-display text-lg">{title}</h3>
+      <p className="text-sm leading-6 text-muted [word-break:keep-all]">{body}</p>
+    </article>
+  );
+}
+
+function OpenChatCard() {
+  return (
+    <div className="grid gap-6 rounded-xl border border-border bg-card p-6 sm:p-8 md:grid-cols-[1fr_auto] md:items-center">
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="rounded-full bg-accent/12 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-accent">
+            Community
+          </span>
+          <span className="text-xs font-medium text-muted">관리자 공지 채널</span>
+        </div>
+        <h2 className="font-display text-2xl leading-snug [word-break:keep-all] sm:text-3xl">
+          새 소식과 문의는
+          <br />
+          카카오톡 오픈톡방에서.
+        </h2>
+        <p className="text-[15px] leading-7 text-muted [word-break:keep-all]">
+          업데이트 · 사용량 문의 · 기능 요청 · 가입 승인 요청 모두 이 오픈톡방에서 받습니다.
+          관리자만 공지하는 채널이라 알림 소음 없이 조용히 필요한 소식만 확인할 수 있습니다.
+        </p>
+        <div className="flex flex-wrap gap-3">
+          <a
+            href={OPENCHAT.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-signal px-5 py-3 text-sm font-bold text-white shadow-[0_18px_36px_rgba(240,95,50,0.28)] transition hover:brightness-110"
+          >
+            오픈톡방 열기
+            <span aria-hidden="true">→</span>
+          </a>
+          <a
+            href={OPENCHAT.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center break-all rounded-lg border border-border bg-panel px-4 py-3 font-mono text-xs font-medium text-muted transition hover:text-foreground sm:text-sm"
+          >
+            open.kakao.com/o/pmT0WGGi
+          </a>
+        </div>
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <div className="rounded-xl border border-border bg-background p-3 shadow-sm">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={OPENCHAT.qrSrc}
+            alt="카카오톡 오픈톡방 QR 코드"
+            width={168}
+            height={168}
+            className="block h-[168px] w-[168px]"
+          />
+        </div>
+        <p className="text-[11px] font-medium text-muted">QR 스캔으로 바로 입장</p>
       </div>
     </div>
   );
 }
 
-function ProofCard({ label, value }: { label: string; value: string }) {
+function FaqItem({
+  question,
+  children,
+}: {
+  question: string;
+  children: React.ReactNode;
+}) {
   return (
-    <article className="proof-card rounded-lg border border-border bg-card p-5">
-      <p className="font-mono text-[11px] font-bold uppercase tracking-[0.08em] text-accent">
-        {label}
-      </p>
-      <p className="mt-2 text-base font-bold">{value}</p>
-    </article>
+    <details className="group rounded-xl border border-border bg-card p-5 transition open:shadow-[0_10px_28px_rgba(9,23,36,0.06)]">
+      <summary className="flex cursor-pointer items-center justify-between gap-4 text-base font-bold [&::-webkit-details-marker]:hidden">
+        {question}
+        <span
+          aria-hidden="true"
+          className="shrink-0 rounded-full border border-border px-2 text-lg leading-none text-muted transition group-open:rotate-45"
+        >
+          +
+        </span>
+      </summary>
+      <div className="mt-3 text-[15px] leading-7 text-muted [word-break:keep-all]">
+        {children}
+      </div>
+    </details>
   );
 }
+
+function FooterLink({
+  href,
+  external,
+  children,
+}: {
+  href: string;
+  external?: boolean;
+  children: React.ReactNode;
+}) {
+  if (external) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-muted transition hover:text-foreground"
+      >
+        {children}
+      </a>
+    );
+  }
+  return (
+    <Link href={href} className="text-muted transition hover:text-foreground">
+      {children}
+    </Link>
+  );
+}
+
+// ═════════════════════════════════════════════════════════════════
+// PRODUCT SCREEN — CSS 목업 (히어로 우측)
+// GIF/스크린샷 있으면 여기만 <img>/<video> 로 교체하면 됨.
+// ═════════════════════════════════════════════════════════════════
 
 function ProductScreen() {
   return (
@@ -446,204 +658,5 @@ function RailRow({ label, value }: { label: string; value: string }) {
       <span className="font-mono text-white/42">{label}</span>
       <span className="font-mono font-bold text-[#a8fff4]">{value}</span>
     </div>
-  );
-}
-
-function StatusPill({
-  children,
-  tone,
-}: {
-  children: React.ReactNode;
-  tone?: "green" | "dark";
-}) {
-  return (
-    <span
-      className={`rounded-full border px-3 py-1 text-xs font-bold ${
-        tone === "green"
-          ? "border-emerald-300/20 bg-emerald-300/10 text-emerald-200"
-          : tone === "dark"
-            ? "border-white/16 bg-white/8 text-white/78"
-            : "border-border bg-card text-muted"
-      }`}
-    >
-      {children}
-    </span>
-  );
-}
-
-function FeatureCard({
-  label,
-  title,
-  body,
-}: {
-  label: string;
-  title: string;
-  body: string;
-}) {
-  return (
-    <article className="feature-card rounded-lg border border-border bg-card p-6">
-      <p className="font-mono text-xs font-bold text-accent">{label}</p>
-      <h2 className="mt-4 text-lg font-bold">{title}</h2>
-      <p className="mt-2 text-[15px] leading-7 text-muted">{body}</p>
-    </article>
-  );
-}
-
-function GuideStep({
-  step,
-  title,
-  body,
-  sample,
-  keycap,
-}: {
-  step: string;
-  title: string;
-  body: string;
-  sample: string;
-  keycap?: boolean;
-}) {
-  return (
-    <article className="rounded-lg border border-border bg-card p-4 sm:p-5">
-      <div className="flex items-center justify-between">
-        <span className="font-mono text-xs font-bold text-accent">STEP {step}</span>
-        <span className="step-dot h-2 w-2 rounded-full bg-accent" />
-      </div>
-      <h3 className="mt-4 text-base font-bold">{title}</h3>
-      <p className="mt-2 text-[15px] leading-7 text-muted sm:min-h-12">{body}</p>
-      <div
-        className={
-          keycap
-            ? "mt-3 flex min-h-12 items-center justify-center rounded-md bg-ink px-3 py-3 text-lg font-bold text-white sm:mt-4 sm:min-h-16"
-            : "mt-3 flex min-h-12 items-center rounded-md border border-border bg-paper px-3 py-3 text-sm font-semibold text-ink sm:mt-4 sm:min-h-16"
-        }
-      >
-        {sample}
-      </div>
-    </article>
-  );
-}
-
-function FlowRow({
-  number,
-  title,
-  body,
-}: {
-  number: string;
-  title: string;
-  body: string;
-}) {
-  return (
-    <article className="flex gap-4 rounded-lg border border-white/12 bg-white/7 p-4">
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-signal text-sm font-bold text-white">
-        {number}
-      </span>
-      <div>
-        <h3 className="font-bold text-white">{title}</h3>
-        <p className="mt-1 text-sm leading-6 text-white/68">{body}</p>
-      </div>
-    </article>
-  );
-}
-
-function OpenChatCard() {
-  return (
-    <div className="grid gap-6 rounded-xl border border-border bg-card p-6 sm:p-8 md:grid-cols-[1fr_auto] md:items-center">
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-full bg-accent/12 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-accent">
-            문의 창구
-          </span>
-          <span className="text-xs font-medium text-muted">상시 응답</span>
-        </div>
-        <h2 className="font-display text-2xl leading-snug [word-break:keep-all] sm:text-3xl">
-          문의는 카카오톡 오픈톡방으로 받고 있습니다.
-        </h2>
-        <p className="text-[15px] leading-7 text-muted [word-break:keep-all]">
-          사용량 문의, 가입 승인, 설치 오류, 기능 건의 등 모든 커뮤니케이션은
-          오픈톡방 한 곳에서 확인합니다. 참여하시면 새 버전 공지와 팁도 함께 받아보실 수 있습니다.
-        </p>
-        <div className="flex flex-wrap gap-3">
-          <a
-            href={OPENCHAT.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-signal px-5 py-3 text-sm font-bold text-white shadow-[0_18px_36px_rgba(240,95,50,0.28)] transition hover:brightness-110"
-          >
-            오픈톡방 열기
-            <span aria-hidden="true">→</span>
-          </a>
-          <a
-            href={OPENCHAT.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center break-all rounded-lg border border-border bg-panel px-4 py-3 font-mono text-xs font-medium text-muted transition hover:text-foreground sm:text-sm"
-          >
-            open.kakao.com/o/skntmeGi
-          </a>
-        </div>
-      </div>
-      <div className="flex flex-col items-center gap-2">
-        <div className="rounded-xl border border-border bg-background p-3 shadow-sm">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={OPENCHAT.qrSrc}
-            alt="카카오톡 오픈톡방 QR 코드"
-            width={168}
-            height={168}
-            className="block h-[168px] w-[168px]"
-          />
-        </div>
-        <p className="text-[11px] font-medium text-muted">QR 스캔으로 바로 입장</p>
-      </div>
-    </div>
-  );
-}
-
-function Notice({
-  title,
-  date,
-  children,
-}: {
-  title: string;
-  date: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="grid gap-2 py-4 sm:grid-cols-[92px_1fr]">
-      <span className="font-mono text-xs font-bold text-accent">{date}</span>
-      <div>
-        <h3 className="text-sm font-bold">{title}</h3>
-        <p className="mt-1 text-[15px] leading-7 text-muted">{children}</p>
-      </div>
-    </div>
-  );
-}
-
-function SupportLink({
-  title,
-  body,
-  href,
-  label,
-}: {
-  title: string;
-  body: string;
-  href: string;
-  label: string;
-}) {
-  return (
-    <a
-      href={href}
-      className="support-link rounded-lg border border-transparent bg-muted-bg/70 p-4"
-    >
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h3 className="text-sm font-bold">{title}</h3>
-          <p className="mt-1 text-[15px] text-muted">{body}</p>
-        </div>
-        <span className="shrink-0 rounded bg-card px-2.5 py-1 text-xs font-semibold text-muted">
-          {label}
-        </span>
-      </div>
-    </a>
   );
 }
