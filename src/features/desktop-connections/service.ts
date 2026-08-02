@@ -74,7 +74,7 @@ export async function activateDesktopConnection(
   if (user.status !== "approved") return null;
 
   const token = await generateApiKey();
-  const name = (deviceName || "HUDTyping desktop").trim().slice(0, 80);
+  const name = (deviceName || "낱말지기 desktop").trim().slice(0, 80);
 
   await db.insert(desktopTokens).values({
     clerkId: user.clerkId,

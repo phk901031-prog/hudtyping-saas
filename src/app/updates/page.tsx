@@ -8,8 +8,8 @@ import { fetchReleases, type ReleaseInfo } from "@/features/updates/releases";
 import { ReleaseNotes } from "@/components/release-notes";
 
 export const metadata: Metadata = {
-  title: "업데이트 로그 — HUDTyping",
-  description: "HUDTyping Windows 앱의 버전별 변경 사항.",
+  title: "업데이트 로그 — 낱말지기",
+  description: "낱말지기 Windows 앱의 버전별 변경 사항.",
 };
 
 // Vercel 서버에서 1시간 캐시. 새 릴리스 배포 1시간 안에 반영.
@@ -37,7 +37,7 @@ export default async function UpdatesPage() {
             업데이트 로그
           </h1>
           <p className="max-w-2xl text-base leading-7 text-muted">
-            HUDTyping Windows 앱의 버전별 변경 사항입니다. 앱은 자동 업데이트를 지원하며,
+            낱말지기 Windows 앱의 버전별 변경 사항입니다. 앱은 자동 업데이트를 지원하며,
             새 버전이 적용되면 앱 상단 배너로도 안내됩니다.
           </p>
         </header>

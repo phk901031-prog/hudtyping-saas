@@ -108,7 +108,7 @@ export default function WindowsDownloadPage() {
               <p className="text-[15px] leading-7 text-muted [word-break:keep-all]">
                 Windows·Chrome은 대기업이 구매하는 <strong>코드 서명 인증서</strong>가
                 붙어 있고 다운로드 이력이 많은 파일에만 &ldquo;검증됨&rdquo; 표시를 줍니다.
-                HUDTyping은 개인 개발자가 운영하는 무료 소프트웨어라 아직 그 절차를 거치지
+                낱말지기은 개인 개발자가 운영하는 무료 소프트웨어라 아직 그 절차를 거치지
                 않아, 처음 받으실 때는 경고가 뜨는 게 정상입니다.
               </p>
               <p className="text-[15px] leading-7 text-muted [word-break:keep-all]">
@@ -138,7 +138,7 @@ export default function WindowsDownloadPage() {
       </section>
 
       <p className="mx-auto mt-10 max-w-2xl text-center text-xs leading-6 text-muted">
-        파일은 GitHub Release 에 보관됩니다. 사용 안내와 설치 흐름은 HUDTyping 사이트에서
+        파일은 GitHub Release 에 보관됩니다. 사용 안내와 설치 흐름은 낱말지기 사이트에서
         계속 확인하실 수 있습니다.
       </p>
     </main>

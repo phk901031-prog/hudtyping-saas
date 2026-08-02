@@ -7,8 +7,8 @@ import { ArrowLeft, TrendingUp } from "lucide-react";
 import { fetchTrendWindows } from "@/features/trends/service";
 
 export const metadata: Metadata = {
-  title: "인기 검색어 — HUDTyping",
-  description: "HUDTyping 사용자들이 이번 주·이번 달 자주 찾은 우리말샘 검색어 top 30.",
+  title: "인기 검색어 — 낱말지기",
+  description: "낱말지기 사용자들이 이번 주·이번 달 자주 찾은 우리말샘 검색어 top 30.",
 };
 
 // 캐시 30분 — 검색 로그가 실시간까지 필요는 없음.
@@ -37,7 +37,7 @@ export default async function TrendsPage() {
             인기 검색어
           </h1>
           <p className="max-w-2xl text-base leading-7 text-muted">
-            HUDTyping 사용자들이 자주 찾은 우리말샘 단어 top 30. 사전에 실제
+            낱말지기 사용자들이 자주 찾은 우리말샘 단어 top 30. 사전에 실제
             뜻이 있는 단어만 집계하고, 사용자 개인 정보는 노출하지 않습니다.
           </p>
         </header>

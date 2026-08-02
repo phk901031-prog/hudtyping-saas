@@ -53,10 +53,10 @@ export default function ApiKeysPage() {
 
       <section className="rounded-lg border border-border bg-card p-6">
         <p className="text-sm font-bold text-accent">계정 연결</p>
-        <h1 className="mt-2 text-2xl font-bold">HUDTyping 프로그램 연결</h1>
+        <h1 className="mt-2 text-2xl font-bold">낱말지기 프로그램 연결</h1>
         <p className="mt-3 text-sm leading-7 text-muted">
           이메일 주소나 비밀번호를 프로그램에 입력하지 않습니다. 승인된 계정으로 연결 코드를 발급한 뒤,
-          HUDTyping 프로그램의 <strong className="text-foreground">계정 연결</strong> 칸에 그 코드를 입력하세요.
+          낱말지기 프로그램의 <strong className="text-foreground">계정 연결</strong> 칸에 그 코드를 입력하세요.
           연결 코드는 10분 동안 한 번만 사용할 수 있습니다.
         </p>
 
@@ -110,7 +110,7 @@ export default function ApiKeysPage() {
       <section className="rounded-lg border border-border bg-card p-5 text-sm leading-7 text-muted">
         <h2 className="font-bold text-foreground">프로그램에서 입력하는 방법</h2>
         <p className="mt-2">
-          HUDTyping을 열고 설정에서 <strong className="text-foreground">계정 연결</strong> 영역에 위 연결 코드를 입력한 뒤
+          낱말지기를 열고 설정에서 <strong className="text-foreground">계정 연결</strong> 영역에 위 연결 코드를 입력한 뒤
           연결 버튼을 누르세요. 연결이 완료되면 이후에는 코드를 다시 입력하지 않아도 됩니다.
           이메일 주소를 입력하는 방식이 아닙니다.
         </p>

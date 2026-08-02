@@ -28,14 +28,14 @@ export default async function DashboardPage() {
 
       <div className="flex w-full max-w-4xl flex-col gap-8 text-center">
         <div className="flex flex-col gap-3">
-          <p className="text-sm font-bold text-accent">HUDTYPING WORKSPACE</p>
+          <p className="text-sm font-bold text-accent">낱말지기 워크스페이스</p>
           <h1 className="font-display text-3xl sm:text-4xl">환영합니다</h1>
           <p className="text-lg text-muted">필요한 작업을 선택하세요.</p>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <DashboardCard href="/search" eyebrow="SEARCH" title="우리말샘 검색" description="뜻풀이와 예문을 웹에서도 빠르게 확인합니다." />
-          <DashboardCard href="/api-keys" eyebrow="CONNECT" title="프로그램 연결" description="일회용 연결 코드로 HUDTyping 앱을 안전하게 연결합니다." />
+          <DashboardCard href="/api-keys" eyebrow="CONNECT" title="프로그램 연결" description="일회용 연결 코드로 낱말지기 앱을 안전하게 연결합니다." />
           <DashboardCard href="/stats" eyebrow="STATS" title="내 검색 통계" description="사용량, 최근 검색어와 자주 찾은 단어를 확인합니다." />
           <DashboardCard href="/help" eyebrow="GUIDE" title="사용 가이드" description="설치부터 단축키와 문제 해결 방법까지 살펴봅니다." />
 

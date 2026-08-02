@@ -40,9 +40,18 @@ export default async function HomePage() {
       <nav className="sticky top-0 z-40 border-b border-border bg-card/90 backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
           <Link href="/" className="group inline-flex items-center gap-3">
-            <span className="keycap h-11 w-11 text-base">H</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo.png"
+              alt="낱말지기"
+              width={44}
+              height={44}
+              className="h-11 w-11 rounded-xl"
+            />
             <span className="flex flex-col leading-none">
-              <span className="font-display text-xl">HUDTyping</span>
+              <span className="font-display text-xl">
+                낱말지기 <span className="text-[11px] font-medium text-muted">온라인</span>
+              </span>
               <span className="mt-1 text-[11px] font-medium text-muted">
                 한글 문서 위에서 쓰는 우리말샘 HUD
               </span>
@@ -268,7 +277,7 @@ export default async function HomePage() {
                 <div className="rounded-lg border border-white/12 bg-[#041012]/95 p-3">
                   <div className="flex items-center justify-between border-b border-white/10 pb-2">
                     <span className="text-[10px] font-bold text-white/50">
-                      HUDTyping
+                      낱말지기
                     </span>
                     <span className="rounded bg-accent/22 px-1.5 py-0.5 text-[9px] font-bold text-[#bff6ef]">
                       정리
@@ -398,9 +407,16 @@ export default async function HomePage() {
       <footer className="border-t border-border bg-card">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-5 py-10 sm:px-8 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-start gap-3">
-            <span className="keycap h-10 w-10 text-sm">H</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo.png"
+              alt="낱말지기"
+              width={40}
+              height={40}
+              className="h-10 w-10 rounded-xl"
+            />
             <div>
-              <p className="font-display text-lg">HUDTyping</p>
+              <p className="font-display text-lg">낱말지기</p>
               <p className="mt-1 text-xs text-muted">
                 한글 문서 위에서 쓰는 우리말샘 HUD · Windows v{WINDOWS_RELEASE.version}
               </p>
@@ -841,7 +857,7 @@ function ProductScreen() {
 
         <div className="hud-panel absolute bottom-5 right-5 w-[min(82%,360px)] rounded-lg border border-white/14 bg-[#041012]/96 p-4 shadow-2xl">
           <div className="mb-4 flex items-center justify-between">
-            <span className="text-xs font-bold text-white/50">HUDTyping</span>
+            <span className="text-xs font-bold text-white/50">낱말지기</span>
             <span className="rounded bg-accent/22 px-2 py-0.5 text-[11px] font-bold text-[#bff6ef]">
               커서 앞 검색
             </span>
