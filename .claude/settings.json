@@ -15,7 +15,8 @@
       "Read(//c/app//**)",
       "Bash(node scripts/generate-brand-assets.mjs)",
       "Bash(cp public/logo-hud.ico /c/app/hudtyping-local/resources/icon.ico)",
-      "Read(//c/app/hudtyping-local/resources/**)"
+      "Read(//c/app/hudtyping-local/resources/**)",
+      "Bash(node scripts/register-binary.mjs \"C:\\\\\\\\app\\\\\\\\hudtyping\\\\\\\\dist\\\\\\\\win-unpacked\\\\\\\\낱말지기 \\(온라인\\).exe\" 0.2.27 \"낱말지기 리브랜딩 + 상태바 quota 표시\")"
     ],
     "additionalDirectories": [
       "C:\\app\\hudtyping-local"
