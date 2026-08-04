@@ -21,7 +21,10 @@ export async function checkRateLimit(input: {
     | "binary-verify"
     | "api-key-read"
     | "api-key-write"
-    | "admin-write";
+    | "admin-write"
+    | "license-activate"
+    | "license-checkin"
+    | "license-deactivate";
   subject: string;
   limit: number;
   windowSeconds?: number;

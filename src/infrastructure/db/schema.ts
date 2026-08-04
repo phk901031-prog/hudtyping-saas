@@ -307,3 +307,82 @@ export type OperatorDictionaryEntry =
   typeof operatorDictionaryEntries.$inferSelect;
 export type NewOperatorDictionaryEntry =
   typeof operatorDictionaryEntries.$inferInsert;
+
+// ──────────────────────────────────────────────────────────────────────
+// 낱말지기(hudtyping-local) 정품 라이선스
+//
+// licenses — CD-key 형태로 판매/배포하는 라이선스 원장.
+//   - lifetime: durationDays/expiresAt 둘 다 항상 NULL (영구)
+//   - annual/trial: durationDays 는 발급 시 정해두는 "부여할 기간"(연간=365,
+//     체험판=7/14 등). expiresAt 은 **최초 활성화 시점에 activatedAt +
+//     durationDays 로 딱 한 번만 계산해서 고정**한다 — 재설치·재활성화로
+//     기간이 늘어나는 걸 막기 위한 핵심 규칙 (activate 서비스 로직에서 강제).
+export const licensePlanEnum = pgEnum("license_plan", [
+  "lifetime",
+  "annual",
+  "trial",
+]);
+
+export const licenses = pgTable(
+  "licenses",
+  {
+    // 사람이 직접 입력하는 키. 예: HDTP-A3F9-B7E2-C1D8
+    key: text("key").primaryKey(),
+    plan: licensePlanEnum("plan").notNull(),
+    // lifetime 이면 NULL. annual/trial 이면 발급 시 부여할 기간(일).
+    durationDays: integer("duration_days"),
+    issuedToEmail: text("issued_to_email"),
+    issuedAt: timestamp("issued_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    // 최초 활성화 시각 — expiresAt 계산의 기준점. 활성화 전에는 NULL.
+    activatedAt: timestamp("activated_at", { withTimezone: true }),
+    // 최초 활성화 시 1회만 계산되어 저장되고 이후 절대 재계산하지 않음.
+    expiresAt: timestamp("expires_at", { withTimezone: true }),
+    // 동시에 활성화 가능한 기기 수 (기본 1대).
+    maxActivations: integer("max_activations").notNull().default(1),
+    revokedAt: timestamp("revoked_at", { withTimezone: true }),
+    notes: text("notes"),
+    // 발급한 관리자 (Clerk ID). 관리자 계정 삭제돼도 라이선스는 남아야 하므로 SET NULL.
+    createdBy: text("created_by").references(() => users.clerkId, {
+      onDelete: "set null",
+    }),
+  },
+  (table) => [
+    index("licenses_plan_idx").on(table.plan),
+    index("licenses_issued_to_email_idx").on(table.issuedToEmail),
+  ]
+);
+
+export type License = typeof licenses.$inferSelect;
+export type NewLicense = typeof licenses.$inferInsert;
+export type LicensePlan = (typeof licensePlanEnum.enumValues)[number];
+
+// licenseActivations — 라이선스 키가 실제로 활성화된 기기(지문) 목록.
+// 한 라이선스에 여러 활성화 이력이 쌓일 수 있고(비활성화 후 재활성화 등),
+// maxActivations 검사는 deactivatedAt이 NULL인 것만 센다.
+export const licenseActivations = pgTable(
+  "license_activations",
+  {
+    id: serial("id").primaryKey(),
+    licenseKey: text("license_key")
+      .notNull()
+      .references(() => licenses.key, { onDelete: "cascade" }),
+    fingerprint: text("fingerprint").notNull(),
+    deviceName: text("device_name"),
+    activatedAt: timestamp("activated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    lastSeenAt: timestamp("last_seen_at", { withTimezone: true }),
+    deactivatedAt: timestamp("deactivated_at", { withTimezone: true }),
+    // 'user' | 'admin' | 'expired'
+    deactivationReason: text("deactivation_reason"),
+  },
+  (table) => [
+    index("license_activations_license_key_idx").on(table.licenseKey),
+    index("license_activations_fingerprint_idx").on(table.fingerprint),
+  ]
+);
+
+export type LicenseActivation = typeof licenseActivations.$inferSelect;
+export type NewLicenseActivation = typeof licenseActivations.$inferInsert;

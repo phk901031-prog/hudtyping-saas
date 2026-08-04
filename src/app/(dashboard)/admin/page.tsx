@@ -49,6 +49,7 @@ export default async function AdminHomePage() {
           </div>
           <div className="flex flex-wrap gap-2">
             <AdminButton href="/admin/users">회원 관리</AdminButton>
+            <AdminButton href="/admin/licenses">라이선스 관리</AdminButton>
             <AdminButton href="/admin/stats">상세 통계</AdminButton>
             <AdminButton href="/admin/operator-dictionary">표기 사전</AdminButton>
             <AdminButton href="/">메인 화면</AdminButton>
