@@ -136,14 +136,18 @@ export default async function HomePage() {
               </div>
 
               <h1 className="font-display text-4xl font-bold leading-[1.1] tracking-tight [word-break:keep-all] sm:text-5xl lg:text-[3.75rem]">
-                한글 문서에서 벗어나지 않고,
+                받아쓰기는 누구나 합니다.
                 <br />
-                <span className="text-[#a8fff4]">커서 앞 단어</span>를 바로 검색.
+                <span className="text-[#a8fff4]">정확한 기록</span>은 아무나 못 합니다.
               </h1>
 
               <p className="max-w-xl text-lg leading-8 text-white/76 [word-break:keep-all]">
-                Alt+Tab, 브라우저 검색, 복사·붙여넣기 없이 지정 키 한 번이면
-                우리말샘 결과가 작은 HUD 창에 뜹니다.
+                확인하지 않는 사람은 모릅니다, 자기가 뭘 놓쳤는지조차.
+              </p>
+
+              <p className="max-w-xl text-sm leading-7 text-white/50 [word-break:keep-all]">
+                한글 문서에서 벗어나지 않고, 지정 키 한 번이면 우리말샘 결과가 작은 HUD 창에 뜹니다 —
+                Alt+Tab도, 브라우저 검색도, 복사·붙여넣기도 필요 없습니다.
               </p>
 
               <div className="flex flex-col gap-3 sm:flex-row">
@@ -191,7 +195,7 @@ export default async function HomePage() {
               3단계로 시작합니다
             </h2>
             <p className="max-w-2xl text-lg leading-8 text-muted">
-              가입 승인부터 앱 연결까지 이 순서만 따라오면 됩니다.
+              정확한 기록을 만드는 습관은, 이 3단계에서 시작됩니다.
             </p>
           </div>
 
@@ -303,7 +307,7 @@ export default async function HomePage() {
               작지만 매일 쓰기 좋은 것들
             </h2>
             <p className="max-w-2xl text-lg leading-8 text-muted">
-              반복해서 찾는 단어일수록 더 빨라지도록 만들어졌습니다.
+              자주 확인할수록, 더 빨라지고 더 정확해집니다.
             </p>
           </div>
 
@@ -365,6 +369,28 @@ export default async function HomePage() {
           <div className="mt-14 grid gap-5 lg:grid-cols-2">
             <LatestReleaseCard release={latestRelease} />
             <WeeklyTrendCard rows={weeklyTrend} />
+          </div>
+        </section>
+
+        {/* ─────────────  5.8 FINAL CTA  ───────────── */}
+        <section className="border-t border-border bg-ink text-white">
+          <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-6 px-5 py-24 text-center sm:px-8 lg:py-28">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#a8fff4]">
+              Before you go
+            </p>
+            <h2 className="font-display text-3xl leading-tight [word-break:keep-all] sm:text-4xl">
+              지금 놓친 그 단어, 나중엔 기억도 안 납니다.
+            </h2>
+            <p className="max-w-xl text-lg leading-8 text-white/70 [word-break:keep-all]">
+              확인하는 습관은 지금 만드는 게 가장 쉽습니다. 설치는 1분이면 끝납니다.
+            </p>
+            <a
+              href={DOWNLOAD_URL}
+              className="inline-flex items-center justify-center gap-2 rounded-md bg-signal px-8 py-4 text-base font-bold text-white transition hover:brightness-110"
+            >
+              Windows 앱 다운로드
+              <span aria-hidden="true">↓</span>
+            </a>
           </div>
         </section>
 
