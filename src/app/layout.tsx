@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "낱말지기 | 한글 문서 위 우리말샘 HUD",
+  title: "PlaySteno · 속기사의 놀이터 | 낱말지기 (온라인)",
   description:
-    "속기사·회의록 작성자가 한글 문서 작업 중 Alt+Tab 없이 우리말샘 검색 결과를 즉시 확인할 수 있는 Windows HUD 도구.",
+    "PlaySteno — 속기사를 위한 도구 모음. 낱말지기(온라인)로 한글 문서 작업 중 Alt+Tab 없이 우리말샘 검색 결과를 즉시 확인할 수 있는 Windows HUD.",
   keywords: ["속기", "우리말샘", "회의록", "한글", "HUD", "단축키"],
 };
 

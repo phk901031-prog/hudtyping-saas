@@ -43,17 +43,15 @@ export default async function HomePage() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/logo.png"
-              alt="낱말지기"
+              alt="PlaySteno"
               width={44}
               height={44}
               className="h-11 w-11 rounded-xl"
             />
             <span className="flex flex-col leading-none">
-              <span className="font-display text-xl">
-                낱말지기 <span className="text-[11px] font-medium text-muted">온라인</span>
-              </span>
+              <span className="font-display text-xl">PlaySteno</span>
               <span className="mt-1 text-[11px] font-medium text-muted">
-                한글 문서 위에서 쓰는 우리말샘 HUD
+                속기사의 놀이터 · 낱말지기 (온라인)
               </span>
             </span>
           </Link>
@@ -442,9 +440,9 @@ export default async function HomePage() {
               className="h-10 w-10 rounded-xl"
             />
             <div>
-              <p className="font-display text-lg">낱말지기</p>
+              <p className="font-display text-lg">PlaySteno</p>
               <p className="mt-1 text-xs text-muted">
-                한글 문서 위에서 쓰는 우리말샘 HUD · Windows v{WINDOWS_RELEASE.version}
+                속기사의 놀이터 · 낱말지기 (온라인) · Windows v{WINDOWS_RELEASE.version}
               </p>
             </div>
           </div>

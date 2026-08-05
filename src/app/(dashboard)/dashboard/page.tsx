@@ -28,7 +28,7 @@ export default async function DashboardPage() {
 
       <div className="flex w-full max-w-4xl flex-col gap-8 text-center">
         <div className="flex flex-col gap-3">
-          <p className="text-sm font-bold text-accent">낱말지기 워크스페이스</p>
+          <p className="text-sm font-bold text-accent">PlaySteno 워크스페이스</p>
           <h1 className="font-display text-3xl sm:text-4xl">환영합니다</h1>
           <p className="text-lg text-muted">필요한 작업을 선택하세요.</p>
         </div>
