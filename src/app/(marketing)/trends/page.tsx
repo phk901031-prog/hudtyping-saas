@@ -9,6 +9,7 @@ import { fetchTrendWindows } from "@/features/trends/service";
 export const metadata: Metadata = {
   title: "인기 검색어 — 낱말지기",
   description: "낱말지기 사용자들이 이번 주·이번 달 자주 찾은 우리말샘 검색어 top 30.",
+  alternates: { canonical: "/trends" },
 };
 
 // 캐시 30분 — 검색 로그가 실시간까지 필요는 없음.

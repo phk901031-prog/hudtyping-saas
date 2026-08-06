@@ -8,6 +8,7 @@ import { OPENCHAT } from "@/config/community";
 
 export const metadata: Metadata = {
   title: "개인정보 처리방침",
+  alternates: { canonical: "/privacy" },
 };
 
 export default function PrivacyPage() {

@@ -20,7 +20,7 @@
 → **SaaS는 1.x.y, HUD는 0.x.y로 별도 lifecycle**.
 
 이유:
-- SaaS는 이미 사용 중 (papawheels.vercel.app) — 운영 단계로 봐서 1.0
+- SaaS는 이미 사용 중 (playsteno.com) — 운영 단계로 봐서 1.0
 - HUD는 베타 운영 (1년 무료) — 정식 출시 = 유료화 lock 도입 시점
 
 ## SaaS API 버전

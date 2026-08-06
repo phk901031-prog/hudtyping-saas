@@ -24,6 +24,13 @@ export const metadata: Metadata = {
   description:
     `${BRAND.name}는 속기사를 위한 도구와 정보를 제공합니다. ${NATMALGI_ONLINE.name}으로 문서 작업 중 우리말샘 뜻풀이와 예문을 Windows HUD에서 확인하세요.`,
   keywords: ["속기", "속기사", "우리말샘", "회의록", "한글", "HUD", "단축키"],
+  openGraph: {
+    type: "website",
+    locale: "ko_KR",
+    siteName: BRAND.name,
+    title: `${BRAND.name} · ${BRAND.tagline}`,
+    description: `${NATMALGI_ONLINE.name}으로 문서 작업 중 우리말샘 뜻풀이와 예문을 Windows HUD에서 확인하세요.`,
+  },
 };
 
 export default function RootLayout({

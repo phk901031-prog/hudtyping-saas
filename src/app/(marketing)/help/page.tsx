@@ -6,6 +6,7 @@ import { NATMALGI_ONLINE } from "@/config/product";
 export const metadata: Metadata = {
   title: "사용 가이드 — 낱말지기 온라인",
   description: "낱말지기 온라인 가입, 설치, 연결, 커서 앞 검색과 예문 창 사용 방법.",
+  alternates: { canonical: "/help" },
 };
 
 export default function HelpPage() {

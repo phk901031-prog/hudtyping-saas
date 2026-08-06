@@ -26,6 +26,15 @@ export const metadata: Metadata = {
   title: "낱말지기 온라인 — 문서 위 우리말샘 HUD",
   description:
     "문서 작업을 멈추지 않고 커서 앞 단어의 우리말샘 뜻풀이와 예문을 확인하는 Windows HUD.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "ko_KR",
+    url: "/",
+    siteName: "PlaySteno",
+    title: "PlaySteno · 속기사의 놀이터",
+    description: "낱말지기 온라인으로 문서 작업 중 우리말샘 뜻풀이와 예문을 Windows HUD에서 확인하세요.",
+  },
 };
 
 // 홈은 30분 캐시 — releases · trends 데이터도 이 창 안에서 신선.

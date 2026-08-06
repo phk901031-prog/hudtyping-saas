@@ -77,7 +77,7 @@ git push origin vX.Y.Z
 
 ```bash
 # SaaS production에서 검증 라우트 호출
-curl -X POST https://papawheels.vercel.app/api/verify-client \
+curl -X POST https://playsteno.com/api/verify-client \
   -H "Content-Type: application/json" \
   -d "{\"sha256\": \"<빌드된 exe hash>\"}"
 # 기대: { "verified": true, ... }

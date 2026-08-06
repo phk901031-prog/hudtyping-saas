@@ -1,9 +1,9 @@
 # PlaySteno 포털 전환 로드맵
 
 **작성**: 2026-08-04
-**상태**: 설계 단계 (착수 대기)
+**상태**: 단계적 전환 진행 중 (Phase A·B 완료)
 
-이 문서는 앞으로 `papawheels.vercel.app` → `playsteno.com` 도메인 이관과 함께
+이 문서는 `papawheels.vercel.app` → `playsteno.com` 도메인 이관과 함께
 사이트 성격을 **낱말지기 단일 랜딩** 에서 **속기사 통합 포털** 로 확장할 때
 따라갈 로드맵.
 
@@ -41,11 +41,12 @@ PlaySteno · 속기사의 놀이터                (상위 브랜드)
 - 준비 안 된 카테고리 카드 · "준비 중" 라벨 노출 안 함
 - URL 구조 그대로 (기존 링크 유지)
 
-### Phase B — 도메인 확정 시 (`playsteno.com` 구매 후)
-- Vercel Domains 에 `playsteno.com` 추가
-- 가비아 DNS 설정 (A `76.76.21.21` · CNAME `cname.vercel-dns.com`)
-- Clerk allowed origins 갱신
-- 기존 `papawheels.vercel.app` 은 Vercel 이 계속 유지 → 옛 사용자 링크 안 깨짐
+### Phase B — 공식 도메인 이관 완료
+- [x] Vercel Domains에 `playsteno.com` 추가
+- [x] DNS 연결 및 HTTPS 응답 확인
+- [x] 고객용·검색엔진 canonical 주소를 `https://playsteno.com`으로 고정
+- 기존 `papawheels.vercel.app`은 옛 사용자 링크 호환용으로만 유지하고 외부 안내에 사용하지 않음
+- Clerk allowed origins와 HUD 앱 서버 주소는 릴리스 시 `playsteno.com` 기준인지 재확인
 - HUD 앱 (`main/dictionary-api.ts` 의 `SAAS_BASE_URL`) 을 새 도메인 가리키게
   재빌드 → autoUpdater 로 배포 (v0.2.28 예상)
 
@@ -149,7 +150,7 @@ async redirects() {
 ## 7. 오픈 이슈
 
 - [ ] PlaySteno 전용 로고 만들 것인지 (지금은 낱말지기 S 로고 재사용)
-- [ ] `playsteno.com` 소유권 · 예산 확인
+- [x] `playsteno.com` 연결 확인
 - [ ] `natmalgi.com` · `.co.kr` 도 확보해서 리다이렉트 걸어둘지
 - [ ] 타자게임 실제 착수 순서 · 시점 (커뮤니티는 타자게임 도입 후 재검토)
 - [ ] 로그인 필요 도구와 무료 도구 구분 정책

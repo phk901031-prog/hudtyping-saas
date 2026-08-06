@@ -1,6 +1,2 @@
-const vercelProductionHost = process.env.VERCEL_PROJECT_PRODUCTION_URL;
-
-export const SITE_URL = new URL(
-  process.env.NEXT_PUBLIC_SITE_URL ??
-    (vercelProductionHost ? `https://${vercelProductionHost}` : "https://papawheels.vercel.app")
-);
+/** 고객과 검색엔진에 노출하는 유일한 공식 주소. Vercel 기본 별칭은 호환용이다. */
+export const SITE_URL = new URL("https://playsteno.com");
