@@ -44,7 +44,7 @@ export default async function HomePage() {
   const { userId } = await auth();
   const isSignedIn = !!userId;
 
-  // 홈페이지에 살짝 노출할 최신 릴리스 · 이번 주 top 8
+  // 홈페이지에 살짝 노출할 최신 릴리스 · 이번 주 상위 8개
   const [releases, weeklyTrend] = await Promise.all([
     fetchReleases().catch(() => []),
     fetchTrendTop({ days: 7, limit: 8 }).catch(() => []),
@@ -61,8 +61,8 @@ export default async function HomePage() {
             className="absolute inset-0 bg-[radial-gradient(120%_80%_at_20%_0%,rgba(56,189,248,0.10),transparent_60%),radial-gradient(90%_60%_at_100%_100%,rgba(240,95,50,0.08),transparent_60%)]"
           />
 
-          <div className="relative mx-auto grid w-full max-w-6xl gap-12 px-5 pb-20 pt-16 sm:px-8 lg:min-h-[640px] lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:pt-20">
-            <div className="flex flex-col justify-center gap-7">
+          <div className="relative mx-auto grid w-full max-w-7xl gap-12 px-5 pb-20 pt-14 sm:px-8 sm:pt-16 xl:min-h-[680px] xl:grid-cols-[minmax(0,1.05fr)_minmax(520px,0.95fr)] xl:items-center xl:gap-14 xl:py-20">
+            <div className="flex max-w-3xl flex-col justify-center gap-7 xl:max-w-none">
               <div className="flex flex-wrap items-center gap-2 text-xs">
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 font-bold text-emerald-100">
                   <span className="status-led" />
@@ -74,17 +74,16 @@ export default async function HomePage() {
                 </span>
               </div>
 
-              <h1 className="font-display text-4xl font-bold leading-[1.1] tracking-tight [word-break:keep-all] sm:text-5xl lg:text-[3.75rem]">
-                문서 작업을 멈추지 않고,
-                <br />
-                <span className="text-[#a8fff4]">필요한 단어를 바로 확인하세요.</span>
+              <h1 className="ko-heading font-display text-4xl font-bold leading-[1.12] tracking-tight sm:text-5xl xl:text-[3.5rem]">
+                <span className="block">작업 흐름은 그대로,</span>
+                <span className="mt-1 block text-[#a8fff4]">필요한 단어는 바로 확인하세요.</span>
               </h1>
 
-              <p className="max-w-xl text-lg leading-8 text-white/76 [word-break:keep-all]">
+              <p className="ko-copy max-w-xl text-lg leading-8 text-white/82">
                 커서 앞 단어의 뜻풀이와 예문을 작은 HUD에서 확인합니다.
               </p>
 
-              <p className="max-w-xl text-sm leading-7 text-white/50 [word-break:keep-all]">
+              <p className="ko-copy max-w-xl text-sm leading-7 text-white/64">
                 한글 문서에서 벗어나지 않고 지정 키를 누르면 우리말샘 검색 결과가 표시됩니다.
                 연속으로 누르면 앞 어절까지 검색 범위를 넓힐 수 있습니다.
               </p>
@@ -115,30 +114,26 @@ export default async function HomePage() {
                 )}
               </div>
 
-              <p className="text-sm text-white/50">
+              <p className="ko-copy text-sm text-white/62">
                 {NATMALGI_ONLINE.supportedEnvironment} · 승인 계정 전용 · 월 기본 {NATMALGI_ONLINE.monthlySearchLimit}회
               </p>
             </div>
 
-            <NatmalgiDemo />
+            <div className="mx-auto w-full max-w-2xl xl:max-w-none">
+              <NatmalgiDemo />
+            </div>
           </div>
         </section>
 
         {/* ─────────────  2. GETTING STARTED  ───────────── */}
-        <section id="start" className="mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 lg:py-28">
-          <div className="flex flex-col items-center gap-4 text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent">
-              시작하기
-            </p>
-            <h2 className="font-display text-4xl leading-tight sm:text-5xl">
-              3단계로 시작합니다
-            </h2>
-            <p className="max-w-2xl text-lg leading-8 text-muted">
-              가입 승인부터 첫 검색까지 순서대로 안내합니다.
-            </p>
-          </div>
+        <section id="start" className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 lg:py-24">
+          <SectionIntro
+            eyebrow="시작하기"
+            title="3단계로 시작합니다"
+            description="가입 승인부터 첫 검색까지 순서대로 안내합니다."
+          />
 
-          <div className="mt-14 grid gap-6 md:grid-cols-3">
+          <div className="mt-12 grid gap-6 lg:grid-cols-3">
             <StartStepCard
               number="01"
               title="가입 승인"
@@ -169,28 +164,22 @@ export default async function HomePage() {
 
         {/* ─────────────  3. HOW IT WORKS  ───────────── */}
         <section className="border-y border-border bg-ink text-white">
-          <div className="mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 lg:py-28">
-            <div className="flex flex-col items-center gap-4 text-center">
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#a8fff4]">
-              작동 방식
-              </p>
-              <h2 className="font-display text-4xl leading-tight sm:text-5xl">
-                한글 문서에서, 키 한 번.
-              </h2>
-              <p className="max-w-2xl text-lg leading-8 text-white/68">
-                복사할 수 있는 커서 앞 텍스트를 가져와 검색하고,
-                결과를 작업 화면 위 HUD에 표시합니다.
-              </p>
-            </div>
+          <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 lg:py-24">
+            <SectionIntro
+              eyebrow="작동 방식"
+              title="한글 문서에서, 키 한 번."
+              description="복사할 수 있는 커서 앞 텍스트를 가져와 검색하고, 결과를 작업 화면 위 HUD에 표시합니다."
+              inverse
+            />
 
-            <div className="mt-14 grid gap-8 md:grid-cols-3">
+            <div className="mt-12 grid gap-8 lg:grid-cols-3">
               <HowStep
                 index="1"
                 title="커서 두기"
                 caption="검색할 단어 바로 뒤에 커서를 두고"
               >
                 <div className="rounded-lg border border-white/12 bg-white/[0.04] p-4">
-                  <p className="text-xs font-bold uppercase tracking-wider text-white/40">
+                  <p className="text-xs font-bold uppercase tracking-wider text-white/60">
                     HWP
                   </p>
                   <p className="mt-3 font-mono text-sm text-white/80">
@@ -206,9 +195,9 @@ export default async function HomePage() {
               >
                 <div className="flex flex-wrap items-center justify-center gap-2 rounded-lg border border-white/12 bg-white/[0.04] py-6">
                   <KeyCap>F3</KeyCap>
-                  <span className="text-xs text-white/40">or</span>
+                  <span className="text-xs text-white/58">또는</span>
                   <KeyCap>Insert</KeyCap>
-                  <span className="text-xs text-white/40">or</span>
+                  <span className="text-xs text-white/58">또는</span>
                   <KeyCap dim>내가 정한 키</KeyCap>
                 </div>
               </HowStep>
@@ -219,7 +208,7 @@ export default async function HomePage() {
               >
                 <div className="rounded-lg border border-white/12 bg-[#041012]/95 p-3">
                   <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                    <span className="text-[10px] font-bold text-white/50">
+                    <span className="text-[10px] font-bold text-white/62">
                       낱말지기
                     </span>
                     <span className="rounded bg-accent/22 px-1.5 py-0.5 text-[9px] font-bold text-[#bff6ef]">
@@ -237,20 +226,14 @@ export default async function HomePage() {
         </section>
 
         {/* ─────────────  4. FEATURES  ───────────── */}
-        <section id="features" className="mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 lg:py-28">
-          <div className="flex flex-col items-center gap-4 text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent">
-              주요 기능
-            </p>
-            <h2 className="font-display text-4xl leading-tight sm:text-5xl">
-              기록 흐름을 지키는 실용적인 기능
-            </h2>
-            <p className="max-w-2xl text-lg leading-8 text-muted">
-              화면을 전환하거나 검색어를 다시 입력하는 반복을 줄였습니다.
-            </p>
-          </div>
+        <section id="features" className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 lg:py-24">
+          <SectionIntro
+            eyebrow="주요 기능"
+            title="기록 흐름을 지키는 실용적인 기능"
+            description="화면을 전환하거나 검색어를 다시 입력하는 반복을 줄였습니다."
+          />
 
-          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
             <FeatureCard
               Icon={Command}
               title="커서 앞 자동 검색"
@@ -286,26 +269,20 @@ export default async function HomePage() {
 
         {/* ─────────────  5. SUPPORT  ───────────── */}
         <section id="support" className="border-y border-border bg-panel">
-          <div className="mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 lg:py-28">
+          <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 lg:py-24">
             <OpenChatCard />
           </div>
         </section>
 
         {/* ─────────────  5.5 LIVE — Updates + Trends  ───────────── */}
-        <section className="mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 lg:py-28">
-          <div className="flex flex-col items-center gap-4 text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent">
-              최근 소식
-            </p>
-            <h2 className="font-display text-4xl leading-tight sm:text-5xl">
-              최근 업데이트와 검색 흐름
-            </h2>
-            <p className="max-w-2xl text-lg leading-8 text-muted">
-              최근 업데이트와 사용자들이 자주 찾은 단어를 한눈에 확인합니다.
-            </p>
-          </div>
+        <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 lg:py-24">
+          <SectionIntro
+            eyebrow="최근 소식"
+            title="최근 업데이트와 검색 흐름"
+            description="최근 업데이트와 사용자들이 자주 찾은 단어를 한눈에 확인합니다."
+          />
 
-          <div className="mt-14 grid gap-5 lg:grid-cols-2">
+          <div className="mt-12 grid gap-5 lg:grid-cols-2">
             <LatestReleaseCard release={latestRelease} />
             <WeeklyTrendCard rows={weeklyTrend} />
           </div>
@@ -313,14 +290,14 @@ export default async function HomePage() {
 
         {/* ─────────────  5.8 FINAL CTA  ───────────── */}
         <section className="border-t border-border bg-ink text-white">
-          <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-6 px-5 py-24 text-center sm:px-8 lg:py-28">
+          <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-6 px-5 py-20 text-center sm:px-8 lg:py-24">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#a8fff4]">
               낱말지기 온라인
             </p>
-            <h2 className="font-display text-3xl leading-tight [word-break:keep-all] sm:text-4xl">
+            <h2 className="ko-heading font-display max-w-3xl text-3xl leading-tight sm:text-4xl">
               필요한 순간 바로 확인하는 작업 환경을 만들어보세요.
             </h2>
-            <p className="max-w-xl text-lg leading-8 text-white/70 [word-break:keep-all]">
+            <p className="ko-copy max-w-xl text-lg leading-8 text-white/76">
               무료 베타 기간에는 승인된 계정으로 월 {NATMALGI_ONLINE.monthlySearchLimit}회까지 이용할 수 있습니다.
             </p>
             <a
@@ -334,17 +311,10 @@ export default async function HomePage() {
         </section>
 
         {/* ─────────────  6. FAQ  ───────────── */}
-        <section className="mx-auto w-full max-w-4xl px-5 py-24 sm:px-8 lg:py-28">
-          <div className="flex flex-col items-center gap-4 text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent">
-              FAQ
-            </p>
-            <h2 className="font-display text-4xl leading-tight sm:text-5xl">
-              자주 묻는 질문
-            </h2>
-          </div>
+        <section className="mx-auto w-full max-w-4xl px-5 py-20 sm:px-8 lg:py-24">
+          <SectionIntro eyebrow="FAQ" title="자주 묻는 질문" />
 
-          <div className="mt-14 flex flex-col gap-3">
+          <div className="mt-12 flex flex-col gap-3">
             <FaqItem question="어떤 편집기에서 되나요?">
               한글(HWP), MS Word, 텍스트 편집기처럼 커서 앞 텍스트를 복사할 수 있는
               Windows 프로그램에서 사용할 수 있습니다. 프로그램의 보안 설정이나 입력 방식에 따라
@@ -375,6 +345,42 @@ export default async function HomePage() {
 // SECTION HELPERS
 // ═════════════════════════════════════════════════════════════════
 
+function SectionIntro({
+  eyebrow,
+  title,
+  description,
+  inverse = false,
+}: {
+  eyebrow: string;
+  title: string;
+  description?: React.ReactNode;
+  inverse?: boolean;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-4 text-center">
+      <p
+        className={`text-xs font-bold uppercase tracking-[0.18em] ${
+          inverse ? "text-[#a8fff4]" : "text-accent"
+        }`}
+      >
+        {eyebrow}
+      </p>
+      <h2 className="ko-heading font-display max-w-3xl text-3xl leading-tight sm:text-4xl lg:text-[2.75rem]">
+        {title}
+      </h2>
+      {description && (
+        <p
+          className={`ko-copy max-w-2xl text-base leading-7 sm:text-lg sm:leading-8 ${
+            inverse ? "text-white/74" : "text-muted"
+          }`}
+        >
+          {description}
+        </p>
+      )}
+    </div>
+  );
+}
+
 function StartStepCard({
   number,
   title,
@@ -391,13 +397,13 @@ function StartStepCard({
       ? "bg-signal text-white hover:brightness-110"
       : "bg-foreground text-background hover:opacity-90";
   return (
-    <article className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-8 transition hover:border-accent/40">
+    <article className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-6 transition hover:border-accent/40 xl:p-8">
       <span className="font-mono text-4xl font-bold text-accent">
         {number}
       </span>
       <div className="flex flex-col gap-3">
-        <h3 className="font-display text-2xl leading-tight">{title}</h3>
-        <p className="text-[15px] leading-7 text-muted [word-break:keep-all]">
+        <h3 className="ko-heading font-display text-2xl leading-tight">{title}</h3>
+        <p className="ko-copy text-[15px] leading-7 text-muted">
           {body}
         </p>
       </div>
@@ -450,10 +456,10 @@ function HowStep({
         <span className="font-mono text-lg font-bold text-[#a8fff4]">
           {index}
         </span>
-        <h3 className="text-lg font-bold text-white">{title}</h3>
+        <h3 className="ko-heading text-lg font-bold text-white">{title}</h3>
       </div>
       {children}
-      <p className="text-sm text-white/56 [word-break:keep-all]">{caption}</p>
+      <p className="ko-copy text-sm leading-6 text-white/68">{caption}</p>
     </article>
   );
 }
@@ -468,22 +474,22 @@ function FeatureCard({
   body: string;
 }) {
   return (
-    <article className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-8 transition hover:border-accent/40 hover:shadow-[0_20px_40px_rgba(9,23,36,0.06)]">
+    <article className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-6 transition hover:border-accent/40 hover:shadow-[0_20px_40px_rgba(9,23,36,0.06)] xl:p-8">
       <span
         aria-hidden="true"
         className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-accent-soft text-accent"
       >
         <Icon size={22} strokeWidth={2} />
       </span>
-      <h3 className="font-display text-xl leading-tight">{title}</h3>
-      <p className="text-[15px] leading-7 text-muted [word-break:keep-all]">{body}</p>
+      <h3 className="ko-heading font-display text-xl leading-tight">{title}</h3>
+      <p className="ko-copy text-[15px] leading-7 text-muted">{body}</p>
     </article>
   );
 }
 
 function OpenChatCard() {
   return (
-    <div className="grid gap-6 rounded-xl border border-border bg-card p-6 sm:p-8 md:grid-cols-[1fr_auto] md:items-center">
+    <div className="grid gap-6 rounded-xl border border-border bg-card p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center">
       <div className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-full bg-accent/12 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-accent">
@@ -491,12 +497,10 @@ function OpenChatCard() {
           </span>
           <span className="text-xs font-medium text-muted">관리자 공지 채널</span>
         </div>
-        <h2 className="font-display text-2xl leading-snug [word-break:keep-all] sm:text-3xl">
-          업데이트 소식과 문의는
-          <br />
-          카카오톡 오픈톡방에서.
+        <h2 className="ko-heading font-display max-w-2xl text-2xl leading-snug sm:text-3xl">
+          업데이트 소식과 문의는 카카오톡 오픈톡방에서.
         </h2>
-        <p className="text-[15px] leading-7 text-muted [word-break:keep-all]">
+        <p className="ko-copy max-w-3xl text-[15px] leading-7 text-muted">
           업데이트 · 사용량 문의 · 기능 요청 · 가입 승인 요청을 오픈톡방에서 받습니다.
           현재는 회원 커뮤니티가 아닌 관리자 공지·지원 채널로 운영합니다.
         </p>
@@ -551,23 +555,23 @@ function LatestReleaseCard({
         >
           <Sparkles size={16} strokeWidth={2.2} />
         </span>
-        <span className="text-xs font-bold uppercase tracking-[0.14em] text-accent">
-          Latest release
+        <span className="text-xs font-bold tracking-[0.14em] text-accent">
+          최신 업데이트
         </span>
       </div>
       {release ? (
         <>
-          <h3 className="font-display text-2xl leading-tight">{release.title}</h3>
+          <h3 className="ko-heading font-display text-2xl leading-tight">{release.title}</h3>
           <p className="mt-2 font-mono text-xs text-muted">
             {formatShortDate(release.publishedAt)} · {release.tag}
           </p>
-          <p className="mt-4 line-clamp-4 text-[15px] leading-7 text-muted [word-break:keep-all]">
+          <p className="ko-copy mt-4 line-clamp-4 text-[15px] leading-7 text-muted">
             {stripMarkdown(release.bodyMarkdown)}
           </p>
         </>
       ) : (
         <>
-          <h3 className="font-display text-2xl leading-tight">
+          <h3 className="ko-heading font-display text-2xl leading-tight">
             곧 새 소식을 만나보세요
           </h3>
           <p className="mt-2 text-[15px] text-muted">
@@ -602,12 +606,12 @@ function WeeklyTrendCard({
         >
           <TrendingUp size={16} strokeWidth={2.2} />
         </span>
-        <span className="text-xs font-bold uppercase tracking-[0.14em] text-accent">
-          This week
+        <span className="text-xs font-bold tracking-[0.14em] text-accent">
+          이번 주
         </span>
       </div>
-      <h3 className="font-display text-2xl leading-tight">이번 주 인기 검색어</h3>
-      <p className="mt-2 font-mono text-xs text-muted">지난 7일 · top 8</p>
+      <h3 className="ko-heading font-display text-2xl leading-tight">이번 주 인기 검색어</h3>
+      <p className="mt-2 text-xs text-muted">지난 7일 · 상위 8개</p>
 
       {rows.length === 0 ? (
         <p className="mt-6 rounded-xl border border-dashed border-border px-4 py-8 text-center text-sm text-muted">
@@ -639,7 +643,7 @@ function WeeklyTrendCard({
           href="/trends"
           className="inline-flex items-center gap-1.5 text-sm font-bold text-accent transition hover:opacity-80"
         >
-          top 30 전체 보기
+          상위 30개 전체 보기
           <ArrowRight size={14} strokeWidth={2.4} />
         </Link>
       </div>
@@ -677,7 +681,7 @@ function FaqItem({
 }) {
   return (
     <details className="group rounded-2xl border border-border bg-card p-6 transition open:shadow-[0_10px_28px_rgba(9,23,36,0.06)]">
-      <summary className="flex cursor-pointer items-center justify-between gap-4 text-lg font-bold [&::-webkit-details-marker]:hidden">
+      <summary className="ko-heading flex cursor-pointer items-center justify-between gap-4 text-lg font-bold [&::-webkit-details-marker]:hidden">
         {question}
         <span
           aria-hidden="true"
@@ -686,7 +690,7 @@ function FaqItem({
           +
         </span>
       </summary>
-      <div className="mt-4 text-[15px] leading-7 text-muted [word-break:keep-all]">
+      <div className="ko-copy mt-4 text-[15px] leading-7 text-muted">
         {children}
       </div>
     </details>

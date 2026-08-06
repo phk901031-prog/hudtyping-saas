@@ -22,7 +22,7 @@ export function SiteFooter() {
           <Image src="/logo.png" alt="" width={40} height={40} className="h-10 w-10 rounded-xl" />
           <div>
             <p className="font-display text-lg">{BRAND.name}</p>
-            <p className="mt-1 text-xs leading-5 text-muted">
+            <p className="ko-copy mt-1 text-xs leading-5 text-muted">
               {BRAND.tagline}<br />
               {NATMALGI_ONLINE.name} · Windows v{WINDOWS_RELEASE.version}
             </p>

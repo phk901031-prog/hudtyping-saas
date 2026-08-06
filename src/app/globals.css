@@ -492,6 +492,17 @@ body {
   letter-spacing: 0;
 }
 
+/* 한글 문구가 어절 중간에서 끊기거나 한 줄만 짧게 남지 않도록 통일한다. */
+.ko-heading {
+  word-break: keep-all;
+  text-wrap: balance;
+}
+
+.ko-copy {
+  word-break: keep-all;
+  text-wrap: pretty;
+}
+
 /* 부드러운 selection */
 ::selection {
   background: var(--accent-soft);
