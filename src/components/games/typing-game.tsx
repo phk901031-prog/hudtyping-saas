@@ -252,7 +252,9 @@ export function TypingGame({
 
   function processValue(nextValue: string) {
     if (phase !== "running" || !activePrompt) return;
-    const normalized = nextValue.normalize("NFC");
+    // 속기 키보드 약어가 문장 전환 직후 남기는 공백은 새 문장의
+    // 첫 글자로 취급하지 않는다. 문장 중간의 정상 공백은 그대로 유지한다.
+    const normalized = nextValue.normalize("NFC").replace(/^\s+/, "");
     const nextChars = Array.from(normalized);
     const targetChars = Array.from(activePrompt.text.normalize("NFC"));
 
