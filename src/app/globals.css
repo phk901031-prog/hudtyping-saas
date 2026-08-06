@@ -623,31 +623,19 @@ body {
   }
 }
 
-/* 메인 타자 게임 배너 — 실제 키 입력처럼 차분하게 이어지는 눌림 모션 */
-.game-key-press {
-  animation: game-keyboard-press 3.2s ease-in-out infinite;
-}
-.game-key-press-1 { animation-delay: 0s; }
-.game-key-press-2 { animation-delay: 0.16s; }
-.game-key-press-3 { animation-delay: 0.32s; }
-.game-key-press-4 { animation-delay: 0.48s; }
-.game-key-press-5 { animation-delay: 0.64s; }
+/* 메인 타자 게임 배너 — 실제 플레이 화면의 입력 진행만 작게 표현 */
 .game-demo-caret { animation: game-caret-blink 0.85s steps(1) infinite; }
-.game-promo-arrow { animation: game-promo-pulse 2.2s ease-in-out infinite; }
-
-@keyframes game-keyboard-press {
-  0%, 8%, 22%, 100% { transform: translateY(0); background-color: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.75); }
-  12%, 17% { transform: translateY(3px); background-color: rgba(168, 255, 244, 0.2); color: #d9fff9; box-shadow: 0 0 14px rgba(168, 255, 244, 0.16); }
-}
+.game-preview-progress { animation: game-preview-progress 4.5s ease-in-out infinite; }
 
 @keyframes game-caret-blink {
   0%, 55% { opacity: 1; }
   56%, 100% { opacity: 0; }
 }
 
-@keyframes game-promo-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(240, 95, 50, 0); }
-  50% { box-shadow: 0 0 0 8px rgba(240, 95, 50, 0.13); }
+@keyframes game-preview-progress {
+  0%, 12% { width: 42%; opacity: 0.75; }
+  72%, 88% { width: 78%; opacity: 1; }
+  100% { width: 42%; opacity: 0.75; }
 }
 
 /* 모션 줄이기 사용자 선호 시 sweep 끔 */
@@ -669,11 +657,12 @@ body {
     animation: none;
   }
 
-  .game-key-press,
   .game-demo-caret,
-  .game-promo-arrow {
+  .game-preview-progress {
     animation: none;
   }
+
+  .game-preview-progress { width: 62%; }
 
   .keycap::after {
     animation: none;

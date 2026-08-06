@@ -372,13 +372,6 @@ export default async function HomePage() {
 // ═════════════════════════════════════════════════════════════════
 
 function TypingGamePromo() {
-  const keys = [
-    { label: "ㅅ", className: "game-key-press-1" },
-    { label: "ㅗ", className: "game-key-press-2" },
-    { label: "ㄱ", className: "game-key-press-3" },
-    { label: "ㅣ", className: "game-key-press-4" },
-    { label: "Space", className: "game-key-press-5 col-span-2 w-full" },
-  ];
   return (
     <Link
       href="/games/typing"
@@ -391,20 +384,31 @@ function TypingGamePromo() {
         <Trophy size={19} className="text-signal" />
       </div>
       <div className="relative mt-5 rounded-2xl border border-white/12 bg-black/20 p-4" aria-hidden="true">
-        <div className="flex items-center justify-between border-b border-white/10 pb-3">
-          <div className="flex gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-signal" /><span className="h-1.5 w-1.5 rounded-full bg-[#a8fff4]" /></div>
-          <span className="font-mono text-[10px] text-white/50">30.0 SEC</span>
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/45">문장 4</span>
+          <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 font-mono text-[11px] font-bold text-white/80">18.4초</span>
         </div>
-        <div className="mt-3 flex items-center justify-between gap-3">
-          <p className="font-display text-base text-white/90">속기 연습<span className="game-demo-caret ml-1 inline-block h-4 w-[2px] translate-y-0.5 bg-[#a8fff4]" /></p>
-          <span className="rounded-full bg-[#a8fff4]/10 px-2 py-1 font-mono text-[10px] text-[#a8fff4]">312 CPM</span>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <div className="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2">
+            <p className="text-[9px] text-white/40">타수</p>
+            <p className="mt-0.5 font-mono text-sm font-bold text-[#a8fff4]">312 <span className="text-[9px] font-normal">CPM</span></p>
+          </div>
+          <div className="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2">
+            <p className="text-[9px] text-white/40">정확도</p>
+            <p className="mt-0.5 font-mono text-sm font-bold text-white">98.7<span className="text-[9px] font-normal">%</span></p>
+          </div>
         </div>
-        <div className="mt-4 grid grid-cols-6 gap-2">
-          {keys.map((key) => (
-            <span key={key.label} className={`game-key-press flex h-9 items-center justify-center rounded-lg border border-white/15 bg-white/8 font-mono text-xs font-bold text-white/75 shadow-[0_3px_0_rgba(0,0,0,0.28)] ${key.className}`}>
-              {key.label}
-            </span>
-          ))}
+        <div className="mt-3 rounded-xl border border-white/10 bg-[#07151d] px-3 py-3">
+          <p className="ko-copy text-[13px] font-semibold leading-6">
+            <span className="text-emerald-300">정확한 기록은 작은 차이를 </span>
+            <span className="rounded bg-signal/25 text-[#ff9b7d]">놓</span>
+            <span className="text-white">치지</span>
+            <span className="game-demo-caret ml-0.5 inline-block h-4 w-[2px] translate-y-0.5 bg-[#a8fff4]" />
+            <span className="text-white/38"> 않는 태도에서 시작된다.</span>
+          </p>
+          <div className="mt-3 h-1 overflow-hidden rounded-full bg-white/8">
+            <span className="game-preview-progress block h-full rounded-full bg-[#a8fff4]" />
+          </div>
         </div>
       </div>
       <div className="relative z-10 mt-1 flex items-end justify-between gap-4">
@@ -412,7 +416,7 @@ function TypingGamePromo() {
           <p className="font-display text-3xl">타자 게임</p>
           <p className="mt-1 text-xs text-white/60">주간 · 월간 순위에 도전하세요</p>
         </div>
-        <span className="game-promo-arrow inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-signal text-white transition group-hover:scale-110">
+        <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-signal text-white transition group-hover:scale-110">
           <ArrowRight size={18} />
         </span>
       </div>
