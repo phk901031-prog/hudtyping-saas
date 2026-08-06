@@ -52,15 +52,13 @@ export default function WindowsDownloadPage() {
       {/* 설치 흐름 안내 */}
       <section className="mx-auto mt-12 w-full max-w-4xl">
         <div className="flex flex-col items-center gap-3 text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent">
-            Install
-          </p>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent">설치 안내</p>
           <h2 className="font-display text-3xl sm:text-4xl">
             설치는 3단계면 됩니다
           </h2>
           <p className="max-w-2xl text-base leading-7 text-muted">
-            브라우저와 Windows가 처음 보는 파일이라 경고를 띄우는 게 정상입니다.
-            아래처럼 진행하면 안전하게 설치됩니다.
+            현재 코드 서명이 적용되지 않아 Windows가 게시자를 확인할 수 없다는 경고를
+            표시할 수 있습니다. 공식 다운로드 주소와 파일명을 확인한 뒤 진행하세요.
           </p>
         </div>
 
@@ -106,15 +104,13 @@ export default function WindowsDownloadPage() {
                 왜 &ldquo;검증되지 않은 파일&rdquo; 경고가 뜨나요?
               </h3>
               <p className="text-[15px] leading-7 text-muted [word-break:keep-all]">
-                Windows·Chrome은 대기업이 구매하는 <strong>코드 서명 인증서</strong>가
-                붙어 있고 다운로드 이력이 많은 파일에만 &ldquo;검증됨&rdquo; 표시를 줍니다.
-                낱말지기은 개인 개발자가 운영하는 무료 소프트웨어라 아직 그 절차를 거치지
-                않아, 처음 받으실 때는 경고가 뜨는 게 정상입니다.
+                코드 서명은 Windows가 파일의 배포 주체와 서명 이후 변경 여부를 확인하는
+                수단입니다. 낱말지기 온라인은 아직 코드 서명을 적용하지 않아 게시자를
+                확인할 수 없다는 경고가 표시될 수 있습니다.
               </p>
               <p className="text-[15px] leading-7 text-muted [word-break:keep-all]">
-                설치 파일은 GitHub Release에 공개되어 있고, 서버는 등록된 해시와 일치하는
-                파일만 인증하도록 되어 있어 배포 중 변조는 감지됩니다. 안심하고 설치하셔도
-                됩니다.
+                설치 파일은 공식 GitHub Releases에서만 받으세요. 다운로드 주소나 파일명이
+                다르거나 백신이 구체적인 위협을 탐지하면 실행하지 말고 문의해 주세요.
               </p>
               <div className="flex flex-wrap gap-3 pt-2">
                 <Link
@@ -129,7 +125,7 @@ export default function WindowsDownloadPage() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-4 py-2 text-sm font-bold transition hover:bg-muted-bg"
                 >
-                  오픈톡방 문의 →
+                  공지·문의 채널 →
                 </a>
               </div>
             </div>
@@ -138,7 +134,7 @@ export default function WindowsDownloadPage() {
       </section>
 
       <p className="mx-auto mt-10 max-w-2xl text-center text-xs leading-6 text-muted">
-        파일은 GitHub Release 에 보관됩니다. 사용 안내와 설치 흐름은 낱말지기 사이트에서
+        파일은 GitHub Releases에 보관됩니다. 사용 안내와 설치 흐름은 PlaySteno에서
         계속 확인하실 수 있습니다.
       </p>
     </main>
@@ -184,7 +180,7 @@ function BrowserBarMock() {
         <span aria-hidden="true" className="text-lg">📦</span>
         <div className="min-w-0">
           <p className="truncate text-[11px] font-bold text-zinc-800 dark:text-zinc-100">
-            hudtyping-Setup.exe
+            hudtyping-Setup-{WINDOWS_RELEASE.version}.exe
           </p>
           <p className="text-[10px] text-zinc-500">다운로드 완료</p>
         </div>

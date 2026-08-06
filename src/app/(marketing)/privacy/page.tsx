@@ -1,13 +1,13 @@
 // src/app/privacy/page.tsx
 // 개인정보 처리방침. 베타 단계의 최소 구성.
-// 1년 후 유료화·결제 도입 시 보강 예정.
+// 결제나 새로운 회원 기능 도입 시 처리 항목을 함께 갱신한다.
 
 import Link from "next/link";
 import type { Metadata } from "next";
 import { OPENCHAT } from "@/config/community";
 
 export const metadata: Metadata = {
-  title: "개인정보 처리방침 — hudtyping",
+  title: "개인정보 처리방침",
 };
 
 export default function PrivacyPage() {
@@ -23,7 +23,7 @@ export default function PrivacyPage() {
       <h1 className="font-display text-3xl sm:text-4xl mt-6 mb-2">
         개인정보 처리방침
       </h1>
-      <p className="text-sm text-muted mb-8">최종 업데이트: 2026-05-07</p>
+      <p className="text-sm text-muted mb-8">최종 업데이트: 2026-08-06</p>
 
       <div className="flex flex-col gap-8 leading-relaxed">
         <section>
@@ -53,10 +53,7 @@ export default function PrivacyPage() {
             <li>서비스 이용 인증·승인</li>
             <li>월 검색 한도 계산 (사용자별 누적 사용량 추적)</li>
             <li>전체 사용 패턴 분석 (인기 검색어, 캐시 적중률 등)</li>
-            <li>
-              유료화 전환 시점 결정 자료 (1년 무료 운영 후 — 자세한 내용은 변경 시
-              별도 안내)
-            </li>
+            <li>오류 분석과 기능·성능 개선을 위한 이용 통계 확인</li>
           </ul>
         </section>
 
@@ -81,7 +78,7 @@ export default function PrivacyPage() {
               계정 삭제 시 관련된 검색 기록·프로그램 연결 정보도 함께 자동 삭제돼요 (DB
               cascade)
             </li>
-            <li>프로그램 연결 정보는 본인이 직접 언제든 삭제할 수 있어요 (`/api-keys`)</li>
+            <li>프로그램 연결 정보는 대시보드의 프로그램 연결 화면에서 다시 발급하거나 해제할 수 있어요</li>
           </ul>
         </section>
 

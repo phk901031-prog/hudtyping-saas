@@ -18,6 +18,7 @@ interface Props {
   currentMonthlyLimit: number;
   currentUnlimitedUntil: Date | null;
   currentUnlimitedPermanent: boolean;
+  currentUnlimitedActive: boolean;
   /** 탈퇴 확인 시 입력 대조용 표시 이름 (실명 우선, 없으면 이메일) */
   displayName: string;
   isSelf: boolean; // 본인이면 admin 해제 · 탈퇴 버튼 비활성화 (lock-out 방지)
@@ -30,6 +31,7 @@ export function UserActionButtons({
   currentMonthlyLimit,
   currentUnlimitedUntil,
   currentUnlimitedPermanent,
+  currentUnlimitedActive,
   displayName,
   isSelf,
 }: Props) {
@@ -94,8 +96,7 @@ export function UserActionButtons({
 
   const hasUnlimitedGrant =
     currentUnlimitedPermanent ||
-    (currentUnlimitedUntil !== null &&
-      currentUnlimitedUntil.getTime() > Date.now());
+    (currentUnlimitedUntil !== null && currentUnlimitedActive);
 
   return (
     <div className="flex flex-col gap-1 items-end">

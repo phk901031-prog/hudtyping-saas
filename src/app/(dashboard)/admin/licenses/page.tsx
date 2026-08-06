@@ -46,7 +46,7 @@ export default async function AdminLicensesPage() {
           <h2 className="text-base font-bold">발급 내역 ({list.length}건)</h2>
           <ul className="overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
             {list.map((license) => {
-              const isExpired = !!license.expiresAt && license.expiresAt.getTime() < Date.now();
+              const isExpired = license.expired;
               const isRevoked = !!license.revokedAt;
               return (
                 <li

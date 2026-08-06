@@ -26,10 +26,8 @@ const OUTPUTS = {
 };
 
 // OG 이미지에 얹을 문구
-const OG_TAGLINE = "한글 문서에서 커서 앞 단어를 바로 검색";
-const OG_TITLE = "낱말지기";
-
-const NAVY_BG = "#091724"; // 홈페이지 팔레트와 정확히 일치
+const OG_TAGLINE = "속기사의 놀이터 · 낱말지기 온라인";
+const OG_TITLE = "PlaySteno";
 
 await fs.access(SOURCE).catch(() => {
   console.error(`원본 로고를 찾을 수 없습니다: ${SOURCE}`);
@@ -76,7 +74,7 @@ const ogSvgText = `
   <text x="720" y="360" fill="#a8fff4" font-family="Pretendard, 'SF Pro Display', system-ui, sans-serif"
         font-size="30" font-weight="500">${OG_TAGLINE}</text>
   <text x="720" y="550" fill="rgba(255,255,255,0.45)" font-family="Pretendard, 'SF Pro Display', system-ui, sans-serif"
-        font-size="22" font-weight="600" letter-spacing="4">HUDTYPING</text>
+        font-size="22" font-weight="600" letter-spacing="4">PLAYSTENO</text>
 </svg>
 `.trim();
 const ogSvg = Buffer.from(ogSvgText);

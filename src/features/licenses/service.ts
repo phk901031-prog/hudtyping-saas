@@ -252,11 +252,17 @@ export async function issueLicense(input: IssueLicenseInput): Promise<License> {
 }
 
 export async function listLicenses(limit = 200) {
-  return db
+  const rows = await db
     .select()
     .from(licenses)
     .orderBy(sql`${licenses.issuedAt} DESC`)
     .limit(limit);
+
+  const nowMs = Date.now();
+  return rows.map((license) => ({
+    ...license,
+    expired: license.expiresAt !== null && license.expiresAt.getTime() < nowMs,
+  }));
 }
 
 export async function getLicenseActivations(keyInput: string) {

@@ -50,6 +50,7 @@ export async function listUsers(filter?: {
  * 사용자 수 30명 규모면 충분히 가볍다.
  */
 export type UserWithActivity = User & {
+  unlimitedActive: boolean;
   monthlyCount: number;
   totalCount: number;
   cacheHitCount: number;
@@ -125,10 +126,15 @@ export async function listUsersWithActivity(filter?: {
     ])
   );
 
+  const nowMs = Date.now();
+
   return usersList.map((u) => {
     const last = lastMap.get(u.clerkId);
     return {
       ...u,
+      unlimitedActive:
+        u.unlimitedPermanent ||
+        (u.unlimitedUntil !== null && u.unlimitedUntil.getTime() > nowMs),
       monthlyCount: monthlyMap.get(u.clerkId) ?? 0,
       totalCount: totalMap.get(u.clerkId)?.total ?? 0,
       cacheHitCount: totalMap.get(u.clerkId)?.cacheHits ?? 0,

@@ -4,9 +4,10 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { OPENCHAT } from "@/config/community";
+import { NATMALGI_ONLINE } from "@/config/product";
 
 export const metadata: Metadata = {
-  title: "이용약관 — hudtyping",
+  title: "이용약관",
 };
 
 export default function TermsPage() {
@@ -20,22 +21,22 @@ export default function TermsPage() {
       </Link>
 
       <h1 className="font-display text-3xl sm:text-4xl mt-6 mb-2">이용약관</h1>
-      <p className="text-sm text-muted mb-8">최종 업데이트: 2026-05-07</p>
+      <p className="text-sm text-muted mb-8">최종 업데이트: 2026-08-06</p>
 
       <div className="flex flex-col gap-8 leading-relaxed">
         <section>
           <h2 className="font-display text-xl mb-3">1. 서비스 안내</h2>
           <p>
-            hudtyping은 한글 워드프로세서 사용자가 단축키로 우리말샘 사전을 빠르게
-            검색할 수 있게 도와주는 도구예요. 데스크톱 HUD 앱과 SaaS 백엔드로 구성돼
-            있어요.
+            PlaySteno는 속기사를 위한 도구와 정보를 제공하는 서비스입니다. 현재 공개 제품인
+            낱말지기 온라인은 Windows HUD 앱과 온라인 검색 서비스로 구성되며, 커서 앞
+            텍스트를 우리말샘에서 빠르게 확인할 수 있도록 돕습니다.
           </p>
         </section>
 
         <section>
           <h2 className="font-display text-xl mb-3">2. 베타 운영 안내</h2>
           <ul className="list-disc pl-5 flex flex-col gap-1.5">
-            <li>현재 1년 무료 운영 단계예요. 이후 유료화로 전환될 수 있어요.</li>
+            <li>현재 낱말지기 온라인은 무료 베타로 운영합니다.</li>
             <li>
               유료화 전환은 최소 30일 전 이메일·웹사이트로 미리 안내해 드려요.
             </li>
@@ -49,7 +50,8 @@ export default function TermsPage() {
           <h2 className="font-display text-xl mb-3">3. 이용 한도</h2>
           <ul className="list-disc pl-5 flex flex-col gap-1.5">
             <li>
-              일반 사용자: <strong>월 500회</strong> 검색 (매월 1일 0시 UTC 리셋)
+              일반 사용자: <strong>월 {NATMALGI_ONLINE.monthlySearchLimit}회</strong> 검색
+              ({NATMALGI_ONLINE.quotaResetLabel} 초기화)
             </li>
             <li>관리자가 사용자별로 한도를 조정할 수 있어요</li>
             <li>한도 초과 시 다음 달까지 검색이 일시 제한돼요</li>

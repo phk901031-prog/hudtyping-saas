@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { UserButton } from "@clerk/nextjs";
+import type { Metadata } from "next";
 import {
   ArrowRight,
   BellRing,
@@ -14,11 +14,19 @@ import {
 } from "lucide-react";
 import { auth } from "@/infrastructure/clerk";
 import { WINDOWS_RELEASE } from "@/config/release";
+import { NATMALGI_ONLINE } from "@/config/product";
 import { OPENCHAT } from "@/config/community";
 import { fetchReleases } from "@/features/updates/releases";
 import { fetchTrendTop } from "@/features/trends/service";
+import { NatmalgiDemo } from "@/components/marketing/natmalgi-demo";
 
 const DOWNLOAD_URL = "/download/windows";
+
+export const metadata: Metadata = {
+  title: "낱말지기 온라인 — 문서 위 우리말샘 HUD",
+  description:
+    "문서 작업을 멈추지 않고 커서 앞 단어의 우리말샘 뜻풀이와 예문을 확인하는 Windows HUD.",
+};
 
 // 홈은 30분 캐시 — releases · trends 데이터도 이 창 안에서 신선.
 export const revalidate = 1800;
@@ -35,85 +43,9 @@ export default async function HomePage() {
   const latestRelease = releases[0] ?? null;
 
   return (
-    <div className="flex flex-1 flex-col bg-background text-foreground">
-      {/* ─────────────  NAV  ───────────── */}
-      <nav className="sticky top-0 z-40 border-b border-border bg-card/90 backdrop-blur-xl">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
-          <Link href="/" className="group inline-flex items-center gap-3">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/logo.png"
-              alt="PlaySteno"
-              width={44}
-              height={44}
-              className="h-11 w-11 rounded-xl"
-            />
-            <span className="flex flex-col leading-none">
-              <span className="font-display text-xl">PlaySteno</span>
-              <span className="mt-1 text-[11px] font-medium text-muted">
-                속기사의 놀이터 · 낱말지기 (온라인)
-              </span>
-            </span>
-          </Link>
-
-          <div className="flex items-center gap-2 sm:gap-3">
-            <a
-              href="#start"
-              className="hidden text-sm font-medium text-muted transition hover:text-foreground sm:inline"
-            >
-              시작하기
-            </a>
-            <a
-              href="#features"
-              className="hidden text-sm font-medium text-muted transition hover:text-foreground sm:inline"
-            >
-              기능
-            </a>
-            <Link
-              href="/updates"
-              className="hidden text-sm font-medium text-muted transition hover:text-foreground sm:inline"
-            >
-              업데이트
-            </Link>
-            <Link
-              href="/trends"
-              className="hidden text-sm font-medium text-muted transition hover:text-foreground sm:inline"
-            >
-              인기 검색어
-            </Link>
-            {isSignedIn ? (
-              <>
-                <Link
-                  href="/dashboard"
-                  className="rounded-lg border border-border px-4 py-2 text-sm font-semibold transition hover:bg-muted-bg"
-                >
-                  대시보드
-                </Link>
-                <UserButton />
-              </>
-            ) : (
-              <>
-                <Link
-                  href="/sign-in"
-                  className="hidden whitespace-nowrap text-sm font-medium text-muted transition hover:text-foreground sm:inline"
-                >
-                  로그인
-                </Link>
-                <Link
-                  href="/sign-up"
-                  className="whitespace-nowrap rounded-lg bg-foreground px-4 py-2 text-sm font-semibold text-background transition hover:opacity-90"
-                >
-                  가입 승인 요청
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      </nav>
-
-      <main className="flex flex-1 flex-col">
+    <main className="flex flex-1 flex-col bg-background text-foreground">
         {/* ─────────────  1. HERO  ───────────── */}
-        <section className="relative overflow-hidden bg-ink text-white">
+        <section id="product" className="relative scroll-mt-28 overflow-hidden bg-ink text-white">
           {/* 절제된 그라디언트 하나만 유지 — 회로 애니메이션 등 노이즈 제거 */}
           <div
             aria-hidden="true"
@@ -125,7 +57,7 @@ export default async function HomePage() {
               <div className="flex flex-wrap items-center gap-2 text-xs">
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 font-bold text-emerald-100">
                   <span className="status-led" />
-                  서비스 운영 중
+                  무료 베타 운영 중
                 </span>
                 <span className="text-white/45">·</span>
                 <span className="font-mono text-white/70">
@@ -134,18 +66,18 @@ export default async function HomePage() {
               </div>
 
               <h1 className="font-display text-4xl font-bold leading-[1.1] tracking-tight [word-break:keep-all] sm:text-5xl lg:text-[3.75rem]">
-                받아쓰기는 누구나 합니다.
+                문서 작업을 멈추지 않고,
                 <br />
-                <span className="text-[#a8fff4]">정확한 기록</span>은 아무나 못 합니다.
+                <span className="text-[#a8fff4]">필요한 단어를 바로 확인하세요.</span>
               </h1>
 
               <p className="max-w-xl text-lg leading-8 text-white/76 [word-break:keep-all]">
-                확인하지 않는 사람은 모릅니다, 자기가 뭘 놓쳤는지조차.
+                커서 앞 단어의 뜻풀이와 예문을 작은 HUD에서 확인합니다.
               </p>
 
               <p className="max-w-xl text-sm leading-7 text-white/50 [word-break:keep-all]">
-                한글 문서에서 벗어나지 않고, 지정 키 한 번이면 우리말샘 결과가 작은 HUD 창에 뜹니다 —
-                Alt+Tab도, 브라우저 검색도, 복사·붙여넣기도 필요 없습니다.
+                한글 문서에서 벗어나지 않고 지정 키를 누르면 우리말샘 검색 결과가 표시됩니다.
+                연속으로 누르면 앞 어절까지 검색 범위를 넓힐 수 있습니다.
               </p>
 
               <div className="flex flex-col gap-3 sm:flex-row">
@@ -153,7 +85,7 @@ export default async function HomePage() {
                   href={DOWNLOAD_URL}
                   className="inline-flex items-center justify-center gap-2 rounded-md bg-signal px-7 py-4 text-base font-bold text-white transition hover:brightness-110"
                 >
-                  Windows 앱 다운로드
+                  낱말지기 다운로드
                   <span aria-hidden="true">↓</span>
                 </a>
                 {!isSignedIn && (
@@ -161,7 +93,7 @@ export default async function HomePage() {
                     href="/sign-up"
                     className="inline-flex items-center justify-center rounded-md border border-white/25 bg-white/8 px-7 py-4 text-base font-bold text-white transition hover:bg-white/14"
                   >
-                    가입 승인 요청
+                    무료로 시작하기
                   </Link>
                 )}
                 {isSignedIn && (
@@ -175,11 +107,11 @@ export default async function HomePage() {
               </div>
 
               <p className="text-sm text-white/50">
-                승인 계정 전용 · v{WINDOWS_RELEASE.minimumFreshInstallVersion} 미만 앱은 새 설치 필요
+                {NATMALGI_ONLINE.supportedEnvironment} · 승인 계정 전용 · 월 기본 {NATMALGI_ONLINE.monthlySearchLimit}회
               </p>
             </div>
 
-            <ProductScreen />
+            <NatmalgiDemo />
           </div>
         </section>
 
@@ -187,13 +119,13 @@ export default async function HomePage() {
         <section id="start" className="mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 lg:py-28">
           <div className="flex flex-col items-center gap-4 text-center">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent">
-              Get started
+              시작하기
             </p>
             <h2 className="font-display text-4xl leading-tight sm:text-5xl">
               3단계로 시작합니다
             </h2>
             <p className="max-w-2xl text-lg leading-8 text-muted">
-              정확한 기록을 만드는 습관은, 이 3단계에서 시작됩니다.
+              가입 승인부터 첫 검색까지 순서대로 안내합니다.
             </p>
           </div>
 
@@ -231,14 +163,14 @@ export default async function HomePage() {
           <div className="mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 lg:py-28">
             <div className="flex flex-col items-center gap-4 text-center">
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#a8fff4]">
-                How it works
+              작동 방식
               </p>
               <h2 className="font-display text-4xl leading-tight sm:text-5xl">
                 한글 문서에서, 키 한 번.
               </h2>
               <p className="max-w-2xl text-lg leading-8 text-white/68">
-                편집기와 통신하지 않습니다. 커서 앞 어절을 잡아 검색한 뒤
-                결과만 HUD 창에 표시합니다.
+                복사할 수 있는 커서 앞 텍스트를 가져와 검색하고,
+                결과를 작업 화면 위 HUD에 표시합니다.
               </p>
             </div>
 
@@ -299,13 +231,13 @@ export default async function HomePage() {
         <section id="features" className="mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 lg:py-28">
           <div className="flex flex-col items-center gap-4 text-center">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent">
-              Features
+              주요 기능
             </p>
             <h2 className="font-display text-4xl leading-tight sm:text-5xl">
-              작지만 매일 쓰기 좋은 것들
+              기록 흐름을 지키는 실용적인 기능
             </h2>
             <p className="max-w-2xl text-lg leading-8 text-muted">
-              자주 확인할수록, 더 빨라지고 더 정확해집니다.
+              화면을 전환하거나 검색어를 다시 입력하는 반복을 줄였습니다.
             </p>
           </div>
 
@@ -323,7 +255,7 @@ export default async function HomePage() {
             <FeatureCard
               Icon={Zap}
               title="즉시 재검색"
-              body="한 번 찾은 단어는 앱 안에 저장돼 재검색 시 네트워크 없이 0ms 응답."
+              body="자주 찾은 결과는 캐시를 활용해 반복 검색의 대기 시간을 줄입니다."
             />
             <FeatureCard
               Icon={BellRing}
@@ -343,7 +275,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* ─────────────  5. COMMUNITY  ───────────── */}
+        {/* ─────────────  5. SUPPORT  ───────────── */}
         <section id="support" className="border-y border-border bg-panel">
           <div className="mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 lg:py-28">
             <OpenChatCard />
@@ -354,10 +286,10 @@ export default async function HomePage() {
         <section className="mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 lg:py-28">
           <div className="flex flex-col items-center gap-4 text-center">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent">
-              Live
+              최근 소식
             </p>
             <h2 className="font-display text-4xl leading-tight sm:text-5xl">
-              지금 이 순간 벌어지는 일
+              최근 업데이트와 검색 흐름
             </h2>
             <p className="max-w-2xl text-lg leading-8 text-muted">
               최근 업데이트와 사용자들이 자주 찾은 단어를 한눈에 확인합니다.
@@ -374,19 +306,19 @@ export default async function HomePage() {
         <section className="border-t border-border bg-ink text-white">
           <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-6 px-5 py-24 text-center sm:px-8 lg:py-28">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#a8fff4]">
-              Before you go
+              낱말지기 온라인
             </p>
             <h2 className="font-display text-3xl leading-tight [word-break:keep-all] sm:text-4xl">
-              지금 놓친 그 단어, 나중엔 기억도 안 납니다.
+              필요한 순간 바로 확인하는 작업 환경을 만들어보세요.
             </h2>
             <p className="max-w-xl text-lg leading-8 text-white/70 [word-break:keep-all]">
-              확인하는 습관은 지금 만드는 게 가장 쉽습니다. 설치는 1분이면 끝납니다.
+              무료 베타 기간에는 승인된 계정으로 월 {NATMALGI_ONLINE.monthlySearchLimit}회까지 이용할 수 있습니다.
             </p>
             <a
               href={DOWNLOAD_URL}
               className="inline-flex items-center justify-center gap-2 rounded-md bg-signal px-8 py-4 text-base font-bold text-white transition hover:brightness-110"
             >
-              Windows 앱 다운로드
+              낱말지기 다운로드
               <span aria-hidden="true">↓</span>
             </a>
           </div>
@@ -405,8 +337,9 @@ export default async function HomePage() {
 
           <div className="mt-14 flex flex-col gap-3">
             <FaqItem question="어떤 편집기에서 되나요?">
-              한글(HWP), MS Word, 텍스트 편집기 등 커서가 있는 대부분의 문서 앱에서 동작합니다.
-              앱이 특정 편집기와 통신하지 않고 커서 앞 단어를 캡처하는 방식이라 범용적으로 쓸 수 있습니다.
+              한글(HWP), MS Word, 텍스트 편집기처럼 커서 앞 텍스트를 복사할 수 있는
+              Windows 프로그램에서 사용할 수 있습니다. 프로그램의 보안 설정이나 입력 방식에 따라
+              텍스트 캡처가 제한될 수 있습니다.
             </FaqItem>
             <FaqItem question="단축키가 안 눌리면?">
               다른 프로그램이 같은 키를 쓰고 있을 수 있어요. HUD 설정에서 Insert · Pause 같은
@@ -417,7 +350,7 @@ export default async function HomePage() {
               <Link href="/install-help" className="text-accent underline">
                 설치 문제 해결 가이드
               </Link>
-              에 케이스별 우회 방법을 정리해 뒀습니다.
+              에 확인 절차를 정리했습니다.
             </FaqItem>
             <FaqItem question="문의는 어디로?">
               가입 승인 · 사용 문의 · 기능 요청 · 오류 제보 모두 아래 카카오톡 오픈톡방으로
@@ -425,70 +358,13 @@ export default async function HomePage() {
             </FaqItem>
           </div>
         </section>
-      </main>
-
-      {/* ─────────────  FOOTER  ───────────── */}
-      <footer className="border-t border-border bg-card">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-5 py-10 sm:px-8 sm:flex-row sm:items-start sm:justify-between">
-          <div className="flex items-start gap-3">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/logo.png"
-              alt="낱말지기"
-              width={40}
-              height={40}
-              className="h-10 w-10 rounded-xl"
-            />
-            <div>
-              <p className="font-display text-lg">PlaySteno</p>
-              <p className="mt-1 text-xs text-muted">
-                속기사의 놀이터 · 낱말지기 (온라인) · Windows v{WINDOWS_RELEASE.version}
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm sm:grid-cols-3">
-            <FooterLink href={DOWNLOAD_URL}>Windows 다운로드</FooterLink>
-            <FooterLink href="/updates">업데이트 로그</FooterLink>
-            <FooterLink href="/trends">인기 검색어</FooterLink>
-            <FooterLink href="/help">사용 가이드</FooterLink>
-            <FooterLink href="/install-help">설치 도움말</FooterLink>
-            <FooterLink href="/terms">이용약관</FooterLink>
-            <FooterLink href="/privacy">개인정보 처리방침</FooterLink>
-            <FooterLink external href={OPENCHAT.url}>
-              오픈톡방
-            </FooterLink>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </main>
   );
 }
 
 // ═════════════════════════════════════════════════════════════════
 // SECTION HELPERS
 // ═════════════════════════════════════════════════════════════════
-
-function StatusPill({
-  tone,
-  children,
-}: {
-  tone: "green" | "dark";
-  children: React.ReactNode;
-}) {
-  const color =
-    tone === "green"
-      ? "border-emerald-400/40 bg-emerald-400/12 text-emerald-100"
-      : "border-white/16 bg-white/8 text-white/85";
-  return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold ${color}`}
-    >
-      {tone === "green" && <span className="status-led" />}
-      {children}
-    </span>
-  );
-}
 
 function StartStepCard({
   number,
@@ -602,18 +478,18 @@ function OpenChatCard() {
       <div className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-full bg-accent/12 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-accent">
-            Community
+            공지 · 지원
           </span>
           <span className="text-xs font-medium text-muted">관리자 공지 채널</span>
         </div>
         <h2 className="font-display text-2xl leading-snug [word-break:keep-all] sm:text-3xl">
-          새 소식과 문의는
+          업데이트 소식과 문의는
           <br />
           카카오톡 오픈톡방에서.
         </h2>
         <p className="text-[15px] leading-7 text-muted [word-break:keep-all]">
-          업데이트 · 사용량 문의 · 기능 요청 · 가입 승인 요청 모두 이 오픈톡방에서 받습니다.
-          관리자만 공지하는 채널이라 알림 소음 없이 조용히 필요한 소식만 확인할 수 있습니다.
+          업데이트 · 사용량 문의 · 기능 요청 · 가입 승인 요청을 오픈톡방에서 받습니다.
+          현재는 회원 커뮤니티가 아닌 관리자 공지·지원 채널로 운영합니다.
         </p>
         <div className="flex flex-wrap gap-3">
           <a
@@ -622,7 +498,7 @@ function OpenChatCard() {
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 rounded-lg bg-signal px-5 py-3 text-sm font-bold text-white shadow-[0_18px_36px_rgba(240,95,50,0.28)] transition hover:brightness-110"
           >
-            오픈톡방 열기
+            공지·문의 채널 열기
             <span aria-hidden="true">→</span>
           </a>
           <a
@@ -805,126 +681,5 @@ function FaqItem({
         {children}
       </div>
     </details>
-  );
-}
-
-function FooterLink({
-  href,
-  external,
-  children,
-}: {
-  href: string;
-  external?: boolean;
-  children: React.ReactNode;
-}) {
-  if (external) {
-    return (
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-muted transition hover:text-foreground"
-      >
-        {children}
-      </a>
-    );
-  }
-  return (
-    <Link href={href} className="text-muted transition hover:text-foreground">
-      {children}
-    </Link>
-  );
-}
-
-// ═════════════════════════════════════════════════════════════════
-// PRODUCT SCREEN — CSS 목업 (히어로 우측)
-// GIF/스크린샷 있으면 여기만 <img>/<video> 로 교체하면 됨.
-// ═════════════════════════════════════════════════════════════════
-
-function ProductScreen() {
-  return (
-    <div className="hud-stage tech-shell relative min-h-[500px] overflow-hidden rounded-xl border border-white/12 bg-ink p-4 text-white shadow-[0_30px_80px_rgba(5,18,26,0.35)] sm:p-5">
-      <div className="absolute inset-x-0 top-0 h-1 bg-signal" />
-      <div className="screen-grid absolute inset-0 opacity-25" />
-      <div className="scan-line absolute inset-x-8 top-10 h-14 rounded-full opacity-45" />
-
-      <div className="relative flex min-h-[450px] flex-col rounded-lg border border-white/10 bg-[#0a1519]/96 p-4">
-        <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-3">
-          <div>
-            <p className="text-xs font-semibold text-white/45">HWP DOCUMENT</p>
-            <p className="mt-1 text-sm font-bold">회의록 작성 중</p>
-          </div>
-          <span className="key-press rounded-md bg-white/10 px-2.5 py-1 text-xs font-bold text-white/85">
-            Insert
-          </span>
-        </div>
-
-        <div className="max-w-[62%] space-y-3 text-sm leading-7 text-white/70">
-          <p>참석자 의견은 다음 회의에서 다시 검토하기로 하였으며</p>
-          <p>
-            <span className="select-token select-token-3">회의</span>{" "}
-            <span className="select-token select-token-2">의견</span>{" "}
-            <span className="select-token select-token-1">정리</span>
-            <span className="typing-caret ml-1 inline-block h-5 w-[2px] translate-y-1 bg-signal" />
-            에 따라 후속 조치를 진행한다.
-          </p>
-        </div>
-
-        <div className="system-rail absolute bottom-6 left-5 hidden w-36 rounded-md border border-white/10 bg-white/[0.045] p-3 text-[11px] text-white/58 lg:block">
-          <p className="font-bold text-white/82">CONNECTION</p>
-          <div className="mt-3 grid gap-2">
-            <RailRow label="ACCOUNT" value="OK" />
-            <RailRow label="CACHE" value="HIT" />
-            <RailRow label="LATENCY" value="184ms" />
-          </div>
-        </div>
-
-        <div className="hud-panel absolute bottom-5 right-5 w-[min(82%,360px)] rounded-lg border border-white/14 bg-[#041012]/96 p-4 shadow-2xl">
-          <div className="mb-4 flex items-center justify-between">
-            <span className="text-xs font-bold text-white/50">낱말지기</span>
-            <span className="rounded bg-accent/22 px-2 py-0.5 text-[11px] font-bold text-[#bff6ef]">
-              커서 앞 검색
-            </span>
-          </div>
-
-          <div className="rounded-md border border-white/10 bg-white/[0.04] p-3">
-            <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-white/38">
-              검색어
-            </p>
-            <div className="query-cycle mt-1 h-8 overflow-hidden text-xl font-bold">
-              <span className="cycle-item cycle-item-1">정리</span>
-              <span className="cycle-item cycle-item-2">의견 정리</span>
-              <span className="cycle-item cycle-item-3">회의 의견 정리</span>
-            </div>
-            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
-              <span className="search-progress block h-full rounded-full bg-signal" />
-            </div>
-          </div>
-
-          <div className="mt-4 min-h-[96px]">
-            <p className="text-sm font-bold text-white">정리</p>
-            <p className="mt-2 text-sm leading-6 text-white/72">
-              일정한 기준에 따라 내용을 가지런히 바로잡음. 회의록에서는 의견, 발언, 결론을
-              구분해 문서의 흐름을 잡을 때 자주 쓰입니다.
-            </p>
-          </div>
-
-          <div className="mt-4 grid grid-cols-3 gap-2 text-center text-[11px] text-white/62">
-            <span className="rounded-md border border-white/10 py-1.5">1회 정리</span>
-            <span className="rounded-md border border-white/10 py-1.5">2회 의견 정리</span>
-            <span className="rounded-md border border-white/10 py-1.5">3회 회의 의견</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function RailRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between gap-2">
-      <span className="font-mono text-white/42">{label}</span>
-      <span className="font-mono font-bold text-[#a8fff4]">{value}</span>
-    </div>
   );
 }

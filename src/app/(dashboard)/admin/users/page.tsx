@@ -151,6 +151,7 @@ export default async function AdminUsersPage({
                             role={user.role}
                             unlimitedUntil={user.unlimitedUntil}
                             unlimitedPermanent={user.unlimitedPermanent}
+                            unlimitedActive={user.unlimitedActive}
                           />
                         </span>
                         <span className="truncate text-sm text-zinc-500">
@@ -207,8 +208,9 @@ export default async function AdminUsersPage({
                       currentStatus={user.status}
                       currentRole={user.role}
                       currentMonthlyLimit={user.monthlyLimit}
-                      currentUnlimitedUntil={user.unlimitedUntil}
-                      currentUnlimitedPermanent={user.unlimitedPermanent}
+                    currentUnlimitedUntil={user.unlimitedUntil}
+                    currentUnlimitedPermanent={user.unlimitedPermanent}
+                    currentUnlimitedActive={user.unlimitedActive}
                       displayName={displayName(user)}
                       isSelf={user.clerkId === me.clerkId}
                     />
@@ -249,10 +251,12 @@ function UnlimitedBadge({
   role,
   unlimitedUntil,
   unlimitedPermanent,
+  unlimitedActive,
 }: {
   role: "user" | "admin";
   unlimitedUntil: Date | null;
   unlimitedPermanent: boolean;
+  unlimitedActive: boolean;
 }) {
   // admin은 이미 무제한이라 배지 중복 필요 없음
   if (role === "admin") return null;
@@ -264,7 +268,7 @@ function UnlimitedBadge({
       </span>
     );
   }
-  if (unlimitedUntil && unlimitedUntil.getTime() > Date.now()) {
+  if (unlimitedActive && unlimitedUntil) {
     return (
       <span
         className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300"

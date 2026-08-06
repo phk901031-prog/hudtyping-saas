@@ -5,9 +5,11 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { OPENCHAT } from "@/config/community";
+import { WINDOWS_RELEASE } from "@/config/release";
 
 export const metadata: Metadata = {
-  title: "설치 도움말 — hudtyping",
+  title: "설치 도움말 — 낱말지기 온라인",
+  description: "낱말지기 온라인 설치 중 Windows SmartScreen이나 백신 경고가 표시될 때 확인할 내용.",
 };
 
 export default function InstallHelpPage() {
@@ -24,20 +26,18 @@ export default function InstallHelpPage() {
         설치 도움말
       </h1>
       <p className="text-muted mb-8 leading-relaxed">
-        백신이나 Windows Defender가 .exe를 차단하는 경우의 해결법이에요.
+        백신이나 Windows Defender가 설치 파일을 차단하는 경우의 확인 방법입니다.
         <br />
-        코드 서명 인증서 없는 베타 .exe라 보수적인 백신이 가끔 진단 오류로
-        격리해요. 실제 악성코드는 아니에요.
+        현재 설치 파일에는 코드 서명 인증서가 적용되지 않아 SmartScreen 경고가 표시될 수 있습니다.
       </p>
 
       <div className="flex flex-col gap-8 leading-relaxed">
         <section className="rounded-2xl border border-border bg-muted-bg p-5">
           <h2 className="font-display text-lg mb-2">왜 이런 일이 생기나요?</h2>
           <p className="text-sm text-muted">
-            상용 .exe는 보통 코드 서명 인증서 (연 30~50만원)로 서명돼요. 그게
-            있으면 백신이 발급사를 신뢰하고 통과시켜요. hudtyping은 1년 무료
-            운영 단계라 인증서 비용을 미루는 중이에요. 매출 발생 시점에 정식
-            인증서 도입 예정.
+            코드 서명은 파일 배포 주체와 서명 이후 변경 여부를 확인하는 수단입니다.
+            낱말지기 온라인은 아직 코드 서명을 적용하지 않아 Windows가 게시자를
+            확인할 수 없으며, 다운로드 이력이 적은 새 버전은 추가 경고가 표시될 수 있습니다.
           </p>
         </section>
 
@@ -50,7 +50,7 @@ export default function InstallHelpPage() {
             <li>좌측 메뉴 <strong>‘격리실’</strong> 또는 <strong>‘보안 검사 결과’</strong></li>
             <li>
               <code className="bg-muted-bg px-1.5 py-0.5 rounded text-xs">
-                hudtyping-Setup-0.1.0.exe
+                hudtyping-Setup-{WINDOWS_RELEASE.version}.exe
               </code>{" "}
               찾아서 선택
             </li>
@@ -87,7 +87,7 @@ export default function InstallHelpPage() {
           <h2 className="font-display text-xl mb-3">4. 그래도 안 되면</h2>
           <ul className="list-disc pl-5 flex flex-col gap-1.5">
             <li>
-              백신을 끄지 말고 격리 내역과 탐지명을 확인한 뒤 관리자에게 문의
+              백신을 끄지 말고 격리 내역과 탐지명을 확인한 뒤 문의
             </li>
             <li>
               회사 PC라 백신 정책을 못 바꾸는 경우, IT 부서에 화이트리스트
@@ -103,18 +103,18 @@ export default function InstallHelpPage() {
               >
                 오픈톡방
               </a>
-              에 알려주세요. 안랩 등 백신사에 진단 오류 신고하고 며칠 안에
-              해제되도록 처리해 드릴게요.
+              에 파일명, 앱 버전, 탐지명을 알려주세요. 내용을 확인한 뒤 필요한 경우
+              백신사에 오진 신고를 진행합니다.
             </li>
           </ul>
         </section>
 
         <section className="rounded-2xl border border-accent/30 bg-accent-soft p-5">
-          <h2 className="font-display text-lg mb-2">파일이 진짜 안전한가요?</h2>
+          <h2 className="font-display text-lg mb-2">공식 설치 파일 확인</h2>
           <p className="text-sm leading-relaxed">
-            .exe는 GitHub Releases에 공개되어 있고, SHA256 해시로 무결성을
-            확인할 수 있어요. 소스 코드도 같은 저장소에 함께 공개돼 있어 누구나
-            검토 가능해요.
+            아래 공식 GitHub Releases에서 받은 파일인지 먼저 확인하세요. 파일명이나
+            다운로드 주소가 다르거나 백신이 구체적인 악성코드명을 탐지하면 실행하지 말고
+            공지·문의 채널로 확인을 요청해 주세요.
           </p>
           <p className="text-xs mt-3">
             <a

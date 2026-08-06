@@ -637,4 +637,18 @@ body {
   .group:hover .keycap::after {
     animation: none;
   }
+
+  .cycle-item-1 {
+    opacity: 1;
+    transform: none;
+  }
+
+  .select-token-1 {
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  .search-progress {
+    transform: scaleX(1);
+  }
 }

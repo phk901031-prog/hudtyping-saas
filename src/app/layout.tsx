@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { BRAND, NATMALGI_ONLINE } from "@/config/product";
+import { SITE_URL } from "@/config/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,10 +16,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PlaySteno · 속기사의 놀이터 | 낱말지기 (온라인)",
+  metadataBase: SITE_URL,
+  title: {
+    default: `${BRAND.name} · ${BRAND.tagline}`,
+    template: `%s | ${BRAND.name}`,
+  },
   description:
-    "PlaySteno — 속기사를 위한 도구 모음. 낱말지기(온라인)로 한글 문서 작업 중 Alt+Tab 없이 우리말샘 검색 결과를 즉시 확인할 수 있는 Windows HUD.",
-  keywords: ["속기", "우리말샘", "회의록", "한글", "HUD", "단축키"],
+    `${BRAND.name}는 속기사를 위한 도구와 정보를 제공합니다. ${NATMALGI_ONLINE.name}으로 문서 작업 중 우리말샘 뜻풀이와 예문을 Windows HUD에서 확인하세요.`,
+  keywords: ["속기", "속기사", "우리말샘", "회의록", "한글", "HUD", "단축키"],
 };
 
 export default function RootLayout({
