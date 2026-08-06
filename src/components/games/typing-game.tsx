@@ -472,6 +472,57 @@ export function TypingGame({
           <Medal className="text-signal" size={24} />
         </div>
 
+        {signedIn && profile && (
+          <div className="mt-5 rounded-2xl border border-accent/25 bg-accent-soft/60 p-4">
+            <div className="flex items-center gap-2">
+              <Palette size={16} className="text-accent" />
+              <h3 className="font-display text-base">내 닉네임 설정</h3>
+            </div>
+            <label className="mt-4 block text-xs font-bold text-muted" htmlFor="typing-nickname">닉네임</label>
+            <input
+              id="typing-nickname"
+              value={nickname}
+              onChange={(event) => setNickname(event.target.value)}
+              maxLength={10}
+              className="mt-2 w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-accent"
+              placeholder="한글 영문 숫자 2~10자"
+            />
+            <fieldset className="mt-4">
+              <legend className="text-xs font-bold text-muted">이름 색상</legend>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {TYPING_NAME_COLORS.map((color) => (
+                  <button key={color.id} type="button" onClick={() => setNameColor(color.id)} aria-pressed={nameColor === color.id} className={`h-8 min-w-8 rounded-full border-2 px-2 text-[11px] font-bold transition ${color.className} ${nameColor === color.id ? "border-current bg-current/10" : "border-border bg-card"}`}>
+                    {color.label}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+            <fieldset className="mt-4">
+              <legend className="text-xs font-bold text-muted">테두리 효과</legend>
+              <div className="mt-2 grid grid-cols-3 gap-2">
+                {TYPING_BORDER_STYLES.map((style) => (
+                  <button key={style.id} type="button" onClick={() => setBorderStyle(style.id)} aria-pressed={borderStyle === style.id} className={`rounded-lg px-2 py-2 text-xs font-bold transition ${borderStyle === style.id ? "bg-ink text-white" : "border border-border bg-card text-muted"}`}>
+                    {style.label}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+            <div className="mt-4 flex items-center justify-between gap-3">
+              <span className={`inline-flex rounded-lg px-3 py-1.5 text-sm font-bold ${colorClass(nameColor)} ${borderClass(borderStyle)}`}>{nickname || profile.nickname}</span>
+              <button type="button" onClick={() => void saveProfile()} disabled={savingProfile} className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3 py-2 text-xs font-bold text-white transition hover:bg-accent-hover disabled:opacity-50">
+                <Save size={13} /> {savingProfile ? "저장 중" : "저장"}
+              </button>
+            </div>
+            {profileMessage && <p className="mt-2 text-xs text-muted">{profileMessage}</p>}
+          </div>
+        )}
+
+        {!signedIn && (
+          <div className="mt-5 rounded-xl border border-accent/25 bg-accent-soft p-4 text-sm leading-6">
+            닉네임과 순위표 꾸미기는 <Link href="/sign-in" className="font-bold text-accent underline">로그인 후 설정</Link>할 수 있습니다. 연습은 바로 시작할 수 있습니다.
+          </div>
+        )}
+
         <div className="mt-5 grid grid-cols-2 rounded-lg bg-panel p-1">
           {(["weekly", "monthly"] as const).map((period) => (
             <button
@@ -490,56 +541,6 @@ export function TypingGame({
         <p className="mt-4 text-xs text-muted">{leaderboard.label} · 사용자별 최고 기록</p>
         <LeaderboardRows leaderboard={leaderboard} />
 
-        {signedIn && profile && (
-          <div className="mt-6 border-t border-border pt-5">
-            <div className="flex items-center gap-2">
-              <Palette size={16} className="text-accent" />
-              <h3 className="font-display text-base">내 순위표 꾸미기</h3>
-            </div>
-            <label className="mt-4 block text-xs font-bold text-muted" htmlFor="typing-nickname">닉네임</label>
-            <input
-              id="typing-nickname"
-              value={nickname}
-              onChange={(event) => setNickname(event.target.value)}
-              maxLength={10}
-              className="mt-2 w-full rounded-lg border border-border bg-panel px-3 py-2.5 text-sm outline-none focus:border-accent"
-              placeholder="한글 영문 숫자 2~10자"
-            />
-            <fieldset className="mt-4">
-              <legend className="text-xs font-bold text-muted">이름 색상</legend>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {TYPING_NAME_COLORS.map((color) => (
-                  <button key={color.id} type="button" onClick={() => setNameColor(color.id)} aria-pressed={nameColor === color.id} className={`h-8 min-w-8 rounded-full border-2 px-2 text-[11px] font-bold transition ${color.className} ${nameColor === color.id ? "border-current bg-current/10" : "border-border"}`}>
-                    {color.label}
-                  </button>
-                ))}
-              </div>
-            </fieldset>
-            <fieldset className="mt-4">
-              <legend className="text-xs font-bold text-muted">테두리 효과</legend>
-              <div className="mt-2 grid grid-cols-3 gap-2">
-                {TYPING_BORDER_STYLES.map((style) => (
-                  <button key={style.id} type="button" onClick={() => setBorderStyle(style.id)} aria-pressed={borderStyle === style.id} className={`rounded-lg px-2 py-2 text-xs font-bold transition ${borderStyle === style.id ? "bg-ink text-white" : "border border-border bg-panel text-muted"}`}>
-                    {style.label}
-                  </button>
-                ))}
-              </div>
-            </fieldset>
-            <div className="mt-4 flex items-center justify-between gap-3">
-              <span className={`inline-flex rounded-lg px-3 py-1.5 text-sm font-bold ${colorClass(nameColor)} ${borderClass(borderStyle)}`}>{nickname || profile.nickname}</span>
-              <button type="button" onClick={() => void saveProfile()} disabled={savingProfile} className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3 py-2 text-xs font-bold text-white transition hover:bg-accent-hover disabled:opacity-50">
-                <Save size={13} /> {savingProfile ? "저장 중" : "저장"}
-              </button>
-            </div>
-            {profileMessage && <p className="mt-2 text-xs text-muted">{profileMessage}</p>}
-          </div>
-        )}
-
-        {!signedIn && (
-          <div className="mt-6 rounded-xl border border-accent/25 bg-accent-soft p-4 text-sm leading-6">
-            연습은 바로 할 수 있습니다. 순위에 기록하려면 <Link href="/sign-up" className="font-bold text-accent underline">무료 가입</Link>이 필요합니다.
-          </div>
-        )}
         {signedIn && !approved && (
           <div className="mt-6 rounded-xl border border-warning/25 bg-warning/10 p-4 text-sm leading-6 text-warning">
             계정 승인 후 공식 순위에 기록됩니다. 지금은 연습 모드로 이용할 수 있습니다.
