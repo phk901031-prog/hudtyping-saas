@@ -1,5 +1,5 @@
 import { getOrCreateCurrentUser } from "@/features/users/service";
-import { createTypingSession } from "@/features/typing-game/service";
+import { createTypingSession, TypingGameError } from "@/features/typing-game/service";
 import {
   checkRateLimit,
   getRequestSubject,
@@ -24,9 +24,16 @@ export async function POST(request: Request) {
     );
   }
 
-  const session = await createTypingSession(user);
-  return Response.json(session, {
-    status: 201,
-    headers: { "Cache-Control": "no-store" },
-  });
+  try {
+    const session = await createTypingSession(user);
+    return Response.json(session, {
+      status: 201,
+      headers: { "Cache-Control": "no-store" },
+    });
+  } catch (error) {
+    if (error instanceof TypingGameError && error.code === "PROFILE_REQUIRED") {
+      return Response.json({ error: error.message, code: error.code }, { status: 403 });
+    }
+    throw error;
+  }
 }

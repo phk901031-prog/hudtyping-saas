@@ -59,14 +59,14 @@ export default async function TypingGamePage() {
         />
 
         <section className="mt-10 grid gap-5 md:grid-cols-3">
-          <RuleCard number="01" title="30초 연속 입력">
+          <RuleCard number="01" title="닉네임 최초 1회">
+            로그인 후 닉네임을 한 번 확정하면 이후 모든 게임과 순위에 같은 이름이 사용됩니다.
+          </RuleCard>
+          <RuleCard number="02" title="30초 연속 입력">
             오타가 있어도 문장 길이만큼 입력하면 다음 문장으로 넘어갑니다. 문장마다 따로 시작할 필요가 없습니다.
           </RuleCard>
-          <RuleCard number="02" title="보이는 그대로">
-            쉼표와 따옴표 등은 문장에서 제외했습니다. 온점이 표시된 경우에만 온점까지 입력합니다.
-          </RuleCard>
-          <RuleCard number="03" title="보상 없는 MVP">
-            현재는 기록과 순위만 제공합니다. 운영 데이터와 이용자 의견을 확인한 뒤 보상을 설계합니다.
+          <RuleCard number="03" title="주간·월간 순위">
+            사용자별 최고 점수를 크게 비교합니다. 종합점수에는 타수와 정확도가 함께 반영됩니다.
           </RuleCard>
         </section>
       </div>

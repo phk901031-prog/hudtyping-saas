@@ -1,7 +1,7 @@
 import "server-only";
 
 import { createHash, randomInt, randomUUID } from "node:crypto";
-import { asc, desc, eq, gte } from "drizzle-orm";
+import { and, asc, desc, eq, gte, isNull } from "drizzle-orm";
 import { db } from "@/infrastructure/db";
 import {
   typingGameResults,
@@ -79,7 +79,8 @@ export class TypingGameError extends Error {
       | "SESSION_NOT_FOUND"
       | "SESSION_TOO_EARLY"
       | "SESSION_EXPIRED"
-      | "INVALID_RESULT",
+      | "INVALID_RESULT"
+      | "PROFILE_REQUIRED",
     message: string
   ) {
     super(message);
@@ -88,6 +89,12 @@ export class TypingGameError extends Error {
 }
 
 export async function createTypingSession(user: User | null) {
+  if (!user?.gameNickname) {
+    throw new TypingGameError(
+      "PROFILE_REQUIRED",
+      "게임을 시작하려면 로그인 후 닉네임을 먼저 확정해주세요."
+    );
+  }
   const sessionId = randomUUID();
   const prompts = pickRandomPrompts(PROMPTS_PER_SESSION);
   const startsAt = Date.now() + TYPING_GAME_COUNTDOWN_MS;
@@ -319,6 +326,9 @@ export async function updateTypingProfile(input: {
   if (!isValidTypingNickname(nickname)) {
     throw new Error("닉네임은 한글, 영문, 숫자 2~10자로 입력해주세요.");
   }
+  if (input.user.gameNickname && input.user.gameNickname !== nickname) {
+    throw new Error("닉네임은 최초 설정 후 변경할 수 없습니다.");
+  }
 
   const duplicate = await db
     .select({ clerkId: users.clerkId })
@@ -330,6 +340,9 @@ export async function updateTypingProfile(input: {
   }
 
   try {
+    const profileCondition = input.user.gameNickname
+      ? and(eq(users.clerkId, input.user.clerkId), eq(users.gameNickname, nickname))
+      : and(eq(users.clerkId, input.user.clerkId), isNull(users.gameNickname));
     const [updated] = await db
       .update(users)
       .set({
@@ -338,9 +351,16 @@ export async function updateTypingProfile(input: {
         gameBorderStyle: input.borderStyle,
         updatedAt: new Date(),
       })
-      .where(eq(users.clerkId, input.user.clerkId))
+      .where(profileCondition)
       .returning();
-    if (!updated) throw new Error("닉네임을 저장하지 못했습니다.");
+    if (!updated) {
+      const [current] = await db.select().from(users).where(eq(users.clerkId, input.user.clerkId)).limit(1);
+      if (current?.gameNickname && current.gameNickname !== nickname) {
+        throw new Error("닉네임은 최초 설정 후 변경할 수 없습니다.");
+      }
+      if (current) return typingProfileForUser(current);
+      throw new Error("닉네임을 저장하지 못했습니다.");
+    }
     return typingProfileForUser(updated);
   } catch (error) {
     if (isUniqueViolation(error)) throw new Error("이미 사용 중인 닉네임입니다.");

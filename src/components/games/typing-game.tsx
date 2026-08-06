@@ -300,6 +300,7 @@ export function TypingGame({
   }
 
   async function saveProfile() {
+    const wasCustomized = Boolean(profile?.customized);
     setSavingProfile(true);
     setProfileMessage(null);
     try {
@@ -312,7 +313,7 @@ export function TypingGame({
       if (!response.ok || !("nickname" in body)) throw new Error("error" in body ? body.error : "저장하지 못했습니다.");
       setProfile(body);
       setNickname(body.nickname);
-      setProfileMessage("순위표 꾸미기를 저장했습니다.");
+      setProfileMessage(wasCustomized ? "순위표 꾸미기를 저장했습니다." : "닉네임을 확정했습니다. 이제 게임을 시작할 수 있습니다.");
       await refreshRankings();
     } catch (error) {
       setProfileMessage(error instanceof Error ? error.message : "저장하지 못했습니다.");
@@ -322,9 +323,64 @@ export function TypingGame({
   }
 
   const leaderboard = leaderboards[rankingPeriod];
+  const canPlay = Boolean(signedIn && profile?.customized);
 
   return (
-    <div className="grid gap-8 xl:grid-cols-[minmax(0,1.35fr)_minmax(340px,0.65fr)]">
+    <div className="space-y-8">
+      {!signedIn && (
+        <section className="rounded-3xl border border-accent/25 bg-accent-soft p-6 sm:flex sm:items-center sm:justify-between sm:gap-8 sm:p-8">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-accent">Player profile</p>
+            <h2 className="mt-2 font-display text-2xl">닉네임을 정하고 게임을 시작하세요</h2>
+            <p className="ko-copy mt-2 text-sm leading-6 text-muted">기록과 순위를 한 사람의 닉네임으로 이어가기 위해 로그인이 필요합니다.</p>
+          </div>
+          <Link href="/sign-in" className="mt-5 inline-flex shrink-0 items-center justify-center rounded-lg bg-accent px-6 py-3 font-bold text-white transition hover:bg-accent-hover sm:mt-0">
+            로그인하고 닉네임 만들기
+          </Link>
+        </section>
+      )}
+
+      {signedIn && profile && !profile.customized && (
+        <section className="rounded-3xl border-2 border-accent/35 bg-accent-soft/60 p-6 sm:p-8">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.7fr)] lg:items-start">
+            <div>
+              <div className="flex items-center gap-2 text-accent"><Palette size={18} /><span className="text-xs font-bold uppercase tracking-[0.16em]">First setup</span></div>
+              <h2 className="mt-3 font-display text-2xl sm:text-3xl">게임에서 사용할 닉네임을 확정해주세요</h2>
+              <p className="ko-copy mt-3 max-w-xl text-sm leading-7 text-muted">닉네임은 모든 주간·월간 기록에 계속 사용되며 최초 저장 후에는 변경할 수 없습니다. 색상과 테두리는 나중에도 바꿀 수 있습니다.</p>
+              <label className="mt-5 block text-xs font-bold text-muted" htmlFor="typing-nickname">닉네임 · 한글 영문 숫자 2~10자</label>
+              <input id="typing-nickname" value={nickname} onChange={(event) => setNickname(event.target.value)} maxLength={10} className="mt-2 w-full max-w-md rounded-xl border-2 border-border bg-card px-4 py-3 text-base font-bold outline-none focus:border-accent" placeholder="사용할 닉네임" />
+            </div>
+            <div className="rounded-2xl border border-border bg-card p-5">
+              <ProfileStyleControls nameColor={nameColor} borderStyle={borderStyle} setNameColor={setNameColor} setBorderStyle={setBorderStyle} />
+              <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+                <span className={`inline-flex rounded-lg px-3 py-1.5 text-sm font-bold ${colorClass(nameColor)} ${borderClass(borderStyle)}`}>{nickname || "미리보기"}</span>
+                <button type="button" onClick={() => void saveProfile()} disabled={savingProfile} className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2.5 text-sm font-bold text-white transition hover:bg-accent-hover disabled:opacity-50">
+                  <Save size={14} /> {savingProfile ? "확정 중" : "닉네임 확정"}
+                </button>
+              </div>
+              {profileMessage && <p className="mt-3 text-xs text-muted">{profileMessage}</p>}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {signedIn && profile?.customized && (
+        <section className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-4">
+            <span className={`inline-flex rounded-lg px-3 py-2 text-sm font-bold ${colorClass(profile.nameColor)} ${borderClass(profile.borderStyle)}`}>{profile.nickname}</span>
+            <div><p className="text-sm font-bold">내 게임 닉네임</p><p className="mt-0.5 text-xs text-muted">확정된 닉네임으로 기록이 계속 쌓입니다.</p></div>
+          </div>
+          <details className="group sm:w-[360px]">
+            <summary className="cursor-pointer list-none rounded-lg border border-border px-4 py-2 text-center text-xs font-bold text-muted transition hover:text-foreground">색상·테두리 바꾸기</summary>
+            <div className="mt-3 rounded-xl border border-border bg-panel p-4">
+              <ProfileStyleControls nameColor={nameColor} borderStyle={borderStyle} setNameColor={setNameColor} setBorderStyle={setBorderStyle} />
+              <button type="button" onClick={() => void saveProfile()} disabled={savingProfile} className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-accent px-3 py-2 text-xs font-bold text-white disabled:opacity-50"><Save size={13} />꾸미기 저장</button>
+              {profileMessage && <p className="mt-2 text-xs text-muted">{profileMessage}</p>}
+            </div>
+          </details>
+        </section>
+      )}
+
       <section className="overflow-hidden rounded-3xl border border-border bg-card shadow-[0_22px_70px_rgba(6,24,39,0.08)]">
         <div className="border-b border-border bg-ink px-5 py-5 text-white sm:px-8">
           <div className="flex flex-wrap items-center justify-between gap-4">
@@ -350,18 +406,23 @@ export function TypingGame({
             {(phase === "idle" || phase === "loading") && (
               <div className="flex min-h-[220px] flex-col items-center justify-center text-center">
                 <Keyboard className="text-accent" size={34} strokeWidth={1.8} />
-                <h3 className="mt-4 font-display text-2xl">준비되면 시작하세요</h3>
+                <h3 className="mt-4 font-display text-2xl">
+                  {canPlay ? "준비되면 시작하세요" : signedIn ? "닉네임 확정이 먼저 필요합니다" : "로그인 후 참여할 수 있습니다"}
+                </h3>
                 <p className="ko-copy mt-2 max-w-md text-sm leading-6 text-muted">
-                  오타가 있어도 문장 길이만큼 입력하면 바로 다음 문장으로 이어집니다. 온점이 보이는 문장은 온점까지 입력하세요.
+                  {canPlay
+                    ? "오타가 있어도 문장 길이만큼 입력하면 바로 다음 문장으로 이어집니다. 온점이 보이는 문장은 온점까지 입력하세요."
+                    : "위에서 게임 닉네임을 확정하면 30초 도전을 시작할 수 있습니다."}
                 </p>
-                <button
-                  type="button"
-                  onClick={() => void startGame()}
-                  disabled={phase === "loading"}
-                  className="mt-6 inline-flex min-w-40 items-center justify-center rounded-lg bg-accent px-6 py-3 font-bold text-white transition hover:bg-accent-hover disabled:cursor-wait disabled:opacity-60"
-                >
-                  {phase === "loading" ? "문장 준비 중" : "30초 시작"}
-                </button>
+                {canPlay ? (
+                  <button type="button" onClick={() => void startGame()} disabled={phase === "loading"} className="mt-6 inline-flex min-w-40 items-center justify-center rounded-lg bg-accent px-6 py-3 font-bold text-white transition hover:bg-accent-hover disabled:cursor-wait disabled:opacity-60">
+                    {phase === "loading" ? "문장 준비 중" : "30초 시작"}
+                  </button>
+                ) : !signedIn ? (
+                  <Link href="/sign-in" className="mt-6 inline-flex min-w-40 items-center justify-center rounded-lg bg-accent px-6 py-3 font-bold text-white transition hover:bg-accent-hover">로그인하기</Link>
+                ) : (
+                  <button type="button" disabled className="mt-6 inline-flex min-w-40 cursor-not-allowed items-center justify-center rounded-lg bg-muted/20 px-6 py-3 font-bold text-muted">닉네임 설정 필요</button>
+                )}
               </div>
             )}
 
@@ -463,82 +524,23 @@ export function TypingGame({
         </div>
       </section>
 
-      <aside className="rounded-3xl border border-border bg-card p-5 sm:p-7">
-        <div className="flex items-start justify-between gap-4">
+      <aside className="rounded-3xl border border-border bg-card p-5 shadow-[0_18px_55px_rgba(6,24,39,0.06)] sm:p-8">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-accent">Leaderboard</p>
-            <h2 className="mt-1 font-display text-2xl">타자 순위</h2>
+            <h2 className="mt-1 font-display text-3xl">주간·월간 타자 순위</h2>
+            <p className="ko-copy mt-2 text-sm text-muted">속도와 정확도를 함께 반영한 사용자별 최고 기록입니다.</p>
           </div>
-          <Medal className="text-signal" size={24} />
-        </div>
-
-        {signedIn && profile && (
-          <div className="mt-5 rounded-2xl border border-accent/25 bg-accent-soft/60 p-4">
-            <div className="flex items-center gap-2">
-              <Palette size={16} className="text-accent" />
-              <h3 className="font-display text-base">내 닉네임 설정</h3>
-            </div>
-            <label className="mt-4 block text-xs font-bold text-muted" htmlFor="typing-nickname">닉네임</label>
-            <input
-              id="typing-nickname"
-              value={nickname}
-              onChange={(event) => setNickname(event.target.value)}
-              maxLength={10}
-              className="mt-2 w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-accent"
-              placeholder="한글 영문 숫자 2~10자"
-            />
-            <fieldset className="mt-4">
-              <legend className="text-xs font-bold text-muted">이름 색상</legend>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {TYPING_NAME_COLORS.map((color) => (
-                  <button key={color.id} type="button" onClick={() => setNameColor(color.id)} aria-pressed={nameColor === color.id} className={`h-8 min-w-8 rounded-full border-2 px-2 text-[11px] font-bold transition ${color.className} ${nameColor === color.id ? "border-current bg-current/10" : "border-border bg-card"}`}>
-                    {color.label}
-                  </button>
-                ))}
-              </div>
-            </fieldset>
-            <fieldset className="mt-4">
-              <legend className="text-xs font-bold text-muted">테두리 효과</legend>
-              <div className="mt-2 grid grid-cols-3 gap-2">
-                {TYPING_BORDER_STYLES.map((style) => (
-                  <button key={style.id} type="button" onClick={() => setBorderStyle(style.id)} aria-pressed={borderStyle === style.id} className={`rounded-lg px-2 py-2 text-xs font-bold transition ${borderStyle === style.id ? "bg-ink text-white" : "border border-border bg-card text-muted"}`}>
-                    {style.label}
-                  </button>
-                ))}
-              </div>
-            </fieldset>
-            <div className="mt-4 flex items-center justify-between gap-3">
-              <span className={`inline-flex rounded-lg px-3 py-1.5 text-sm font-bold ${colorClass(nameColor)} ${borderClass(borderStyle)}`}>{nickname || profile.nickname}</span>
-              <button type="button" onClick={() => void saveProfile()} disabled={savingProfile} className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3 py-2 text-xs font-bold text-white transition hover:bg-accent-hover disabled:opacity-50">
-                <Save size={13} /> {savingProfile ? "저장 중" : "저장"}
+          <div className="grid w-full grid-cols-2 rounded-xl bg-panel p-1 sm:w-64">
+            {(["weekly", "monthly"] as const).map((period) => (
+              <button key={period} type="button" onClick={() => setRankingPeriod(period)} className={`rounded-lg px-4 py-2.5 text-sm font-bold transition ${rankingPeriod === period ? "bg-card text-foreground shadow-sm" : "text-muted"}`}>
+                {period === "weekly" ? "주간 순위" : "월간 순위"}
               </button>
-            </div>
-            {profileMessage && <p className="mt-2 text-xs text-muted">{profileMessage}</p>}
+            ))}
           </div>
-        )}
-
-        {!signedIn && (
-          <div className="mt-5 rounded-xl border border-accent/25 bg-accent-soft p-4 text-sm leading-6">
-            닉네임과 순위표 꾸미기는 <Link href="/sign-in" className="font-bold text-accent underline">로그인 후 설정</Link>할 수 있습니다. 연습은 바로 시작할 수 있습니다.
-          </div>
-        )}
-
-        <div className="mt-5 grid grid-cols-2 rounded-lg bg-panel p-1">
-          {(["weekly", "monthly"] as const).map((period) => (
-            <button
-              key={period}
-              type="button"
-              onClick={() => setRankingPeriod(period)}
-              className={`rounded-md px-3 py-2 text-sm font-bold transition ${
-                rankingPeriod === period ? "bg-card text-foreground shadow-sm" : "text-muted"
-              }`}
-            >
-              {period === "weekly" ? "주간" : "월간"}
-            </button>
-          ))}
         </div>
 
-        <p className="mt-4 text-xs text-muted">{leaderboard.label} · 사용자별 최고 기록</p>
+        <p className="mt-6 text-xs font-medium text-muted">{leaderboard.label} · 사용자별 최고 기록</p>
         <LeaderboardRows leaderboard={leaderboard} />
 
         {signedIn && !approved && (
@@ -602,24 +604,75 @@ function ResultPill({ label, value }: { label: string; value: string }) {
   return <span className="rounded-full border border-border bg-card px-3 py-1.5"><span className="text-muted">{label}</span> <strong>{value}</strong></span>;
 }
 
+function ProfileStyleControls({
+  nameColor,
+  borderStyle,
+  setNameColor,
+  setBorderStyle,
+}: {
+  nameColor: TypingNameColor;
+  borderStyle: TypingBorderStyle;
+  setNameColor: (value: TypingNameColor) => void;
+  setBorderStyle: (value: TypingBorderStyle) => void;
+}) {
+  return (
+    <>
+      <fieldset>
+        <legend className="text-xs font-bold text-muted">이름 색상</legend>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {TYPING_NAME_COLORS.map((color) => (
+            <button key={color.id} type="button" onClick={() => setNameColor(color.id)} aria-pressed={nameColor === color.id} className={`h-8 min-w-8 rounded-full border-2 px-2 text-[11px] font-bold transition ${color.className} ${nameColor === color.id ? "border-current bg-current/10" : "border-border"}`}>
+              {color.label}
+            </button>
+          ))}
+        </div>
+      </fieldset>
+      <fieldset className="mt-4">
+        <legend className="text-xs font-bold text-muted">테두리 효과</legend>
+        <div className="mt-2 grid grid-cols-3 gap-2">
+          {TYPING_BORDER_STYLES.map((style) => (
+            <button key={style.id} type="button" onClick={() => setBorderStyle(style.id)} aria-pressed={borderStyle === style.id} className={`rounded-lg px-2 py-2 text-xs font-bold transition ${borderStyle === style.id ? "bg-ink text-white" : "border border-border bg-panel text-muted"}`}>
+              {style.label}
+            </button>
+          ))}
+        </div>
+      </fieldset>
+    </>
+  );
+}
+
 function LeaderboardRows({ leaderboard }: { leaderboard: TypingLeaderboard }) {
   if (leaderboard.rows.length === 0) {
-    return <p className="mt-5 rounded-xl border border-dashed border-border py-9 text-center text-sm text-muted">첫 기록의 주인공이 되어 보세요.</p>;
+    return <p className="mt-5 rounded-2xl border border-dashed border-border py-14 text-center text-sm text-muted">첫 기록의 주인공이 되어 보세요.</p>;
   }
+  const topThree = leaderboard.rows.slice(0, 3);
+  const remaining = leaderboard.rows.slice(3, 10);
   return (
-    <ol className="mt-4 divide-y divide-border">
-      {leaderboard.rows.slice(0, 10).map((row) => (
-        <li key={`${leaderboard.period}-${row.player}`} className="grid grid-cols-[28px_minmax(0,1fr)_auto] items-center gap-2 py-3 text-sm">
-          <span className={`font-mono font-bold ${row.rank <= 3 ? "text-signal" : "text-muted"}`}>{row.rank}</span>
-          <span className={`w-fit max-w-full truncate rounded-md px-2 py-1 font-bold ${colorClass(row.nameColor)} ${borderClass(row.borderStyle)}`}>
-            {row.player}
-          </span>
-          <span className="text-right">
-            <strong className="font-mono">{row.score}</strong>
-            <span className="ml-1 block text-[10px] text-muted sm:inline">{row.cpm} CPM · {row.accuracy.toFixed(1)}%</span>
-          </span>
-        </li>
-      ))}
-    </ol>
+    <div className="mt-5">
+      <ol className="grid gap-4 md:grid-cols-3">
+        {topThree.map((row) => (
+          <li key={`${leaderboard.period}-${row.player}`} className={`relative overflow-hidden rounded-2xl border p-5 ${row.rank === 1 ? "border-signal/40 bg-signal/5" : "border-border bg-panel"}`}>
+            <div className="flex items-center justify-between">
+              <span className={`font-mono text-2xl font-bold ${row.rank === 1 ? "text-signal" : "text-muted"}`}>#{row.rank}</span>
+              <Medal size={20} className={row.rank === 1 ? "text-signal" : "text-muted/55"} />
+            </div>
+            <span className={`mt-5 inline-flex max-w-full truncate rounded-lg px-3 py-2 text-base font-bold ${colorClass(row.nameColor)} ${borderClass(row.borderStyle)}`}>{row.player}</span>
+            <p className="mt-5 font-mono text-3xl font-bold">{row.score.toLocaleString()}</p>
+            <p className="mt-1 text-xs text-muted">{row.cpm} CPM · 정확도 {row.accuracy.toFixed(1)}%</p>
+          </li>
+        ))}
+      </ol>
+      {remaining.length > 0 && (
+        <ol className="mt-5 grid gap-x-8 md:grid-cols-2">
+          {remaining.map((row) => (
+            <li key={`${leaderboard.period}-${row.player}`} className="grid grid-cols-[42px_minmax(0,1fr)_auto] items-center gap-3 border-b border-border py-4">
+              <span className="font-mono text-base font-bold text-muted">#{row.rank}</span>
+              <span className={`w-fit max-w-full truncate rounded-md px-2.5 py-1.5 text-sm font-bold ${colorClass(row.nameColor)} ${borderClass(row.borderStyle)}`}>{row.player}</span>
+              <span className="text-right"><strong className="font-mono text-base">{row.score.toLocaleString()}</strong><span className="block text-[10px] text-muted">{row.cpm} CPM · {row.accuracy.toFixed(1)}%</span></span>
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
   );
 }
