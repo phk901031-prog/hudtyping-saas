@@ -50,6 +50,10 @@ export default function PrivacyPage() {
               오타 수, 완료 문장 수, 게임 시각 — 입력한 키의 원문과 개별 입력 시각은
               저장하지 않아요
             </li>
+            <li>
+              <strong>타자 게임 공개 프로필</strong>: 사용자가 정한 닉네임, 이름 색상,
+              테두리 효과 — 닉네임과 꾸미기는 주간·월간 순위표에 공개돼요
+            </li>
           </ul>
         </section>
 
@@ -85,7 +89,7 @@ export default function PrivacyPage() {
               계정 삭제 시 관련된 검색 기록·프로그램 연결 정보도 함께 자동 삭제돼요 (DB
               cascade)
             </li>
-            <li>타자 게임 기록도 계정 삭제 시 함께 삭제돼요</li>
+            <li>타자 게임 기록과 공개 프로필도 계정 삭제 시 함께 삭제돼요</li>
             <li>프로그램 연결 정보는 대시보드의 프로그램 연결 화면에서 다시 발급하거나 해제할 수 있어요</li>
           </ul>
         </section>

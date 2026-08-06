@@ -27,7 +27,8 @@ export async function checkRateLimit(input: {
     | "license-deactivate"
     | "typing-session"
     | "typing-submit"
-    | "typing-ranking";
+    | "typing-ranking"
+    | "typing-profile";
   subject: string;
   limit: number;
   windowSeconds?: number;

@@ -1,10 +1,11 @@
 import "server-only";
 
 import { createHash, randomInt, randomUUID } from "node:crypto";
-import { asc, desc, gte } from "drizzle-orm";
+import { asc, desc, eq, gte } from "drizzle-orm";
 import { db } from "@/infrastructure/db";
 import {
   typingGameResults,
+  users,
   type User,
 } from "@/infrastructure/db/schema";
 import { redis } from "@/infrastructure/redis";
@@ -13,6 +14,15 @@ import {
   TYPING_PROMPTS,
   type TypingPrompt,
 } from "@/features/typing-game/prompts";
+import {
+  isTypingBorderStyle,
+  isTypingNameColor,
+  isValidTypingNickname,
+  normalizeTypingNickname,
+  type TypingBorderStyle,
+  type TypingGameProfile,
+  type TypingNameColor,
+} from "@/features/typing-game/customization";
 
 export const TYPING_GAME_DURATION_MS = 30_000;
 export const TYPING_GAME_COUNTDOWN_MS = 3_000;
@@ -53,6 +63,8 @@ export interface TypingLeaderboardRow {
   cpm: number;
   accuracy: number;
   playedAt: string;
+  nameColor: TypingNameColor;
+  borderStyle: TypingBorderStyle;
 }
 
 export interface TypingLeaderboard {
@@ -100,8 +112,6 @@ export async function createTypingSession(user: User | null) {
 export async function finishTypingSession(input: {
   sessionId: string;
   entries: TypingGameEntryInput[];
-  errorCount: number;
-  inputChars: number;
   currentUser: User | null;
 }): Promise<TypingGameResultSummary> {
   const state = await redis.getdel<TypingSessionState>(
@@ -131,8 +141,6 @@ export async function finishTypingSession(input: {
   const metrics = calculateResult({
     promptIds: state.promptIds,
     entries: input.entries,
-    errorCount: input.errorCount,
-    inputChars: input.inputChars,
   });
 
   const sameUser = Boolean(
@@ -181,12 +189,16 @@ export async function fetchTypingLeaderboard(
   const bestByUser = await db
     .selectDistinctOn([typingGameResults.clerkId], {
       clerkId: typingGameResults.clerkId,
+      nickname: users.gameNickname,
+      nameColor: users.gameNameColor,
+      borderStyle: users.gameBorderStyle,
       score: typingGameResults.score,
       cpm: typingGameResults.cpm,
       accuracyBasisPoints: typingGameResults.accuracyBasisPoints,
       createdAt: typingGameResults.createdAt,
     })
     .from(typingGameResults)
+    .innerJoin(users, eq(users.clerkId, typingGameResults.clerkId))
     .where(gte(typingGameResults.createdAt, window.since))
     .orderBy(
       typingGameResults.clerkId,
@@ -207,11 +219,13 @@ export async function fetchTypingLeaderboard(
     .slice(0, Math.min(Math.max(limit, 1), 50))
     .map((row, index) => ({
       rank: index + 1,
-      player: playerAlias(row.clerkId),
+      player: row.nickname ?? playerAlias(row.clerkId),
       score: row.score,
       cpm: row.cpm,
       accuracy: row.accuracyBasisPoints / 100,
       playedAt: row.createdAt.toISOString(),
+      nameColor: isTypingNameColor(row.nameColor) ? row.nameColor : "mint",
+      borderStyle: isTypingBorderStyle(row.borderStyle) ? row.borderStyle : "soft",
     }));
 
   return {
@@ -224,23 +238,16 @@ export async function fetchTypingLeaderboard(
 function calculateResult(input: {
   promptIds: string[];
   entries: TypingGameEntryInput[];
-  errorCount: number;
-  inputChars: number;
 }) {
   if (
     !Array.isArray(input.entries) ||
-    input.entries.length > input.promptIds.length ||
-    !Number.isInteger(input.errorCount) ||
-    input.errorCount < 0 ||
-    input.errorCount > 2_000 ||
-    !Number.isInteger(input.inputChars) ||
-    input.inputChars < 0 ||
-    input.inputChars > 4_000
+    input.entries.length > input.promptIds.length
   ) {
     throw new TypingGameError("INVALID_RESULT", "결과 형식이 올바르지 않습니다.");
   }
 
   let correctChars = 0;
+  let errorCount = 0;
   let completedPrompts = 0;
 
   input.entries.forEach((entry, index) => {
@@ -260,28 +267,19 @@ function calculateResult(input: {
 
     const typed = entry.typed.normalize("NFC");
     const target = prompt.text.normalize("NFC");
-    const isLast = index === input.entries.length - 1;
-
-    if (!isLast && typed !== target) {
-      throw new TypingGameError("INVALID_RESULT", "완료 문장이 일치하지 않습니다.");
+    const typedChars = Array.from(typed);
+    const targetChars = Array.from(target);
+    if (typedChars.length > targetChars.length) {
+      throw new TypingGameError("INVALID_RESULT", "문장 결과가 올바르지 않습니다.");
     }
-
-    if (typed === target) {
-      correctChars += Array.from(target).length;
-      completedPrompts += 1;
-      return;
+    for (let position = 0; position < typedChars.length; position++) {
+      if (typedChars[position] === targetChars[position]) correctChars += 1;
+      else errorCount += 1;
     }
-
-    if (isLast) {
-      const typedChars = Array.from(typed);
-      const targetChars = Array.from(target);
-      for (let position = 0; position < typedChars.length; position++) {
-        if (typedChars[position] === targetChars[position]) correctChars += 1;
-      }
-    }
+    if (typedChars.length === targetChars.length) completedPrompts += 1;
   });
 
-  const attempts = correctChars + input.errorCount;
+  const attempts = correctChars + errorCount;
   const accuracyBasisPoints =
     attempts > 0 ? Math.round((correctChars / attempts) * 10_000) : 0;
   const cpm = Math.round(
@@ -289,19 +287,69 @@ function calculateResult(input: {
   );
   const accuracyRatio = accuracyBasisPoints / 10_000;
   const score = Math.round(cpm * accuracyRatio * accuracyRatio);
-  const suspicious =
-    cpm > MAX_RANKED_CPM ||
-    input.inputChars < correctChars + input.errorCount;
+  const suspicious = cpm > MAX_RANKED_CPM;
 
   return {
     score,
     cpm,
     accuracyBasisPoints,
     correctChars,
-    errorCount: input.errorCount,
+    errorCount,
     completedPrompts,
     suspicious,
   };
+}
+
+export function typingProfileForUser(user: User): TypingGameProfile {
+  return {
+    nickname: user.gameNickname ?? playerAlias(user.clerkId),
+    nameColor: isTypingNameColor(user.gameNameColor) ? user.gameNameColor : "mint",
+    borderStyle: isTypingBorderStyle(user.gameBorderStyle) ? user.gameBorderStyle : "soft",
+    customized: Boolean(user.gameNickname),
+  };
+}
+
+export async function updateTypingProfile(input: {
+  user: User;
+  nickname: string;
+  nameColor: TypingNameColor;
+  borderStyle: TypingBorderStyle;
+}): Promise<TypingGameProfile> {
+  const nickname = normalizeTypingNickname(input.nickname);
+  if (!isValidTypingNickname(nickname)) {
+    throw new Error("닉네임은 한글, 영문, 숫자 2~10자로 입력해주세요.");
+  }
+
+  const duplicate = await db
+    .select({ clerkId: users.clerkId })
+    .from(users)
+    .where(eq(users.gameNickname, nickname))
+    .limit(1);
+  if (duplicate[0] && duplicate[0].clerkId !== input.user.clerkId) {
+    throw new Error("이미 사용 중인 닉네임입니다.");
+  }
+
+  try {
+    const [updated] = await db
+      .update(users)
+      .set({
+        gameNickname: nickname,
+        gameNameColor: input.nameColor,
+        gameBorderStyle: input.borderStyle,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.clerkId, input.user.clerkId))
+      .returning();
+    if (!updated) throw new Error("닉네임을 저장하지 못했습니다.");
+    return typingProfileForUser(updated);
+  } catch (error) {
+    if (isUniqueViolation(error)) throw new Error("이미 사용 중인 닉네임입니다.");
+    throw error;
+  }
+}
+
+function isUniqueViolation(error: unknown) {
+  return typeof error === "object" && error !== null && "code" in error && error.code === "23505";
 }
 
 function pickRandomPrompts(count: number): TypingPrompt[] {

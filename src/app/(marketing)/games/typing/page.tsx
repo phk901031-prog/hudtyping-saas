@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, Keyboard, Sparkles, Trophy } from "lucide-react";
 import { TypingGame } from "@/components/games/typing-game";
 import { getOrCreateCurrentUser } from "@/features/users/service";
-import { fetchTypingLeaderboard } from "@/features/typing-game/service";
+import { fetchTypingLeaderboard, typingProfileForUser } from "@/features/typing-game/service";
 
 export const metadata: Metadata = {
   title: "30초 타자 게임",
@@ -55,11 +55,12 @@ export default async function TypingGamePage() {
           approved={user?.status === "approved"}
           initialWeekly={weekly}
           initialMonthly={monthly}
+          initialProfile={user ? typingProfileForUser(user) : null}
         />
 
         <section className="mt-10 grid gap-5 md:grid-cols-3">
           <RuleCard number="01" title="30초 연속 입력">
-            한 문장을 정확히 마치면 다음 문장으로 넘어갑니다. 문장마다 따로 시작할 필요가 없습니다.
+            오타가 있어도 문장 길이만큼 입력하면 다음 문장으로 넘어갑니다. 문장마다 따로 시작할 필요가 없습니다.
           </RuleCard>
           <RuleCard number="02" title="보이는 그대로">
             쉼표와 따옴표 등은 문장에서 제외했습니다. 온점이 표시된 경우에만 온점까지 입력합니다.

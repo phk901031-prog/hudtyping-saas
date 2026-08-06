@@ -623,6 +623,29 @@ body {
   }
 }
 
+/* 메인 타자 게임 배너 — 키가 차례로 떨어져 쌓이는 짧은 반복 모션 */
+.game-key-drop {
+  opacity: 0;
+  transform: translateY(-72px) rotate(-8deg);
+  animation: game-key-stack 4.8s cubic-bezier(0.2, 0.75, 0.28, 1) infinite;
+}
+.game-key-drop-1 { animation-delay: 0s; }
+.game-key-drop-2 { animation-delay: 0.22s; }
+.game-key-drop-3 { animation-delay: 0.44s; }
+.game-key-drop-4 { animation-delay: 0.66s; }
+.game-promo-arrow { animation: game-promo-pulse 2.2s ease-in-out infinite; }
+
+@keyframes game-key-stack {
+  0%, 5% { opacity: 0; transform: translateY(-72px) rotate(-8deg); }
+  16%, 78% { opacity: 1; transform: translateY(34px) rotate(0deg); }
+  88%, 100% { opacity: 0; transform: translateY(38px) scale(0.92); }
+}
+
+@keyframes game-promo-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(240, 95, 50, 0); }
+  50% { box-shadow: 0 0 0 8px rgba(240, 95, 50, 0.13); }
+}
+
 /* 모션 줄이기 사용자 선호 시 sweep 끔 */
 @media (prefers-reduced-motion: reduce) {
   .screen-grid,
@@ -640,6 +663,16 @@ body {
   .step-dot,
   .status-led::after {
     animation: none;
+  }
+
+  .game-key-drop,
+  .game-promo-arrow {
+    animation: none;
+  }
+
+  .game-key-drop {
+    opacity: 1;
+    transform: translateY(34px);
   }
 
   .keycap::after {

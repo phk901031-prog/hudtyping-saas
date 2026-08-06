@@ -147,17 +147,7 @@ export default async function HomePage() {
                 30초 타자 게임 시작 <ArrowRight size={16} />
               </Link>
             </div>
-            <div className="rounded-2xl border border-border bg-panel p-6">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-[0.14em] text-muted">Ranking score</span>
-                <Trophy size={20} className="text-signal" />
-              </div>
-              <p className="mt-5 font-display text-2xl">속도만 빠른 기록보다</p>
-              <p className="mt-1 font-display text-2xl text-accent">빠르고 정확한 기록을 높게.</p>
-              <div className="mt-5 rounded-lg border border-border bg-card px-4 py-3 font-mono text-sm">
-                종합점수 = CPM × 정확도²
-              </div>
-            </div>
+            <TypingGamePromo />
           </div>
         </section>
 
@@ -380,6 +370,45 @@ export default async function HomePage() {
 // ═════════════════════════════════════════════════════════════════
 // SECTION HELPERS
 // ═════════════════════════════════════════════════════════════════
+
+function TypingGamePromo() {
+  const keys = [
+    { label: "ㅌ", className: "game-key-drop-1 left-[12%] bg-[#a8fff4] text-ink" },
+    { label: "ㅏ", className: "game-key-drop-2 left-[31%] bg-white text-ink" },
+    { label: "ㅈ", className: "game-key-drop-3 left-[50%] bg-signal text-white" },
+    { label: "ㅏ", className: "game-key-drop-4 left-[69%] bg-[#b9a8ff] text-ink" },
+  ];
+  return (
+    <Link
+      href="/games/typing"
+      className="group relative block min-h-64 overflow-hidden rounded-3xl border border-accent/25 bg-ink p-6 text-white shadow-[0_22px_55px_rgba(6,24,39,0.16)]"
+      aria-label="30초 타자 게임 시작"
+    >
+      <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_75%_15%,rgba(168,255,244,0.18),transparent_42%)]" />
+      <div className="relative z-10 flex items-center justify-between">
+        <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-[#a8fff4]">30초 도전</span>
+        <Trophy size={19} className="text-signal" />
+      </div>
+      <div className="relative mt-5 h-24" aria-hidden="true">
+        {keys.map((key) => (
+          <span key={`${key.label}-${key.className}`} className={`game-key-drop absolute top-0 flex h-12 w-12 items-center justify-center rounded-xl border border-black/10 font-display text-xl shadow-[0_5px_0_rgba(0,0,0,0.22)] ${key.className}`}>
+            {key.label}
+          </span>
+        ))}
+        <span className="absolute inset-x-[8%] bottom-0 h-2 rounded-full bg-white/12" />
+      </div>
+      <div className="relative z-10 mt-1 flex items-end justify-between gap-4">
+        <div>
+          <p className="font-display text-3xl">타자 게임</p>
+          <p className="mt-1 text-xs text-white/60">주간 · 월간 순위에 도전하세요</p>
+        </div>
+        <span className="game-promo-arrow inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-signal text-white transition group-hover:scale-110">
+          <ArrowRight size={18} />
+        </span>
+      </div>
+    </Link>
+  );
+}
 
 function SectionIntro({
   eyebrow,

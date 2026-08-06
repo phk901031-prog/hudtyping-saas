@@ -12,8 +12,6 @@ import {
 interface ResultBody {
   sessionId?: unknown;
   entries?: unknown;
-  errorCount?: unknown;
-  inputChars?: unknown;
 }
 
 export async function POST(request: Request) {
@@ -39,16 +37,10 @@ export async function POST(request: Request) {
   if (!body || !isSessionId(body.sessionId) || !isEntries(body.entries)) {
     return Response.json({ error: "결과 형식이 올바르지 않습니다." }, { status: 400 });
   }
-  if (!Number.isInteger(body.errorCount) || !Number.isInteger(body.inputChars)) {
-    return Response.json({ error: "입력 통계를 확인할 수 없습니다." }, { status: 400 });
-  }
-
   try {
     const result = await finishTypingSession({
       sessionId: body.sessionId,
       entries: body.entries,
-      errorCount: body.errorCount as number,
-      inputChars: body.inputChars as number,
       currentUser: user,
     });
     return Response.json(result, { headers: { "Cache-Control": "no-store" } });

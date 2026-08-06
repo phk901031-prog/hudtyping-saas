@@ -13,6 +13,7 @@ import {
   index,
   integer,
   jsonb,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 
 // PostgreSQL의 ENUM 타입을 정의 — DB 레벨에서 잘못된 값 입력을 차단한다.
@@ -63,6 +64,12 @@ export const users = pgTable("users", {
   // admin 이 아닌 VIP 사용자에게 "기간 없이" 무제한을 부여할 때 사용.
   unlimitedPermanent: boolean("unlimited_permanent").notNull().default(false),
 
+  // 타자 게임 순위표에 공개되는 별칭과 제한된 꾸미기 프리셋.
+  // 임의 CSS는 받지 않고 서버가 허용한 식별자만 저장한다.
+  gameNickname: text("game_nickname"),
+  gameNameColor: text("game_name_color").notNull().default("mint"),
+  gameBorderStyle: text("game_border_style").notNull().default("soft"),
+
   // 생성/수정 시각 — 'with timezone'으로 UTC 기준 저장.
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
@@ -70,7 +77,9 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-});
+}, (table) => [
+  uniqueIndex("users_game_nickname_unique_idx").on(table.gameNickname),
+]);
 
 // 다른 파일에서 타입을 참조할 수 있게 export.
 //   const u: User = ...    (조회 결과 타입)

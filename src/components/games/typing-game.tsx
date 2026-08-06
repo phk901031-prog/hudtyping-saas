@@ -6,7 +6,9 @@ import {
   Gauge,
   Keyboard,
   Medal,
+  Palette,
   RefreshCw,
+  Save,
   ShieldCheck,
   Target,
 } from "lucide-react";
@@ -22,6 +24,16 @@ import type {
   TypingGameResultSummary,
   TypingLeaderboard,
 } from "@/features/typing-game/service";
+import {
+  TYPING_BORDER_STYLES,
+  TYPING_NAME_COLORS,
+  borderClass,
+  colorClass,
+  type TypingBorderStyle,
+  type TypingGameProfile,
+  type TypingNameColor,
+} from "@/features/typing-game/customization";
+import { convertDubeolsik } from "@/features/typing-game/dubeolsik";
 
 interface Prompt {
   id: string;
@@ -43,11 +55,13 @@ export function TypingGame({
   approved,
   initialWeekly,
   initialMonthly,
+  initialProfile,
 }: {
   signedIn: boolean;
   approved: boolean;
   initialWeekly: TypingLeaderboard;
   initialMonthly: TypingLeaderboard;
+  initialProfile: TypingGameProfile | null;
 }) {
   const [phase, setPhase] = useState<GamePhase>("idle");
   const [session, setSession] = useState<SessionResponse | null>(null);
@@ -65,15 +79,20 @@ export function TypingGame({
     weekly: initialWeekly,
     monthly: initialMonthly,
   });
+  const [profile, setProfile] = useState(initialProfile);
+  const [nickname, setNickname] = useState(initialProfile?.nickname ?? "");
+  const [nameColor, setNameColor] = useState<TypingNameColor>(initialProfile?.nameColor ?? "mint");
+  const [borderStyle, setBorderStyle] = useState<TypingBorderStyle>(initialProfile?.borderStyle ?? "soft");
+  const [profileMessage, setProfileMessage] = useState<string | null>(null);
+  const [savingProfile, setSavingProfile] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const sessionRef = useRef<SessionResponse | null>(null);
   const promptIndexRef = useRef(0);
   const typedRef = useRef("");
-  const measuredValueRef = useRef("");
   const completedEntriesRef = useRef<TypingGameEntryInput[]>([]);
-  const errorCountRef = useRef(0);
-  const inputCharsRef = useRef(0);
+  const fallbackRawRef = useRef("");
+  const fallbackBaseRef = useRef("");
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const endTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -89,12 +108,20 @@ export function TypingGame({
       0
     );
   }, [activePrompt, typed]);
+  const currentErrorChars = useMemo(() => {
+    if (!activePrompt) return 0;
+    const target = Array.from(activePrompt.text.normalize("NFC"));
+    return Array.from(typed.normalize("NFC")).reduce(
+      (count, character, index) => count + (character !== target[index] ? 1 : 0),
+      0
+    );
+  }, [activePrompt, typed]);
   const liveCorrectChars = completedChars + currentCorrectChars;
   const elapsedMs = Math.max(1, 30_000 - remainingMs);
   const liveCpm = phase === "running" ? Math.round((liveCorrectChars * 60_000) / elapsedMs) : 0;
   const liveAccuracy =
-    liveCorrectChars + errorCount > 0
-      ? (liveCorrectChars / (liveCorrectChars + errorCount)) * 100
+    liveCorrectChars + errorCount + currentErrorChars > 0
+      ? (liveCorrectChars / (liveCorrectChars + errorCount + currentErrorChars)) * 100
       : 100;
 
   const clearTimers = useCallback(() => {
@@ -144,8 +171,6 @@ export function TypingGame({
         body: JSON.stringify({
           sessionId: sessionRef.current.sessionId,
           entries,
-          errorCount: errorCountRef.current,
-          inputChars: inputCharsRef.current,
         }),
       });
       const body = (await response.json().catch(() => ({}))) as
@@ -188,11 +213,10 @@ export function TypingGame({
     setErrorCount(0);
     setCompletedChars(0);
     typedRef.current = "";
-    measuredValueRef.current = "";
     promptIndexRef.current = 0;
     completedEntriesRef.current = [];
-    errorCountRef.current = 0;
-    inputCharsRef.current = 0;
+    fallbackRawRef.current = "";
+    fallbackBaseRef.current = "";
 
     try {
       const response = await fetch("/api/games/typing/session", { method: "POST" });
@@ -229,42 +253,69 @@ export function TypingGame({
   function processValue(nextValue: string) {
     if (phase !== "running" || !activePrompt) return;
     const normalized = nextValue.normalize("NFC");
-    const previous = measuredValueRef.current.normalize("NFC");
     const nextChars = Array.from(normalized);
-    const previousChars = Array.from(previous);
     const targetChars = Array.from(activePrompt.text.normalize("NFC"));
 
-    if (nextChars.length > previousChars.length) {
-      const added = nextChars.length - previousChars.length;
-      let newErrors = 0;
-      for (let index = previousChars.length; index < nextChars.length; index++) {
-        if (nextChars[index] !== targetChars[index]) newErrors += 1;
-      }
-      inputCharsRef.current += added;
-      if (newErrors > 0) {
-        errorCountRef.current += newErrors;
-        setErrorCount(errorCountRef.current);
-      }
-    }
-
-    measuredValueRef.current = normalized;
     typedRef.current = normalized;
     setTyped(normalized);
 
-    if (normalized === activePrompt.text) {
+    if (nextChars.length >= targetChars.length) {
+      const completedTyped = nextChars.slice(0, targetChars.length).join("");
+      const correct = targetChars.reduce(
+        (count, character, index) => count + (nextChars[index] === character ? 1 : 0),
+        0
+      );
+      const errors = targetChars.length - correct;
       completedEntriesRef.current.push({
         promptId: activePrompt.id,
-        typed: activePrompt.text,
+        typed: completedTyped,
       });
-      setCompletedChars((value) => value + Array.from(activePrompt.text).length);
+      setCompletedChars((value) => value + correct);
+      setErrorCount((value) => value + errors);
       const nextIndex = promptIndexRef.current + 1;
       promptIndexRef.current = nextIndex;
       setPromptIndex(nextIndex);
       setCompletedCount(completedEntriesRef.current.length);
       typedRef.current = "";
-      measuredValueRef.current = "";
+      fallbackRawRef.current = "";
+      fallbackBaseRef.current = "";
       setTyped("");
       requestAnimationFrame(() => inputRef.current?.focus());
+    }
+  }
+
+  function handleFallbackKey(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (phase !== "running" || event.nativeEvent.isComposing) return;
+    const isLatin = /^[A-Za-z]$/.test(event.key);
+    const continuing = fallbackRawRef.current.length > 0;
+    if (!isLatin && !(continuing && (event.key === " " || event.key === "." || event.key === "Backspace"))) return;
+
+    event.preventDefault();
+    if (!continuing) fallbackBaseRef.current = typedRef.current;
+    if (event.key === "Backspace") fallbackRawRef.current = fallbackRawRef.current.slice(0, -1);
+    else fallbackRawRef.current += event.key;
+    processValue(fallbackBaseRef.current + convertDubeolsik(fallbackRawRef.current));
+  }
+
+  async function saveProfile() {
+    setSavingProfile(true);
+    setProfileMessage(null);
+    try {
+      const response = await fetch("/api/games/typing/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nickname, nameColor, borderStyle }),
+      });
+      const body = (await response.json().catch(() => ({}))) as TypingGameProfile | { error?: string };
+      if (!response.ok || !("nickname" in body)) throw new Error("error" in body ? body.error : "저장하지 못했습니다.");
+      setProfile(body);
+      setNickname(body.nickname);
+      setProfileMessage("순위표 꾸미기를 저장했습니다.");
+      await refreshRankings();
+    } catch (error) {
+      setProfileMessage(error instanceof Error ? error.message : "저장하지 못했습니다.");
+    } finally {
+      setSavingProfile(false);
     }
   }
 
@@ -299,7 +350,7 @@ export function TypingGame({
                 <Keyboard className="text-accent" size={34} strokeWidth={1.8} />
                 <h3 className="mt-4 font-display text-2xl">준비되면 시작하세요</h3>
                 <p className="ko-copy mt-2 max-w-md text-sm leading-6 text-muted">
-                  문장을 정확히 입력하면 다음 문장으로 이어집니다. 온점이 보이는 문장은 온점까지 입력해야 합니다.
+                  오타가 있어도 문장 길이만큼 입력하면 바로 다음 문장으로 이어집니다. 온점이 보이는 문장은 온점까지 입력하세요.
                 </p>
                 <button
                   type="button"
@@ -334,6 +385,7 @@ export function TypingGame({
                     if (!nativeEvent.isComposing) processValue(event.target.value);
                   }}
                   onCompositionEnd={(event) => processValue(event.currentTarget.value)}
+                  onKeyDown={handleFallbackKey}
                   onPaste={(event) => {
                     event.preventDefault();
                     setMessage("붙여넣기는 사용할 수 없습니다.");
@@ -345,12 +397,17 @@ export function TypingGame({
                   disabled={phase !== "running"}
                   autoComplete="off"
                   autoCapitalize="off"
+                  lang="ko"
+                  inputMode="text"
                   spellCheck={false}
                   maxLength={activePrompt.text.length + 30}
                   aria-label="표시된 문장 입력"
                   className="mt-7 w-full rounded-xl border-2 border-border bg-card px-4 py-4 text-lg outline-none transition focus:border-accent"
                   placeholder="여기에 입력하세요"
                 />
+                <p className="mt-2 text-xs text-muted">
+                  영문 자판으로 시작해도 2벌식 한글로 자동 전환합니다.
+                </p>
                 <div className="mt-5 space-y-2 opacity-55">
                   {session?.prompts.slice(promptIndex + 1, promptIndex + 3).map((prompt) => (
                     <p key={prompt.id} className="truncate text-sm text-muted">{prompt.text}</p>
@@ -431,6 +488,51 @@ export function TypingGame({
         <p className="mt-4 text-xs text-muted">{leaderboard.label} · 사용자별 최고 기록</p>
         <LeaderboardRows leaderboard={leaderboard} />
 
+        {signedIn && profile && (
+          <div className="mt-6 border-t border-border pt-5">
+            <div className="flex items-center gap-2">
+              <Palette size={16} className="text-accent" />
+              <h3 className="font-display text-base">내 순위표 꾸미기</h3>
+            </div>
+            <label className="mt-4 block text-xs font-bold text-muted" htmlFor="typing-nickname">닉네임</label>
+            <input
+              id="typing-nickname"
+              value={nickname}
+              onChange={(event) => setNickname(event.target.value)}
+              maxLength={10}
+              className="mt-2 w-full rounded-lg border border-border bg-panel px-3 py-2.5 text-sm outline-none focus:border-accent"
+              placeholder="한글 영문 숫자 2~10자"
+            />
+            <fieldset className="mt-4">
+              <legend className="text-xs font-bold text-muted">이름 색상</legend>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {TYPING_NAME_COLORS.map((color) => (
+                  <button key={color.id} type="button" onClick={() => setNameColor(color.id)} aria-pressed={nameColor === color.id} className={`h-8 min-w-8 rounded-full border-2 px-2 text-[11px] font-bold transition ${color.className} ${nameColor === color.id ? "border-current bg-current/10" : "border-border"}`}>
+                    {color.label}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+            <fieldset className="mt-4">
+              <legend className="text-xs font-bold text-muted">테두리 효과</legend>
+              <div className="mt-2 grid grid-cols-3 gap-2">
+                {TYPING_BORDER_STYLES.map((style) => (
+                  <button key={style.id} type="button" onClick={() => setBorderStyle(style.id)} aria-pressed={borderStyle === style.id} className={`rounded-lg px-2 py-2 text-xs font-bold transition ${borderStyle === style.id ? "bg-ink text-white" : "border border-border bg-panel text-muted"}`}>
+                    {style.label}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+            <div className="mt-4 flex items-center justify-between gap-3">
+              <span className={`inline-flex rounded-lg px-3 py-1.5 text-sm font-bold ${colorClass(nameColor)} ${borderClass(borderStyle)}`}>{nickname || profile.nickname}</span>
+              <button type="button" onClick={() => void saveProfile()} disabled={savingProfile} className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3 py-2 text-xs font-bold text-white transition hover:bg-accent-hover disabled:opacity-50">
+                <Save size={13} /> {savingProfile ? "저장 중" : "저장"}
+              </button>
+            </div>
+            {profileMessage && <p className="mt-2 text-xs text-muted">{profileMessage}</p>}
+          </div>
+        )}
+
         {!signedIn && (
           <div className="mt-6 rounded-xl border border-accent/25 bg-accent-soft p-4 text-sm leading-6">
             연습은 바로 할 수 있습니다. 순위에 기록하려면 <Link href="/sign-up" className="font-bold text-accent underline">무료 가입</Link>이 필요합니다.
@@ -506,7 +608,9 @@ function LeaderboardRows({ leaderboard }: { leaderboard: TypingLeaderboard }) {
       {leaderboard.rows.slice(0, 10).map((row) => (
         <li key={`${leaderboard.period}-${row.player}`} className="grid grid-cols-[28px_minmax(0,1fr)_auto] items-center gap-2 py-3 text-sm">
           <span className={`font-mono font-bold ${row.rank <= 3 ? "text-signal" : "text-muted"}`}>{row.rank}</span>
-          <span className="truncate font-medium">{row.player}</span>
+          <span className={`w-fit max-w-full truncate rounded-md px-2 py-1 font-bold ${colorClass(row.nameColor)} ${borderClass(row.borderStyle)}`}>
+            {row.player}
+          </span>
           <span className="text-right">
             <strong className="font-mono">{row.score}</strong>
             <span className="ml-1 block text-[10px] text-muted sm:inline">{row.cpm} CPM · {row.accuracy.toFixed(1)}%</span>
