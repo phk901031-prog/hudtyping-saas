@@ -6,9 +6,11 @@ import {
   BookOpen,
   Command,
   KeyRound,
+  Keyboard,
   LineChart,
   Sparkles,
   TrendingUp,
+  Trophy,
   Zap,
   type LucideIcon,
 } from "lucide-react";
@@ -121,6 +123,40 @@ export default async function HomePage() {
 
             <div className="mx-auto w-full max-w-2xl xl:max-w-none">
               <NatmalgiDemo />
+            </div>
+          </div>
+        </section>
+
+        {/* ─────────────  PLAYSTENO GAME  ───────────── */}
+        <section className="border-b border-border bg-card">
+          <div className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-14 sm:px-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-center lg:py-16">
+            <div>
+              <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-accent">
+                <Keyboard size={14} /> PlaySteno game
+              </p>
+              <h2 className="ko-heading mt-3 font-display text-3xl leading-tight sm:text-4xl">
+                30초 동안 어디까지 정확하게 칠 수 있을까요.
+              </h2>
+              <p className="ko-copy mt-4 max-w-2xl text-sm leading-7 text-muted sm:text-base">
+                문장을 연속으로 입력하고 타수와 정확도를 함께 확인하세요. 로그인하지 않아도 연습할 수 있고 승인 사용자의 최고 기록은 주간 및 월간 순위에 반영됩니다.
+              </p>
+              <Link
+                href="/games/typing"
+                className="mt-6 inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3 font-bold text-white transition hover:bg-accent-hover"
+              >
+                30초 타자 게임 시작 <ArrowRight size={16} />
+              </Link>
+            </div>
+            <div className="rounded-2xl border border-border bg-panel p-6">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-[0.14em] text-muted">Ranking score</span>
+                <Trophy size={20} className="text-signal" />
+              </div>
+              <p className="mt-5 font-display text-2xl">속도만 빠른 기록보다</p>
+              <p className="mt-1 font-display text-2xl text-accent">빠르고 정확한 기록을 높게.</p>
+              <div className="mt-5 rounded-lg border border-border bg-card px-4 py-3 font-mono text-sm">
+                종합점수 = CPM × 정확도²
+              </div>
             </div>
           </div>
         </section>

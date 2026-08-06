@@ -386,3 +386,34 @@ export const licenseActivations = pgTable(
 
 export type LicenseActivation = typeof licenseActivations.$inferSelect;
 export type NewLicenseActivation = typeof licenseActivations.$inferInsert;
+
+// 30초 보고 치기 결과. 문제 세션은 Redis에서 짧게 보관하고 검증이 끝난
+// 요약 결과만 PostgreSQL에 남긴다. 원문 키 입력 스트림은 저장하지 않는다.
+export const typingGameResults = pgTable(
+  "typing_game_results",
+  {
+    id: serial("id").primaryKey(),
+    sessionId: text("session_id").notNull().unique(),
+    clerkId: text("clerk_id")
+      .notNull()
+      .references(() => users.clerkId, { onDelete: "cascade" }),
+    score: integer("score").notNull(),
+    cpm: integer("cpm").notNull(),
+    accuracyBasisPoints: integer("accuracy_basis_points").notNull(),
+    correctChars: integer("correct_chars").notNull(),
+    errorCount: integer("error_count").notNull(),
+    completedPrompts: integer("completed_prompts").notNull(),
+    durationMs: integer("duration_ms").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("typing_game_results_clerk_id_idx").on(table.clerkId),
+    index("typing_game_results_created_at_idx").on(table.createdAt),
+    index("typing_game_results_score_idx").on(table.score),
+  ]
+);
+
+export type TypingGameResult = typeof typingGameResults.$inferSelect;
+export type NewTypingGameResult = typeof typingGameResults.$inferInsert;

@@ -6,6 +6,7 @@ import { OPENCHAT } from "@/config/community";
 
 const FOOTER_LINKS = [
   { href: "/download/windows", label: "Windows 다운로드" },
+  { href: "/games/typing", label: "30초 타자 게임" },
   { href: "/help", label: "사용 가이드" },
   { href: "/updates", label: "업데이트 로그" },
   { href: "/trends", label: "인기 검색어" },

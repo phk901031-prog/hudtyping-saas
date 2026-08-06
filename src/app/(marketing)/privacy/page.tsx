@@ -24,7 +24,7 @@ export default function PrivacyPage() {
       <h1 className="font-display text-3xl sm:text-4xl mt-6 mb-2">
         개인정보 처리방침
       </h1>
-      <p className="text-sm text-muted mb-8">최종 업데이트: 2026-08-06</p>
+      <p className="text-sm text-muted mb-8">최종 업데이트: 2026-08-07</p>
 
       <div className="flex flex-col gap-8 leading-relaxed">
         <section>
@@ -45,6 +45,11 @@ export default function PrivacyPage() {
               <strong>프로그램 연결 정보</strong>: 연결 이름, 마지막 사용 시각, 발급 시각
               (실제 토큰은 SHA256 해시만 저장)
             </li>
+            <li>
+              <strong>타자 게임 기록</strong>: 종합점수, 분당 정확 문자 수, 정확도,
+              오타 수, 완료 문장 수, 게임 시각 — 입력한 키의 원문과 개별 입력 시각은
+              저장하지 않아요
+            </li>
           </ul>
         </section>
 
@@ -55,6 +60,7 @@ export default function PrivacyPage() {
             <li>월 검색 한도 계산 (사용자별 누적 사용량 추적)</li>
             <li>전체 사용 패턴 분석 (인기 검색어, 캐시 적중률 등)</li>
             <li>오류 분석과 기능·성능 개선을 위한 이용 통계 확인</li>
+            <li>타자 게임의 주간·월간 순위 제공 및 비정상 기록 확인</li>
           </ul>
         </section>
 
@@ -79,6 +85,7 @@ export default function PrivacyPage() {
               계정 삭제 시 관련된 검색 기록·프로그램 연결 정보도 함께 자동 삭제돼요 (DB
               cascade)
             </li>
+            <li>타자 게임 기록도 계정 삭제 시 함께 삭제돼요</li>
             <li>프로그램 연결 정보는 대시보드의 프로그램 연결 화면에서 다시 발급하거나 해제할 수 있어요</li>
           </ul>
         </section>

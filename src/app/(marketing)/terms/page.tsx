@@ -22,7 +22,7 @@ export default function TermsPage() {
       </Link>
 
       <h1 className="font-display text-3xl sm:text-4xl mt-6 mb-2">이용약관</h1>
-      <p className="text-sm text-muted mb-8">최종 업데이트: 2026-08-06</p>
+      <p className="text-sm text-muted mb-8">최종 업데이트: 2026-08-07</p>
 
       <div className="flex flex-col gap-8 leading-relaxed">
         <section>
@@ -60,7 +60,17 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="font-display text-xl mb-3">4. 사용자 의무</h2>
+          <h2 className="font-display text-xl mb-3">4. 타자 게임</h2>
+          <ul className="list-disc pl-5 flex flex-col gap-1.5">
+            <li>타자 게임은 현재 보상 없이 연습과 순위 기능만 제공해요</li>
+            <li>로그인하지 않은 사용자는 연습할 수 있지만 순위에는 기록되지 않아요</li>
+            <li>순위에는 승인된 사용자별 주간·월간 최고 기록 한 건만 반영해요</li>
+            <li>자동 입력이나 결과 조작 등 비정상 기록은 순위에서 제외할 수 있어요</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 className="font-display text-xl mb-3">5. 사용자 의무</h2>
           <ul className="list-disc pl-5 flex flex-col gap-1.5">
             <li>본인 계정과 프로그램 연결 정보를 안전하게 관리해 주세요</li>
             <li>연결 코드는 한 번만 사용할 수 있어요. 노출됐다면 새 코드를 발급해 다시 연결해 주세요</li>
@@ -74,7 +84,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="font-display text-xl mb-3">5. 책임의 한계</h2>
+          <h2 className="font-display text-xl mb-3">6. 책임의 한계</h2>
           <p>
             서비스는 ‘있는 그대로(as-is)’ 제공돼요. 베타 단계의 특성상 데이터
             손실·서비스 중단·검색 결과 부정확 등이 발생할 수 있고, 이에 따른 직간접
@@ -92,7 +102,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="font-display text-xl mb-3">6. 약관 변경</h2>
+          <h2 className="font-display text-xl mb-3">7. 약관 변경</h2>
           <p>
             본 약관은 서비스 정책 변화에 따라 변경될 수 있어요. 중요한 변경은
             이메일·웹사이트로 사전 안내해 드려요.
@@ -100,7 +110,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="font-display text-xl mb-3">7. 문의</h2>
+          <h2 className="font-display text-xl mb-3">8. 문의</h2>
           <p>
             문의는 카카오톡{" "}
             <a
