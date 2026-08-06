@@ -373,10 +373,11 @@ export default async function HomePage() {
 
 function TypingGamePromo() {
   const keys = [
-    { label: "ㅌ", className: "game-key-drop-1 left-[12%] bg-[#a8fff4] text-ink" },
-    { label: "ㅏ", className: "game-key-drop-2 left-[31%] bg-white text-ink" },
-    { label: "ㅈ", className: "game-key-drop-3 left-[50%] bg-signal text-white" },
-    { label: "ㅏ", className: "game-key-drop-4 left-[69%] bg-[#b9a8ff] text-ink" },
+    { label: "ㅅ", className: "game-key-press-1" },
+    { label: "ㅗ", className: "game-key-press-2" },
+    { label: "ㄱ", className: "game-key-press-3" },
+    { label: "ㅣ", className: "game-key-press-4" },
+    { label: "Space", className: "game-key-press-5 col-span-2 w-full" },
   ];
   return (
     <Link
@@ -389,13 +390,22 @@ function TypingGamePromo() {
         <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-[#a8fff4]">30초 도전</span>
         <Trophy size={19} className="text-signal" />
       </div>
-      <div className="relative mt-5 h-24" aria-hidden="true">
-        {keys.map((key) => (
-          <span key={`${key.label}-${key.className}`} className={`game-key-drop absolute top-0 flex h-12 w-12 items-center justify-center rounded-xl border border-black/10 font-display text-xl shadow-[0_5px_0_rgba(0,0,0,0.22)] ${key.className}`}>
-            {key.label}
-          </span>
-        ))}
-        <span className="absolute inset-x-[8%] bottom-0 h-2 rounded-full bg-white/12" />
+      <div className="relative mt-5 rounded-2xl border border-white/12 bg-black/20 p-4" aria-hidden="true">
+        <div className="flex items-center justify-between border-b border-white/10 pb-3">
+          <div className="flex gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-signal" /><span className="h-1.5 w-1.5 rounded-full bg-[#a8fff4]" /></div>
+          <span className="font-mono text-[10px] text-white/50">30.0 SEC</span>
+        </div>
+        <div className="mt-3 flex items-center justify-between gap-3">
+          <p className="font-display text-base text-white/90">속기 연습<span className="game-demo-caret ml-1 inline-block h-4 w-[2px] translate-y-0.5 bg-[#a8fff4]" /></p>
+          <span className="rounded-full bg-[#a8fff4]/10 px-2 py-1 font-mono text-[10px] text-[#a8fff4]">312 CPM</span>
+        </div>
+        <div className="mt-4 grid grid-cols-6 gap-2">
+          {keys.map((key) => (
+            <span key={key.label} className={`game-key-press flex h-9 items-center justify-center rounded-lg border border-white/15 bg-white/8 font-mono text-xs font-bold text-white/75 shadow-[0_3px_0_rgba(0,0,0,0.28)] ${key.className}`}>
+              {key.label}
+            </span>
+          ))}
+        </div>
       </div>
       <div className="relative z-10 mt-1 flex items-end justify-between gap-4">
         <div>

@@ -623,22 +623,26 @@ body {
   }
 }
 
-/* 메인 타자 게임 배너 — 키가 차례로 떨어져 쌓이는 짧은 반복 모션 */
-.game-key-drop {
-  opacity: 0;
-  transform: translateY(-72px) rotate(-8deg);
-  animation: game-key-stack 4.8s cubic-bezier(0.2, 0.75, 0.28, 1) infinite;
+/* 메인 타자 게임 배너 — 실제 키 입력처럼 차분하게 이어지는 눌림 모션 */
+.game-key-press {
+  animation: game-keyboard-press 3.2s ease-in-out infinite;
 }
-.game-key-drop-1 { animation-delay: 0s; }
-.game-key-drop-2 { animation-delay: 0.22s; }
-.game-key-drop-3 { animation-delay: 0.44s; }
-.game-key-drop-4 { animation-delay: 0.66s; }
+.game-key-press-1 { animation-delay: 0s; }
+.game-key-press-2 { animation-delay: 0.16s; }
+.game-key-press-3 { animation-delay: 0.32s; }
+.game-key-press-4 { animation-delay: 0.48s; }
+.game-key-press-5 { animation-delay: 0.64s; }
+.game-demo-caret { animation: game-caret-blink 0.85s steps(1) infinite; }
 .game-promo-arrow { animation: game-promo-pulse 2.2s ease-in-out infinite; }
 
-@keyframes game-key-stack {
-  0%, 5% { opacity: 0; transform: translateY(-72px) rotate(-8deg); }
-  16%, 78% { opacity: 1; transform: translateY(34px) rotate(0deg); }
-  88%, 100% { opacity: 0; transform: translateY(38px) scale(0.92); }
+@keyframes game-keyboard-press {
+  0%, 8%, 22%, 100% { transform: translateY(0); background-color: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.75); }
+  12%, 17% { transform: translateY(3px); background-color: rgba(168, 255, 244, 0.2); color: #d9fff9; box-shadow: 0 0 14px rgba(168, 255, 244, 0.16); }
+}
+
+@keyframes game-caret-blink {
+  0%, 55% { opacity: 1; }
+  56%, 100% { opacity: 0; }
 }
 
 @keyframes game-promo-pulse {
@@ -665,14 +669,10 @@ body {
     animation: none;
   }
 
-  .game-key-drop,
+  .game-key-press,
+  .game-demo-caret,
   .game-promo-arrow {
     animation: none;
-  }
-
-  .game-key-drop {
-    opacity: 1;
-    transform: translateY(34px);
   }
 
   .keycap::after {
