@@ -111,7 +111,8 @@ export async function viewUrimalsaem(targetCode: string): Promise<WordDetail> {
 }
 
 function requireApiKey(): string {
-  const apiKey = process.env.WOORI_KEY;
+  // env 붙여넣기 실수(뒤 공백·개행)로 우리말샘이 "Unregistered key"를 뱉는 사고가 있어서 trim 방어.
+  const apiKey = process.env.WOORI_KEY?.trim();
   if (!apiKey) {
     throw new Error("WOORI_KEY environment variable is missing.");
   }
