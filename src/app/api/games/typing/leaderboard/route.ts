@@ -25,6 +25,8 @@ export async function GET(request: Request) {
   const leaderboard = await fetchTypingLeaderboard(period);
 
   return Response.json(leaderboard, {
-    headers: { "Cache-Control": "public, max-age=30, stale-while-revalidate=60" },
+    // 게임 종료 직후 새 최고 기록이 바로 보여야 하므로 CDN/브라우저에
+    // 순위 응답을 보관하지 않는다.
+    headers: { "Cache-Control": "private, no-store, max-age=0" },
   });
 }
