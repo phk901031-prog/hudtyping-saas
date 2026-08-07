@@ -34,6 +34,7 @@ import {
   type TypingNameColor,
 } from "@/features/typing-game/customization";
 import { convertDubeolsik } from "@/features/typing-game/dubeolsik";
+import { countTypingStrokes } from "@/features/typing-game/typing-strokes";
 
 interface Prompt {
   id: string;
@@ -70,8 +71,8 @@ export function TypingGame({
   const [remainingMs, setRemainingMs] = useState(30_000);
   const [countdown, setCountdown] = useState(3);
   const [completedCount, setCompletedCount] = useState(0);
-  const [errorCount, setErrorCount] = useState(0);
-  const [completedChars, setCompletedChars] = useState(0);
+  const [completedCorrectStrokes, setCompletedCorrectStrokes] = useState(0);
+  const [completedErrorStrokes, setCompletedErrorStrokes] = useState(0);
   const [result, setResult] = useState<TypingGameResultSummary | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [rankingPeriod, setRankingPeriod] = useState<"weekly" | "monthly">("weekly");
@@ -100,28 +101,30 @@ export function TypingGame({
   const finishingRef = useRef(false);
 
   const activePrompt = session?.prompts[promptIndex] ?? null;
-  const currentCorrectChars = useMemo(() => {
+  const currentCorrectStrokes = useMemo(() => {
     if (!activePrompt) return 0;
     const target = Array.from(activePrompt.text.normalize("NFC"));
     return Array.from(typed.normalize("NFC")).reduce(
-      (count, character, index) => count + (character === target[index] ? 1 : 0),
+      (count, character, index) => count + (character === target[index] ? countTypingStrokes(character) : 0),
       0
     );
   }, [activePrompt, typed]);
-  const currentErrorChars = useMemo(() => {
+  const currentErrorStrokes = useMemo(() => {
     if (!activePrompt) return 0;
     const target = Array.from(activePrompt.text.normalize("NFC"));
     return Array.from(typed.normalize("NFC")).reduce(
-      (count, character, index) => count + (character !== target[index] ? 1 : 0),
+      (count, character, index) => count + (character !== target[index] ? countTypingStrokes(character) : 0),
       0
     );
   }, [activePrompt, typed]);
-  const liveCorrectChars = completedChars + currentCorrectChars;
+  const liveCorrectStrokes = completedCorrectStrokes + currentCorrectStrokes;
+  const liveErrorStrokes = completedErrorStrokes + currentErrorStrokes;
+  const liveAttemptedStrokes = liveCorrectStrokes + liveErrorStrokes;
   const elapsedMs = Math.max(1, 30_000 - remainingMs);
-  const liveCpm = phase === "running" ? Math.round((liveCorrectChars * 60_000) / elapsedMs) : 0;
+  const liveCpm = phase === "running" ? Math.round((liveAttemptedStrokes * 60_000) / elapsedMs) : 0;
   const liveAccuracy =
-    liveCorrectChars + errorCount + currentErrorChars > 0
-      ? (liveCorrectChars / (liveCorrectChars + errorCount + currentErrorChars)) * 100
+    liveAttemptedStrokes > 0
+      ? (liveCorrectStrokes / liveAttemptedStrokes) * 100
       : 100;
 
   const clearTimers = useCallback(() => {
@@ -210,8 +213,8 @@ export function TypingGame({
     setTyped("");
     setPromptIndex(0);
     setCompletedCount(0);
-    setErrorCount(0);
-    setCompletedChars(0);
+    setCompletedCorrectStrokes(0);
+    setCompletedErrorStrokes(0);
     typedRef.current = "";
     promptIndexRef.current = 0;
     completedEntriesRef.current = [];
@@ -263,17 +266,20 @@ export function TypingGame({
 
     if (nextChars.length >= targetChars.length) {
       const completedTyped = nextChars.slice(0, targetChars.length).join("");
-      const correct = targetChars.reduce(
-        (count, character, index) => count + (nextChars[index] === character ? 1 : 0),
-        0
-      );
-      const errors = targetChars.length - correct;
+      let correctStrokes = 0;
+      let errorStrokes = 0;
+      targetChars.forEach((character, index) => {
+        if (nextChars[index] === character) correctStrokes += countTypingStrokes(character);
+        else {
+          errorStrokes += countTypingStrokes(nextChars[index]);
+        }
+      });
       completedEntriesRef.current.push({
         promptId: activePrompt.id,
         typed: completedTyped,
       });
-      setCompletedChars((value) => value + correct);
-      setErrorCount((value) => value + errors);
+      setCompletedCorrectStrokes((value) => value + correctStrokes);
+      setCompletedErrorStrokes((value) => value + errorStrokes);
       const nextIndex = promptIndexRef.current + 1;
       promptIndexRef.current = nextIndex;
       setPromptIndex(nextIndex);
@@ -550,6 +556,7 @@ export function TypingGame({
         )}
 
         <div className="mt-6 border-t border-border pt-5 text-xs leading-5 text-muted">
+          <p>타수는 1분 동안 입력한 한글 자소 수로 환산합니다.</p>
           <p>종합점수는 타수에 정확도의 제곱을 반영합니다.</p>
           <p className="mt-1 font-mono">점수 = 타수 × 정확도²</p>
         </div>

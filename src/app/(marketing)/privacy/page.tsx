@@ -46,7 +46,7 @@ export default function PrivacyPage() {
               (실제 토큰은 SHA256 해시만 저장)
             </li>
             <li>
-              <strong>타자 게임 기록</strong>: 종합점수, 타수, 정확도,
+              <strong>타자 게임 기록</strong>: 종합점수, 자소 기준 타수, 정확도,
               오타 수, 완료 문장 수, 게임 시각 — 입력한 키의 원문과 개별 입력 시각은
               저장하지 않아요
             </li>

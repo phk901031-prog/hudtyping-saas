@@ -23,6 +23,7 @@ import {
   type TypingGameProfile,
   type TypingNameColor,
 } from "@/features/typing-game/customization";
+import { countTypingStrokes } from "@/features/typing-game/typing-strokes";
 
 export const TYPING_GAME_DURATION_MS = 30_000;
 export const TYPING_GAME_COUNTDOWN_MS = 3_000;
@@ -31,7 +32,8 @@ const SESSION_TTL_SECONDS = 120;
 const PROMPTS_PER_SESSION = 28;
 const MIN_FINISH_EARLY_TOLERANCE_MS = 2_500;
 const MAX_FINISH_DELAY_MS = 30_000;
-const MAX_RANKED_CPM = 1_800;
+const MAX_RANKED_CPM = 4_000;
+const TYPING_METRIC_VERSION = 2;
 
 interface TypingSessionState {
   promptIds: string[];
@@ -50,6 +52,7 @@ export interface TypingGameResultSummary {
   cpm: number;
   accuracy: number;
   correctChars: number;
+  correctStrokes: number;
   errorCount: number;
   completedPrompts: number;
   ranked: boolean;
@@ -168,6 +171,9 @@ export async function finishTypingSession(input: {
       cpm: metrics.cpm,
       accuracyBasisPoints: metrics.accuracyBasisPoints,
       correctChars: metrics.correctChars,
+      correctStrokes: metrics.correctStrokes,
+      errorStrokes: metrics.errorStrokes,
+      metricVersion: TYPING_METRIC_VERSION,
       errorCount: metrics.errorCount,
       completedPrompts: metrics.completedPrompts,
       durationMs: TYPING_GAME_DURATION_MS,
@@ -179,6 +185,7 @@ export async function finishTypingSession(input: {
     cpm: metrics.cpm,
     accuracy: metrics.accuracyBasisPoints / 100,
     correctChars: metrics.correctChars,
+    correctStrokes: metrics.correctStrokes,
     errorCount: metrics.errorCount,
     completedPrompts: metrics.completedPrompts,
     ranked,
@@ -206,7 +213,10 @@ export async function fetchTypingLeaderboard(
     })
     .from(typingGameResults)
     .innerJoin(users, eq(users.clerkId, typingGameResults.clerkId))
-    .where(gte(typingGameResults.createdAt, window.since))
+    .where(and(
+      gte(typingGameResults.createdAt, window.since),
+      eq(typingGameResults.metricVersion, TYPING_METRIC_VERSION)
+    ))
     .orderBy(
       typingGameResults.clerkId,
       desc(typingGameResults.score),
@@ -254,6 +264,8 @@ function calculateResult(input: {
   }
 
   let correctChars = 0;
+  let correctStrokes = 0;
+  let errorStrokes = 0;
   let errorCount = 0;
   let completedPrompts = 0;
 
@@ -280,17 +292,22 @@ function calculateResult(input: {
       throw new TypingGameError("INVALID_RESULT", "문장 결과가 올바르지 않습니다.");
     }
     for (let position = 0; position < typedChars.length; position++) {
-      if (typedChars[position] === targetChars[position]) correctChars += 1;
-      else errorCount += 1;
+      if (typedChars[position] === targetChars[position]) {
+        correctChars += 1;
+        correctStrokes += countTypingStrokes(targetChars[position]);
+      } else {
+        errorCount += 1;
+        errorStrokes += countTypingStrokes(typedChars[position]);
+      }
     }
     if (typedChars.length === targetChars.length) completedPrompts += 1;
   });
 
-  const attempts = correctChars + errorCount;
+  const attempts = correctStrokes + errorStrokes;
   const accuracyBasisPoints =
-    attempts > 0 ? Math.round((correctChars / attempts) * 10_000) : 0;
+    attempts > 0 ? Math.round((correctStrokes / attempts) * 10_000) : 0;
   const cpm = Math.round(
-    (correctChars * 60_000) / TYPING_GAME_DURATION_MS
+    (attempts * 60_000) / TYPING_GAME_DURATION_MS
   );
   const accuracyRatio = accuracyBasisPoints / 10_000;
   const score = Math.round(cpm * accuracyRatio * accuracyRatio);
@@ -301,6 +318,8 @@ function calculateResult(input: {
     cpm,
     accuracyBasisPoints,
     correctChars,
+    correctStrokes,
+    errorStrokes,
     errorCount,
     completedPrompts,
     suspicious,

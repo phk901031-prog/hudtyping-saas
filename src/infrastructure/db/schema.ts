@@ -410,6 +410,10 @@ export const typingGameResults = pgTable(
     cpm: integer("cpm").notNull(),
     accuracyBasisPoints: integer("accuracy_basis_points").notNull(),
     correctChars: integer("correct_chars").notNull(),
+    correctStrokes: integer("correct_strokes").notNull().default(0),
+    errorStrokes: integer("error_strokes").notNull().default(0),
+    // 1: 옛 음절 기준, 2: 한컴식 자소 기준. 서로 다른 버전은 같은 순위에 섞지 않는다.
+    metricVersion: integer("metric_version").notNull().default(1),
     errorCount: integer("error_count").notNull(),
     completedPrompts: integer("completed_prompts").notNull(),
     durationMs: integer("duration_ms").notNull(),
