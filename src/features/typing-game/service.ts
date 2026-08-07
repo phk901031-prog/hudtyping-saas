@@ -74,6 +74,7 @@ export interface TypingLeaderboard {
   period: "weekly" | "monthly";
   label: string;
   rows: TypingLeaderboardRow[];
+  hasMore: boolean;
 }
 
 export class TypingGameError extends Error {
@@ -195,13 +196,15 @@ export async function finishTypingSession(input: {
 
 export async function fetchTypingLeaderboard(
   period: "weekly" | "monthly",
-  limit = 20
+  options: { limit?: number; offset?: number } = {}
 ): Promise<TypingLeaderboard> {
   const window = getKoreanRankingWindow(period);
+  const limit = Math.min(Math.max(options.limit ?? 50, 1), 100);
+  const offset = Math.min(Math.max(options.offset ?? 0, 0), 10_000);
 
-  // 사용자마다 기간 내 최고 기록 하나만 남긴 뒤 전체 순위를 정한다.
-  const bestByUser = await db
-    .selectDistinctOn([typingGameResults.clerkId], {
+  // 한 사용자의 여러 도전도 각각 하나의 순위 기록으로 보여준다.
+  const rankedResults = await db
+    .select({
       clerkId: typingGameResults.clerkId,
       nickname: users.gameNickname,
       nameColor: users.gameNameColor,
@@ -218,24 +221,19 @@ export async function fetchTypingLeaderboard(
       eq(typingGameResults.metricVersion, TYPING_METRIC_VERSION)
     ))
     .orderBy(
-      typingGameResults.clerkId,
       desc(typingGameResults.score),
       desc(typingGameResults.accuracyBasisPoints),
       desc(typingGameResults.cpm),
       asc(typingGameResults.createdAt)
-    );
-
-  const rows = bestByUser
-    .sort(
-      (a, b) =>
-        b.score - a.score ||
-        b.accuracyBasisPoints - a.accuracyBasisPoints ||
-        b.cpm - a.cpm ||
-        a.createdAt.getTime() - b.createdAt.getTime()
     )
-    .slice(0, Math.min(Math.max(limit, 1), 50))
+    .limit(limit + 1)
+    .offset(offset);
+
+  const hasMore = rankedResults.length > limit;
+  const rows = rankedResults
+    .slice(0, limit)
     .map((row, index) => ({
-      rank: index + 1,
+      rank: offset + index + 1,
       player: row.nickname ?? playerAlias(row.clerkId),
       score: row.score,
       cpm: row.cpm,
@@ -249,6 +247,7 @@ export async function fetchTypingLeaderboard(
     period,
     label: window.label,
     rows,
+    hasMore,
   };
 }
 

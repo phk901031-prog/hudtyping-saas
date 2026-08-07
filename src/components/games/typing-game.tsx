@@ -80,6 +80,7 @@ export function TypingGame({
     weekly: initialWeekly,
     monthly: initialMonthly,
   });
+  const [loadingMore, setLoadingMore] = useState(false);
   const [profile, setProfile] = useState(initialProfile);
   const [nickname, setNickname] = useState(initialProfile?.nickname ?? "");
   const [nameColor, setNameColor] = useState<TypingNameColor>(initialProfile?.nameColor ?? "mint");
@@ -151,6 +152,31 @@ export function TypingGame({
       setLeaderboards({ weekly, monthly });
     }
   }, []);
+
+  async function loadMoreRankings() {
+    const current = leaderboards[rankingPeriod];
+    if (!current.hasMore || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const response = await fetch(
+        `/api/games/typing/leaderboard?period=${rankingPeriod}&offset=${current.rows.length}`,
+        { cache: "no-store" }
+      );
+      if (!response.ok) throw new Error("순위를 더 불러오지 못했습니다.");
+      const next = (await response.json()) as TypingLeaderboard;
+      setLeaderboards((value) => ({
+        ...value,
+        [rankingPeriod]: {
+          ...next,
+          rows: [...value[rankingPeriod].rows, ...next.rows],
+        },
+      }));
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "순위를 더 불러오지 못했습니다.");
+    } finally {
+      setLoadingMore(false);
+    }
+  }
 
   const finishGame = useCallback(async () => {
     if (finishingRef.current || !sessionRef.current) return;
@@ -535,7 +561,7 @@ export function TypingGame({
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-accent">Leaderboard</p>
             <h2 className="mt-1 font-display text-3xl">주간·월간 타자 순위</h2>
-            <p className="ko-copy mt-2 text-sm text-muted">속도와 정확도를 함께 반영한 사용자별 최고 기록입니다.</p>
+            <p className="ko-copy mt-2 text-sm text-muted">한 사람의 여러 도전도 빠짐없이 쌓이는 전체 게임 기록입니다.</p>
           </div>
           <div className="grid w-full grid-cols-2 rounded-xl bg-panel p-1 sm:w-64">
             {(["weekly", "monthly"] as const).map((period) => (
@@ -546,8 +572,13 @@ export function TypingGame({
           </div>
         </div>
 
-        <p className="mt-6 text-xs font-medium text-muted">{leaderboard.label} · 사용자별 최고 기록</p>
+        <p className="mt-6 text-xs font-medium text-muted">{leaderboard.label} · 종합점수 순 전체 기록</p>
         <LeaderboardRows leaderboard={leaderboard} />
+        {leaderboard.hasMore && (
+          <button type="button" onClick={() => void loadMoreRankings()} disabled={loadingMore} className="mx-auto mt-6 flex min-w-40 items-center justify-center rounded-xl border border-border bg-panel px-5 py-3 text-sm font-bold text-muted transition hover:border-accent/40 hover:text-foreground disabled:opacity-50">
+            {loadingMore ? "불러오는 중" : "기록 더 보기"}
+          </button>
+        )}
 
         {signedIn && !approved && (
           <div className="mt-6 rounded-xl border border-warning/25 bg-warning/10 p-4 text-sm leading-6 text-warning">
@@ -652,34 +683,39 @@ function LeaderboardRows({ leaderboard }: { leaderboard: TypingLeaderboard }) {
   if (leaderboard.rows.length === 0) {
     return <p className="mt-5 rounded-2xl border border-dashed border-border py-14 text-center text-sm text-muted">첫 기록의 주인공이 되어 보세요.</p>;
   }
-  const topThree = leaderboard.rows.slice(0, 3);
-  const remaining = leaderboard.rows.slice(3, 10);
   return (
-    <div className="mt-5">
-      <ol className="grid gap-4 md:grid-cols-3">
-        {topThree.map((row) => (
-          <li key={`${leaderboard.period}-${row.player}`} className={`relative overflow-hidden rounded-2xl border p-5 ${row.rank === 1 ? "border-signal/40 bg-signal/5" : "border-border bg-panel"}`}>
-            <div className="flex items-center justify-between">
-              <span className={`font-mono text-2xl font-bold ${row.rank === 1 ? "text-signal" : "text-muted"}`}>#{row.rank}</span>
-              <Medal size={20} className={row.rank === 1 ? "text-signal" : "text-muted/55"} />
+    <ol className="relative mx-auto mt-6 max-w-4xl space-y-3 before:absolute before:bottom-6 before:left-7 before:top-6 before:w-px before:bg-border sm:before:left-9">
+      {leaderboard.rows.map((row) => {
+        const isTopThree = row.rank <= 3;
+        return (
+          <li key={`${leaderboard.period}-${row.player}-${row.playedAt}`} className={`relative grid grid-cols-[56px_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border p-3 sm:grid-cols-[72px_minmax(0,1fr)_auto] sm:gap-5 sm:p-4 ${row.rank === 1 ? "border-signal/45 bg-signal/5 shadow-[0_12px_30px_rgba(240,95,50,0.08)]" : "border-border bg-panel"}`}>
+            <span className={`relative z-10 flex h-11 w-11 items-center justify-center rounded-full border-4 border-card font-mono text-sm font-bold sm:h-13 sm:w-13 sm:text-base ${isTopThree ? "bg-signal text-white" : "bg-card text-muted"}`}>
+              {row.rank}
+            </span>
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className={`inline-flex max-w-full truncate rounded-lg px-2.5 py-1.5 text-sm font-bold sm:text-base ${colorClass(row.nameColor)} ${borderClass(row.borderStyle)}`}>{row.player}</span>
+                {isTopThree && <Medal size={16} className="text-signal" />}
+              </div>
+              <p className="mt-1.5 text-[10px] text-muted sm:text-xs">{formatRankingTime(row.playedAt)}</p>
             </div>
-            <span className={`mt-5 inline-flex max-w-full truncate rounded-lg px-3 py-2 text-base font-bold ${colorClass(row.nameColor)} ${borderClass(row.borderStyle)}`}>{row.player}</span>
-            <p className="mt-5 font-mono text-3xl font-bold">{row.score.toLocaleString()}</p>
-            <p className="mt-1 text-xs text-muted">{row.cpm}타 · 정확도 {row.accuracy.toFixed(1)}%</p>
+            <div className="text-right">
+              <strong className={`font-mono font-bold ${isTopThree ? "text-xl text-signal sm:text-2xl" : "text-base sm:text-lg"}`}>{row.score.toLocaleString()}점</strong>
+              <span className="mt-1 block text-[10px] text-muted sm:text-xs">{row.cpm}타 · 정확도 {row.accuracy.toFixed(1)}%</span>
+            </div>
           </li>
-        ))}
-      </ol>
-      {remaining.length > 0 && (
-        <ol className="mt-5 grid gap-x-8 md:grid-cols-2">
-          {remaining.map((row) => (
-            <li key={`${leaderboard.period}-${row.player}`} className="grid grid-cols-[42px_minmax(0,1fr)_auto] items-center gap-3 border-b border-border py-4">
-              <span className="font-mono text-base font-bold text-muted">#{row.rank}</span>
-              <span className={`w-fit max-w-full truncate rounded-md px-2.5 py-1.5 text-sm font-bold ${colorClass(row.nameColor)} ${borderClass(row.borderStyle)}`}>{row.player}</span>
-              <span className="text-right"><strong className="font-mono text-base">{row.score.toLocaleString()}</strong><span className="block text-[10px] text-muted">{row.cpm}타 · {row.accuracy.toFixed(1)}%</span></span>
-            </li>
-          ))}
-        </ol>
-      )}
-    </div>
+        );
+      })}
+    </ol>
   );
+}
+
+function formatRankingTime(playedAt: string) {
+  return new Date(playedAt).toLocaleString("ko-KR", {
+    timeZone: "Asia/Seoul",
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }

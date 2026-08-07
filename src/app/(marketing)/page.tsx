@@ -138,7 +138,7 @@ export default async function HomePage() {
                 30초 동안 어디까지 정확하게 칠 수 있을까요.
               </h2>
               <p className="ko-copy mt-4 max-w-2xl text-sm leading-7 text-muted sm:text-base">
-                닉네임을 한 번 정한 뒤 문장을 연속으로 입력하고 타수와 정확도를 확인하세요. 승인 사용자의 최고 기록은 주간 및 월간 순위에 반영됩니다.
+                닉네임을 한 번 정한 뒤 문장을 연속으로 입력하고 타수와 정확도를 확인하세요. 승인 사용자의 모든 정상 기록은 주간 및 월간 순위에 쌓입니다.
               </p>
               <Link
                 href="/games/typing"

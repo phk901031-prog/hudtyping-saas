@@ -38,7 +38,7 @@ export default async function TypingGamePage() {
                 30초 동안 정확하고 빠르게.
               </h1>
               <p className="ko-copy mt-4 max-w-2xl text-base leading-7 text-white/72">
-                화면의 문장을 끝까지 입력하면 다음 문장이 바로 이어집니다. 타수와 정확도를 함께 측정하고 주간 및 월간 최고 기록을 비교합니다.
+                화면의 문장을 끝까지 입력하면 다음 문장이 바로 이어집니다. 타수와 정확도를 함께 측정하고 주간 및 월간 전체 기록을 비교합니다.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -66,7 +66,7 @@ export default async function TypingGamePage() {
             오타가 있어도 다음 문장으로 이어지며 한글 자소 수를 1분 기준으로 환산해 실제 타수를 계산합니다.
           </RuleCard>
           <RuleCard number="03" title="주간·월간 순위">
-            사용자별 최고 점수를 크게 비교합니다. 종합점수에는 타수와 정확도가 함께 반영됩니다.
+            정상적으로 완료한 도전은 매번 순위에 쌓입니다. 종합점수에는 타수와 정확도가 함께 반영됩니다.
           </RuleCard>
         </section>
       </div>
