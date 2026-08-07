@@ -391,7 +391,7 @@ function TypingGamePromo() {
         <div className="mt-3 grid grid-cols-2 gap-2">
           <div className="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2">
             <p className="text-[9px] text-white/40">타수</p>
-            <p className="mt-0.5 font-mono text-sm font-bold text-[#a8fff4]">312 <span className="text-[9px] font-normal">CPM</span></p>
+            <p className="mt-0.5 font-mono text-sm font-bold text-[#a8fff4]">312<span className="text-[9px] font-normal">타</span></p>
           </div>
           <div className="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2">
             <p className="text-[9px] text-white/40">정확도</p>

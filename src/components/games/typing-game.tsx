@@ -397,7 +397,7 @@ export function TypingGame({
 
         <div className="p-5 sm:p-8">
           <div className="grid grid-cols-3 gap-3">
-            <Metric label="타수" value={`${liveCpm}`} suffix="CPM" icon={Gauge} />
+            <Metric label="타수" value={`${liveCpm}`} suffix="타" icon={Gauge} />
             <Metric label="정확도" value={liveAccuracy.toFixed(1)} suffix="%" icon={Target} />
             <Metric label="완료" value={`${completedCount}`} suffix="문장" icon={Keyboard} />
           </div>
@@ -487,7 +487,7 @@ export function TypingGame({
                     <p className="mt-3 text-sm font-bold text-muted">종합점수</p>
                     <p className="font-display text-5xl text-foreground">{result.score.toLocaleString()}</p>
                     <div className="mt-5 flex flex-wrap justify-center gap-3 text-sm">
-                      <ResultPill label="타수" value={`${result.cpm} CPM`} />
+                      <ResultPill label="타수" value={`${result.cpm}타`} />
                       <ResultPill label="정확도" value={`${result.accuracy.toFixed(1)}%`} />
                       <ResultPill label="오타" value={`${result.errorCount}회`} />
                     </div>
@@ -551,7 +551,7 @@ export function TypingGame({
 
         <div className="mt-6 border-t border-border pt-5 text-xs leading-5 text-muted">
           <p>종합점수는 타수에 정확도의 제곱을 반영합니다.</p>
-          <p className="mt-1 font-mono">점수 = CPM × 정확도²</p>
+          <p className="mt-1 font-mono">점수 = 타수 × 정확도²</p>
         </div>
       </aside>
     </div>
@@ -658,7 +658,7 @@ function LeaderboardRows({ leaderboard }: { leaderboard: TypingLeaderboard }) {
             </div>
             <span className={`mt-5 inline-flex max-w-full truncate rounded-lg px-3 py-2 text-base font-bold ${colorClass(row.nameColor)} ${borderClass(row.borderStyle)}`}>{row.player}</span>
             <p className="mt-5 font-mono text-3xl font-bold">{row.score.toLocaleString()}</p>
-            <p className="mt-1 text-xs text-muted">{row.cpm} CPM · 정확도 {row.accuracy.toFixed(1)}%</p>
+            <p className="mt-1 text-xs text-muted">{row.cpm}타 · 정확도 {row.accuracy.toFixed(1)}%</p>
           </li>
         ))}
       </ol>
@@ -668,7 +668,7 @@ function LeaderboardRows({ leaderboard }: { leaderboard: TypingLeaderboard }) {
             <li key={`${leaderboard.period}-${row.player}`} className="grid grid-cols-[42px_minmax(0,1fr)_auto] items-center gap-3 border-b border-border py-4">
               <span className="font-mono text-base font-bold text-muted">#{row.rank}</span>
               <span className={`w-fit max-w-full truncate rounded-md px-2.5 py-1.5 text-sm font-bold ${colorClass(row.nameColor)} ${borderClass(row.borderStyle)}`}>{row.player}</span>
-              <span className="text-right"><strong className="font-mono text-base">{row.score.toLocaleString()}</strong><span className="block text-[10px] text-muted">{row.cpm} CPM · {row.accuracy.toFixed(1)}%</span></span>
+              <span className="text-right"><strong className="font-mono text-base">{row.score.toLocaleString()}</strong><span className="block text-[10px] text-muted">{row.cpm}타 · {row.accuracy.toFixed(1)}%</span></span>
             </li>
           ))}
         </ol>
