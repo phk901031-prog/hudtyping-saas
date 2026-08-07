@@ -6,11 +6,9 @@ import {
   BookOpen,
   Command,
   KeyRound,
-  Keyboard,
   LineChart,
   Sparkles,
   TrendingUp,
-  Trophy,
   Zap,
   type LucideIcon,
 } from "lucide-react";
@@ -124,30 +122,6 @@ export default async function HomePage() {
             <div className="mx-auto w-full max-w-2xl xl:max-w-none">
               <NatmalgiDemo />
             </div>
-          </div>
-        </section>
-
-        {/* ─────────────  PLAYSTENO GAME  ───────────── */}
-        <section className="border-b border-border bg-card">
-          <div className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-14 sm:px-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-center lg:py-16">
-            <div>
-              <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-accent">
-                <Keyboard size={14} /> PlaySteno game
-              </p>
-              <h2 className="ko-heading mt-3 font-display text-3xl leading-tight sm:text-4xl">
-                30초 동안 어디까지 정확하게 칠 수 있을까요.
-              </h2>
-              <p className="ko-copy mt-4 max-w-2xl text-sm leading-7 text-muted sm:text-base">
-                닉네임을 한 번 정한 뒤 문장을 연속으로 입력하고 타수와 정확도를 확인하세요. 승인 사용자의 모든 정상 기록은 주간 및 월간 순위에 쌓입니다.
-              </p>
-              <Link
-                href="/games/typing"
-                className="mt-6 inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3 font-bold text-white transition hover:bg-accent-hover"
-              >
-                30초 타자 게임 시작 <ArrowRight size={16} />
-              </Link>
-            </div>
-            <TypingGamePromo />
           </div>
         </section>
 
@@ -370,59 +344,6 @@ export default async function HomePage() {
 // ═════════════════════════════════════════════════════════════════
 // SECTION HELPERS
 // ═════════════════════════════════════════════════════════════════
-
-function TypingGamePromo() {
-  return (
-    <Link
-      href="/games/typing"
-      className="group relative block min-h-64 overflow-hidden rounded-3xl border border-accent/25 bg-ink p-6 text-white shadow-[0_22px_55px_rgba(6,24,39,0.16)]"
-      aria-label="30초 타자 게임 시작"
-    >
-      <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_75%_15%,rgba(168,255,244,0.18),transparent_42%)]" />
-      <div className="relative z-10 flex items-center justify-between">
-        <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-[#a8fff4]">30초 도전</span>
-        <Trophy size={19} className="text-signal" />
-      </div>
-      <div className="relative mt-5 rounded-2xl border border-white/12 bg-black/20 p-4" aria-hidden="true">
-        <div className="flex items-center justify-between">
-          <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/45">문장 4</span>
-          <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 font-mono text-[11px] font-bold text-white/80">18.4초</span>
-        </div>
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          <div className="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2">
-            <p className="text-[9px] text-white/40">타수</p>
-            <p className="mt-0.5 font-mono text-sm font-bold text-[#a8fff4]">312<span className="text-[9px] font-normal">타</span></p>
-          </div>
-          <div className="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2">
-            <p className="text-[9px] text-white/40">정확도</p>
-            <p className="mt-0.5 font-mono text-sm font-bold text-white">98.7<span className="text-[9px] font-normal">%</span></p>
-          </div>
-        </div>
-        <div className="mt-3 rounded-xl border border-white/10 bg-[#07151d] px-3 py-3">
-          <p className="ko-copy text-[13px] font-semibold leading-6">
-            <span className="text-emerald-300">정확한 기록은 작은 차이를 </span>
-            <span className="rounded bg-signal/25 text-[#ff9b7d]">놓</span>
-            <span className="text-white">치지</span>
-            <span className="game-demo-caret ml-0.5 inline-block h-4 w-[2px] translate-y-0.5 bg-[#a8fff4]" />
-            <span className="text-white/38"> 않는 태도에서 시작된다.</span>
-          </p>
-          <div className="mt-3 h-1 overflow-hidden rounded-full bg-white/8">
-            <span className="game-preview-progress block h-full rounded-full bg-[#a8fff4]" />
-          </div>
-        </div>
-      </div>
-      <div className="relative z-10 mt-1 flex items-end justify-between gap-4">
-        <div>
-          <p className="font-display text-3xl">타자 게임</p>
-          <p className="mt-1 text-xs text-white/60">주간 · 월간 순위에 도전하세요</p>
-        </div>
-        <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-signal text-white transition group-hover:scale-110">
-          <ArrowRight size={18} />
-        </span>
-      </div>
-    </Link>
-  );
-}
 
 function SectionIntro({
   eyebrow,

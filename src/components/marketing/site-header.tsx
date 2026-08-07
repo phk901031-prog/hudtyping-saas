@@ -5,7 +5,6 @@ import { AccountActions } from "@/components/marketing/account-actions";
 
 const NAV_LINKS = [
   { href: "/#product", label: "낱말지기" },
-  { href: "/games/typing", label: "타자 게임" },
   { href: "/help", label: "사용 가이드" },
   { href: "/updates", label: "업데이트" },
   { href: "/trends", label: "인기 검색어" },
