@@ -9,7 +9,6 @@ import {
   Keyboard,
   LineChart,
   Sparkles,
-  TrendingUp,
   Wrench,
   Zap,
   type LucideIcon,
@@ -19,7 +18,6 @@ import { WINDOWS_RELEASE } from "@/config/release";
 import { NATMALGI_ONLINE } from "@/config/product";
 import { OPENCHAT } from "@/config/community";
 import { fetchReleases } from "@/features/updates/releases";
-import { fetchTrendTop } from "@/features/trends/service";
 import { NatmalgiDemo } from "@/components/marketing/natmalgi-demo";
 
 const DOWNLOAD_URL = "/download/windows";
@@ -39,18 +37,15 @@ export const metadata: Metadata = {
   },
 };
 
-// 홈은 30분 캐시 — releases · trends 데이터도 이 창 안에서 신선.
+// 홈은 30분 캐시 — releases 데이터도 이 창 안에서 신선.
 export const revalidate = 1800;
 
 export default async function HomePage() {
   const { userId } = await auth();
   const isSignedIn = !!userId;
 
-  // 홈페이지에 살짝 노출할 최신 릴리스 · 이번 주 상위 8개
-  const [releases, weeklyTrend] = await Promise.all([
-    fetchReleases().catch(() => []),
-    fetchTrendTop({ days: 7, limit: 8 }).catch(() => []),
-  ]);
+  // 홈페이지에 살짝 노출할 최신 릴리스
+  const releases = await fetchReleases().catch(() => []);
   const latestRelease = releases[0] ?? null;
 
   return (
@@ -321,17 +316,16 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* ─────────────  5.5 LIVE — Updates + Trends  ───────────── */}
-        <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 lg:py-24">
+        {/* ─────────────  5.5 LIVE — Updates  ───────────── */}
+        <section className="mx-auto w-full max-w-4xl px-5 py-20 sm:px-8 lg:py-24">
           <SectionIntro
             eyebrow="최근 소식"
-            title="최근 업데이트와 검색 흐름"
-            description="최근 업데이트와 사용자들이 자주 찾은 단어를 한눈에 확인합니다."
+            title="최근 업데이트"
+            description="새 버전과 개선 사항을 확인하세요."
           />
 
-          <div className="mt-12 grid gap-5 lg:grid-cols-2">
+          <div className="mt-12">
             <LatestReleaseCard release={latestRelease} />
-            <WeeklyTrendCard rows={weeklyTrend} />
           </div>
         </section>
 
@@ -716,65 +710,6 @@ function LatestReleaseCard({
           className="inline-flex items-center gap-1.5 text-sm font-bold text-accent transition hover:opacity-80"
         >
           업데이트 로그 전체 보기
-          <ArrowRight size={14} strokeWidth={2.4} />
-        </Link>
-      </div>
-    </article>
-  );
-}
-
-function WeeklyTrendCard({
-  rows,
-}: {
-  rows: Array<{ query: string; count: number }>;
-}) {
-  return (
-    <article className="flex flex-col rounded-2xl border border-border bg-card p-8">
-      <div className="mb-4 flex items-center gap-2">
-        <span
-          aria-hidden="true"
-          className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-accent-soft text-accent"
-        >
-          <TrendingUp size={16} strokeWidth={2.2} />
-        </span>
-        <span className="text-xs font-bold tracking-[0.14em] text-accent">
-          이번 주
-        </span>
-      </div>
-      <h3 className="ko-heading font-display text-2xl leading-tight">이번 주 인기 검색어</h3>
-      <p className="mt-2 text-xs text-muted">지난 7일 · 상위 8개</p>
-
-      {rows.length === 0 ? (
-        <p className="mt-6 rounded-xl border border-dashed border-border px-4 py-8 text-center text-sm text-muted">
-          아직 집계할 검색 기록이 부족합니다.
-        </p>
-      ) : (
-        <ol className="mt-5 flex flex-col divide-y divide-border">
-          {rows.map((row, i) => (
-            <li
-              key={row.query}
-              className="flex items-baseline gap-3 py-2 text-sm"
-            >
-              <span className="w-5 shrink-0 font-mono text-[11px] font-bold text-muted">
-                {i + 1}
-              </span>
-              <span className="min-w-0 flex-1 truncate font-medium">
-                {row.query}
-              </span>
-              <span className="shrink-0 font-mono text-[11px] text-muted">
-                {row.count.toLocaleString()}회
-              </span>
-            </li>
-          ))}
-        </ol>
-      )}
-
-      <div className="mt-auto pt-6">
-        <Link
-          href="/trends"
-          className="inline-flex items-center gap-1.5 text-sm font-bold text-accent transition hover:opacity-80"
-        >
-          상위 30개 전체 보기
           <ArrowRight size={14} strokeWidth={2.4} />
         </Link>
       </div>

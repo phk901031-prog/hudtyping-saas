@@ -7,7 +7,6 @@ const NAV_LINKS = [
   { href: "/#product", label: "낱말지기" },
   { href: "/help", label: "사용 가이드" },
   { href: "/updates", label: "업데이트" },
-  { href: "/trends", label: "인기 검색어" },
 ] as const;
 
 export function SiteHeader() {
