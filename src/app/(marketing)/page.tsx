@@ -6,9 +6,11 @@ import {
   BookOpen,
   Command,
   KeyRound,
+  Keyboard,
   LineChart,
   Sparkles,
   TrendingUp,
+  Wrench,
   Zap,
   type LucideIcon,
 } from "lucide-react";
@@ -53,6 +55,51 @@ export default async function HomePage() {
 
   return (
     <main className="flex flex-1 flex-col bg-background text-foreground">
+        {/* ─────────────  0. PORTAL — 3 카테고리 진입  ───────────── */}
+        <section className="border-b border-border bg-card">
+          <div className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-8 lg:py-20">
+            <div className="flex flex-col gap-3 text-center">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">
+                PlaySteno · 속기사의 놀이터
+              </p>
+              <h1 className="font-display text-3xl leading-tight sm:text-4xl">
+                속기를 위한 도구 · 게임 · 공부를 한 곳에서.
+              </h1>
+              <p className="ko-copy mx-auto max-w-2xl text-sm leading-7 text-muted sm:text-base">
+                필요한 곳을 골라 들어오세요. 각 카테고리는 독립적으로 이용할 수 있습니다.
+              </p>
+            </div>
+
+            <div className="mt-10 grid gap-4 lg:grid-cols-3">
+              <PortalCard
+                eyebrow="Work Steno"
+                title="낱말지기"
+                body="한글 문서 위에서 우리말샘 뜻풀이 · 예문을 바로 확인하는 Windows HUD."
+                icon={Wrench}
+                href="#product"
+                cta="자세히 보기"
+              />
+              <PortalCard
+                eyebrow="Play Steno"
+                title="속기 타자 게임"
+                body="속기 문장으로 타자 속도와 정확도를 겨루는 게임. 가입 없이 바로 플레이."
+                icon={Keyboard}
+                href="/play/typing"
+                cta="지금 플레이"
+                tone="accent"
+              />
+              <PortalCard
+                eyebrow="Study Steno"
+                title="속기 공부"
+                body="자모 · 약자 학습, 자격증 정보, 연습 도구. 준비 중입니다."
+                icon={BookOpen}
+                cta="곧 공개"
+                disabled
+              />
+            </div>
+          </div>
+        </section>
+
         {/* ─────────────  1. HERO  ───────────── */}
         <section id="product" className="relative scroll-mt-28 overflow-hidden bg-ink text-white">
           {/* 절제된 그라디언트 하나만 유지 — 회로 애니메이션 등 노이즈 제거 */}
@@ -344,6 +391,90 @@ export default async function HomePage() {
 // ═════════════════════════════════════════════════════════════════
 // SECTION HELPERS
 // ═════════════════════════════════════════════════════════════════
+
+function PortalCard({
+  eyebrow,
+  title,
+  body,
+  icon: Icon,
+  href,
+  cta,
+  tone,
+  disabled = false,
+}: {
+  eyebrow: string;
+  title: string;
+  body: string;
+  icon: LucideIcon;
+  href?: string;
+  cta: string;
+  tone?: "accent";
+  disabled?: boolean;
+}) {
+  // 셋 다 시각 톤을 자체 CSS 변수(--card, --border, --accent 등)로 표현해서
+  // 라이트/다크 · 브랜드 톤 변경 시 자동 반영.
+  const baseClass =
+    "group relative flex flex-col gap-5 rounded-2xl border p-6 transition sm:p-7";
+  const enabledClass =
+    tone === "accent"
+      ? "border-accent/40 bg-accent/[0.04] hover:border-accent hover:bg-accent/[0.08]"
+      : "border-border bg-background hover:border-accent/60 hover:bg-card";
+  const disabledClass =
+    "border-dashed border-border bg-muted-bg/50 opacity-70 cursor-not-allowed";
+
+  const inner = (
+    <>
+      <div className="flex items-center justify-between">
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-accent">
+          {eyebrow}
+        </p>
+        <Icon size={22} className={disabled ? "text-muted" : "text-accent"} />
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="font-display text-2xl">{title}</p>
+        <p className="ko-copy text-sm leading-6 text-muted">{body}</p>
+      </div>
+      <div className="mt-auto flex items-center gap-1.5 text-sm font-bold">
+        {disabled ? (
+          <span className="text-muted">{cta}</span>
+        ) : (
+          <>
+            <span className={tone === "accent" ? "text-accent" : "text-foreground"}>
+              {cta}
+            </span>
+            <ArrowRight
+              size={16}
+              className={
+                tone === "accent"
+                  ? "text-accent transition group-hover:translate-x-0.5"
+                  : "text-foreground transition group-hover:translate-x-0.5"
+              }
+            />
+          </>
+        )}
+      </div>
+    </>
+  );
+
+  if (disabled || !href) {
+    return <div className={`${baseClass} ${disabledClass}`}>{inner}</div>;
+  }
+
+  // 홈 안 앵커(#product) 는 <a>, 외부 라우트(/play/typing) 는 Next Link 로.
+  if (href.startsWith("#")) {
+    return (
+      <a href={href} className={`${baseClass} ${enabledClass}`}>
+        {inner}
+      </a>
+    );
+  }
+
+  return (
+    <Link href={href} className={`${baseClass} ${enabledClass}`}>
+      {inner}
+    </Link>
+  );
+}
 
 function SectionIntro({
   eyebrow,
