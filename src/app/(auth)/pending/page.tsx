@@ -67,7 +67,7 @@ export default async function PendingPage() {
 
         <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
           <Link
-            href="/help"
+            href="/work/natmalgi/help"
             className="inline-flex items-center justify-center rounded-lg border border-border px-5 py-3 text-sm font-bold transition hover:bg-muted-bg"
           >
             사용 가이드 보기

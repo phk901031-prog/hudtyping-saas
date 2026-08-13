@@ -10,7 +10,7 @@ import { WINDOWS_RELEASE } from "@/config/release";
 export const metadata: Metadata = {
   title: "설치 도움말 — 낱말지기 온라인",
   description: "낱말지기 온라인 설치 중 Windows SmartScreen이나 백신 경고가 표시될 때 확인할 내용.",
-  alternates: { canonical: "/install-help" },
+  alternates: { canonical: "/work/natmalgi/install-help" },
 };
 
 export default function InstallHelpPage() {

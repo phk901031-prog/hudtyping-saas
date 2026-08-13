@@ -23,7 +23,7 @@ import { OPENCHAT } from "@/config/community";
 import { fetchReleases } from "@/features/updates/releases";
 import { NatmalgiDemo } from "@/components/marketing/natmalgi-demo";
 
-const DOWNLOAD_URL = "/download/windows";
+const DOWNLOAD_URL = "/work/natmalgi/download/windows";
 
 export const metadata: Metadata = {
   title: "낱말지기 온라인 — 문서 위 우리말샘 HUD",
@@ -324,7 +324,7 @@ export default async function NatmalgiPage() {
           </FaqItem>
           <FaqItem question="설치할 때 백신이 막아요">
             코드 서명 인증서 확보 전이라 일부 백신·SmartScreen에서 경고가 뜰 수 있습니다.{" "}
-            <Link href="/install-help" className="text-accent underline">
+            <Link href="/work/natmalgi/install-help" className="text-accent underline">
               설치 문제 해결 가이드
             </Link>
             에 확인 절차를 정리했습니다.
@@ -579,7 +579,7 @@ function LatestReleaseCard({
       )}
       <div className="mt-auto pt-6">
         <Link
-          href="/updates"
+          href="/work/natmalgi/updates"
           className="inline-flex items-center gap-1.5 text-sm font-bold text-accent transition hover:opacity-80"
         >
           업데이트 로그 전체 보기

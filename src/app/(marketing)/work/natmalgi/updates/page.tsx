@@ -10,7 +10,7 @@ import { ReleaseNotes } from "@/components/release-notes";
 export const metadata: Metadata = {
   title: "업데이트 로그 — 낱말지기",
   description: "낱말지기 Windows 앱의 버전별 변경 사항.",
-  alternates: { canonical: "/updates" },
+  alternates: { canonical: "/work/natmalgi/updates" },
 };
 
 // Vercel 서버에서 1시간 캐시. 새 릴리스 배포 1시간 안에 반영.

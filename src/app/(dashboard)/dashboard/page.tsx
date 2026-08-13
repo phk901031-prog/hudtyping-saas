@@ -37,7 +37,7 @@ export default async function DashboardPage() {
           <DashboardCard href="/search" eyebrow="SEARCH" title="우리말샘 검색" description="뜻풀이와 예문을 웹에서도 빠르게 확인합니다." />
           <DashboardCard href="/api-keys" eyebrow="CONNECT" title="프로그램 연결" description="일회용 연결 코드로 낱말지기 앱을 안전하게 연결합니다." />
           <DashboardCard href="/stats" eyebrow="STATS" title="내 검색 통계" description="사용량, 최근 검색어와 자주 찾은 단어를 확인합니다." />
-          <DashboardCard href="/help" eyebrow="GUIDE" title="사용 가이드" description="설치부터 단축키와 문제 해결 방법까지 살펴봅니다." />
+          <DashboardCard href="/work/natmalgi/help" eyebrow="GUIDE" title="사용 가이드" description="설치부터 단축키와 문제 해결 방법까지 살펴봅니다." />
 
           {/* admin만 보이는 카드 */}
           {isAdmin && (

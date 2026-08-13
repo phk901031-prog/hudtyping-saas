@@ -5,8 +5,8 @@ import { AccountActions } from "@/components/marketing/account-actions";
 
 const NAV_LINKS = [
   { href: "/work/natmalgi", label: "낱말지기" },
-  { href: "/help", label: "사용 가이드" },
-  { href: "/updates", label: "업데이트" },
+  { href: "/work/natmalgi/help", label: "사용 가이드" },
+  { href: "/work/natmalgi/updates", label: "업데이트" },
 ] as const;
 
 export function SiteHeader() {
