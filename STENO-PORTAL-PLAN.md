@@ -292,18 +292,21 @@ export function sanitizeForTyping(text: string): string {
 
 각 Phase 는 이전 완료 후 착수. 병렬 금지 (성급함 방지).
 
-### Phase A — 계획 확정 (지금)
-- 본 문서 리뷰 · 결정 항목 확정
-- 소요: 대화 몇 세션
+### Phase A — 계획 확정 ✅ 완료
+- 본 문서 리뷰 · §4 결정 항목 8개 확정 (2026-08-13~14)
 
-### Phase B — 홈 리디자인 (안전한 첫 걸음)
-- PlaySteno 홈을 3-카테고리 포털로 리디자인
-- 지금 낱말지기 랜딩 내용을 `/natmalgi` 로 이동, `/` 는 포털 홈
-- 리다이렉트 규칙 추가 (§2.2)
-- 이 시점엔 Play Steno 카드가 있어도 눌러도 자리표시자
-- 소요: 1~2일
+### Phase B — 홈 리디자인 ✅ 완료 (2026-08-14)
+- ✅ PlaySteno 홈을 3-카테고리 포털로 리디자인 (Play · Study · Work)
+- ✅ Study 카드는 "곧 공개" 자리표시
+- ✅ Play 카드 → `/play/typing` 임시 페이지 (Phase E 에서 실제 게임)
+- ✅ 낱말지기 랜딩 콘텐츠를 `/work/natmalgi` 로 통째로 이동
+- ✅ 개별 페이지 이동: `/help` → `/work/natmalgi/help`, `/download/windows` → `/work/natmalgi/download/windows`, `/updates` → `/work/natmalgi/updates`, `/install-help` → `/work/natmalgi/install-help`
+- ✅ `next.config.ts` 에 legacy → 신규 URL permanent(308) 리다이렉트 규칙 추가
+- ✅ site-header · site-footer · dashboard · auth 페이지 안 링크 다 새 URL 로 갱신
+- ✅ 인기검색어 (`/trends`) 홈·nav·footer 노출 제거 (파일은 관리자용으로 남김)
+- **HUD 앱 URL 하드코드는 아직 안 건드림** — 리다이렉트가 커버해줌. 여유 있을 때 v0.2.29 등에서 정리.
 
-### Phase C — 인프라 (스키마 · 인증)
+### Phase C — 인프라 (스키마 · 인증) 🟢 다음 착수
 - Drizzle schema: `typing_contents`, `typing_results`, `game_profiles` (§4.7), `game_leaderboard_snapshot` 등
 - Clerk 인증 통합 (users 테이블 재활용)
 - 마이그레이션 · 시드 파이프라인
