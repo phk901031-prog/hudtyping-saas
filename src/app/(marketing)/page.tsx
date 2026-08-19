@@ -1,14 +1,20 @@
 // src/app/(marketing)/page.tsx
 // PlaySteno 포털 홈 — 3-카테고리(Work/Play/Study)를 색으로 구분한 가로 밴드로 배치.
-// 아이콘은 제네릭 UI 아이콘 대신 로고에 쓰던 키캡 모티프(.keycap, globals.css)를
-// 재사용하고, 각 밴드에 실시간 타이핑 느낌의 모노스페이스 미리보기 줄을 넣어
-// "타자와 관련된 사이트"라는 게 시각적으로 바로 느껴지게 한다.
+// 각 밴드는 텍스트(왼쪽) + 다크 톤 화면 목업(오른쪽, portal-mockups.tsx)의 2단 구성 —
+// natmalgi-demo.tsx 에 이미 있던 "실제 화면처럼 보이는" 다크 목업 언어를 그대로
+// 계승해서, 제네릭 아이콘 카드 대신 각 제품이 실제로 뭘 하는지 보여준다.
 // 세 카테고리는 서로 다른 사람을 위한 것이다 — 낱말지기는 현직 속기사 실무 도구,
 // Study는 시험 준비생, Play는 누구나 가볍게. 하나로 뭉뚱그려 말하지 않는다.
 
 import Link from "next/link";
 import type { Metadata } from "next";
+import type { ComponentType } from "react";
 import { ArrowRight } from "lucide-react";
+import {
+  PlayStenoMockup,
+  StudyStenoMockup,
+  WorkStenoMockup,
+} from "@/components/marketing/portal-mockups";
 
 export const metadata: Metadata = {
   title: "PlaySteno · 속기사의 놀이터",
@@ -41,7 +47,7 @@ interface Category {
   keycapLetter: string;
   title: string;
   audience: string; // 이 카테고리는 누구를 위한 것인지 — 뭉뚱그리지 않고 명확하게
-  preview: string; // 모노스페이스 타이핑 미리보기 문구
+  Mockup: ComponentType;
   items: CategoryItem[];
 }
 
@@ -52,7 +58,7 @@ const CATEGORIES: Category[] = [
     keycapLetter: "W",
     title: "속기 실무 도구",
     audience: "현직 속기사가 실무에서 매일 쓰는 도구",
-    preview: "우리말샘 검색 중",
+    Mockup: WorkStenoMockup,
     items: [
       { label: "낱말지기", href: "/work/natmalgi" },
       { label: "AI 속기 툴" },
@@ -64,7 +70,7 @@ const CATEGORIES: Category[] = [
     keycapLetter: "P",
     title: "속기 타자 게임",
     audience: "쉬는 시간에 가볍게, 타자 실력을 겨루는 놀이",
-    preview: "189타 · 정확도 98%",
+    Mockup: PlayStenoMockup,
     items: [
       { label: "단문 타자전", href: "/play/typing" },
       { label: "장문 타자전", href: "/play/typing" },
@@ -77,7 +83,7 @@ const CATEGORIES: Category[] = [
     keycapLetter: "S",
     title: "속기 공부",
     audience: "자격증을 준비하는 이들의 연습장",
-    preview: "오늘 5,320자 연습",
+    Mockup: StudyStenoMockup,
     items: [
       { label: "듣고치기" },
       { label: "보고치기", href: "/study/bogochigi" },
@@ -104,7 +110,7 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className="mt-10 flex flex-col gap-5">
+        <div className="mt-10 flex flex-col gap-6">
           {CATEGORIES.map((category) => (
             <CategoryBand key={category.eyebrow} category={category} />
           ))}
@@ -115,7 +121,7 @@ export default function HomePage() {
 }
 
 // ═════════════════════════════════════════════════════════════════
-// CategoryBand — 카테고리 하나를 가로로 꽉 채우는 색 밴드
+// CategoryBand — 텍스트 + 다크 목업의 2단 밴드
 // ═════════════════════════════════════════════════════════════════
 
 const TONE_CLASSES: Record<
@@ -157,10 +163,11 @@ const TONE_CLASSES: Record<
 
 function CategoryBand({ category }: { category: Category }) {
   const t = TONE_CLASSES[category.tone];
+  const { Mockup } = category;
 
   return (
-    <div className={`group rounded-2xl border p-6 sm:p-8 ${t.border} ${t.wash}`}>
-      <div className="flex flex-wrap items-start justify-between gap-4">
+    <div className={`grid gap-6 rounded-2xl border p-6 sm:p-8 lg:grid-cols-[1.1fr_1fr] lg:items-center ${t.border} ${t.wash}`}>
+      <div>
         <div className="flex items-center gap-4">
           <span
             className="keycap h-14 w-14 shrink-0 text-2xl"
@@ -173,38 +180,35 @@ function CategoryBand({ category }: { category: Category }) {
               {category.eyebrow}
             </p>
             <p className="font-display text-2xl sm:text-3xl">{category.title}</p>
-            <p className="ko-copy mt-1 text-sm text-muted">{category.audience}</p>
           </div>
         </div>
+        <p className="ko-copy mt-3 text-sm leading-6 text-muted">{category.audience}</p>
 
-        <p className="font-mono text-xs text-muted sm:text-sm">
-          {category.preview}
-          <span className="typing-caret">▌</span>
-        </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          {category.items.map((item) =>
+            item.href ? (
+              <Link
+                key={item.label}
+                href={item.href}
+                className={`group inline-flex items-center gap-2 rounded-xl px-5 py-3 text-base font-bold transition ${t.pillLive} ${t.pillLiveHover}`}
+              >
+                {item.label}
+                <ArrowRight size={16} className="opacity-70 transition group-hover:translate-x-0.5" />
+              </Link>
+            ) : (
+              <span
+                key={item.label}
+                className="inline-flex items-center gap-2 rounded-xl border border-dashed border-border px-5 py-3 text-base font-bold text-muted"
+              >
+                {item.label}
+                <span className="text-xs font-normal">준비 중</span>
+              </span>
+            )
+          )}
+        </div>
       </div>
 
-      <div className="mt-6 flex flex-wrap gap-3">
-        {category.items.map((item) =>
-          item.href ? (
-            <Link
-              key={item.label}
-              href={item.href}
-              className={`inline-flex items-center gap-2 rounded-xl px-5 py-3 text-base font-bold transition ${t.pillLive} ${t.pillLiveHover}`}
-            >
-              {item.label}
-              <ArrowRight size={16} className="opacity-70 transition group-hover:translate-x-0.5" />
-            </Link>
-          ) : (
-            <span
-              key={item.label}
-              className="inline-flex items-center gap-2 rounded-xl border border-dashed border-border px-5 py-3 text-base font-bold text-muted"
-            >
-              {item.label}
-              <span className="text-xs font-normal">준비 중</span>
-            </span>
-          )
-        )}
-      </div>
+      <Mockup />
     </div>
   );
 }
