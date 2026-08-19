@@ -1,3 +1,5 @@
+// game_profiles.nameColor / borderStyle 의 DB enum 값과 1:1로 맞춰야 한다.
+// (src/infrastructure/db/schema.ts 의 gameNameColorEnum / gameBorderStyleEnum 참고)
 export const TYPING_NAME_COLORS = [
   { id: "mint", label: "민트", className: "text-accent" },
   { id: "coral", label: "코랄", className: "text-signal" },
@@ -15,33 +17,12 @@ export const TYPING_BORDER_STYLES = [
 export type TypingNameColor = (typeof TYPING_NAME_COLORS)[number]["id"];
 export type TypingBorderStyle = (typeof TYPING_BORDER_STYLES)[number]["id"];
 
-export interface TypingGameProfile {
-  nickname: string;
-  nameColor: TypingNameColor;
-  borderStyle: TypingBorderStyle;
-  customized: boolean;
-}
-
 export function isTypingNameColor(value: unknown): value is TypingNameColor {
   return TYPING_NAME_COLORS.some((color) => color.id === value);
 }
 
 export function isTypingBorderStyle(value: unknown): value is TypingBorderStyle {
   return TYPING_BORDER_STYLES.some((style) => style.id === value);
-}
-
-export function normalizeTypingNickname(value: string) {
-  return value.normalize("NFC").trim().replace(/\s+/g, " ");
-}
-
-export function isValidTypingNickname(value: string) {
-  const normalized = normalizeTypingNickname(value);
-  return (
-    normalized.length >= 2 &&
-    normalized.length <= 10 &&
-    /^[가-힣A-Za-z0-9]+$/.test(normalized) &&
-    !/^(관리자|운영자|playsteno|플레이스테노)$/i.test(normalized)
-  );
 }
 
 export function colorClass(color: TypingNameColor) {

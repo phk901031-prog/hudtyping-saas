@@ -24,11 +24,7 @@ export async function checkRateLimit(input: {
     | "admin-write"
     | "license-activate"
     | "license-checkin"
-    | "license-deactivate"
-    | "typing-session"
-    | "typing-submit"
-    | "typing-ranking"
-    | "typing-profile";
+    | "license-deactivate";
   subject: string;
   limit: number;
   windowSeconds?: number;

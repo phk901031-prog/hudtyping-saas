@@ -26,6 +26,11 @@ const nextConfig: NextConfig = {
         destination: "/work/natmalgi/install-help",
         permanent: true,
       },
+      {
+        source: "/games/typing",
+        destination: "/play/typing",
+        permanent: true,
+      },
     ];
   },
 };

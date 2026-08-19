@@ -13,7 +13,6 @@ import {
   index,
   integer,
   jsonb,
-  uniqueIndex,
 } from "drizzle-orm/pg-core";
 
 // PostgreSQL의 ENUM 타입을 정의 — DB 레벨에서 잘못된 값 입력을 차단한다.
@@ -64,12 +63,6 @@ export const users = pgTable("users", {
   // admin 이 아닌 VIP 사용자에게 "기간 없이" 무제한을 부여할 때 사용.
   unlimitedPermanent: boolean("unlimited_permanent").notNull().default(false),
 
-  // 타자 게임 순위표에 공개되는 별칭과 제한된 꾸미기 프리셋.
-  // 임의 CSS는 받지 않고 서버가 허용한 식별자만 저장한다.
-  gameNickname: text("game_nickname"),
-  gameNameColor: text("game_name_color").notNull().default("mint"),
-  gameBorderStyle: text("game_border_style").notNull().default("soft"),
-
   // 생성/수정 시각 — 'with timezone'으로 UTC 기준 저장.
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
@@ -77,9 +70,7 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-}, (table) => [
-  uniqueIndex("users_game_nickname_unique_idx").on(table.gameNickname),
-]);
+});
 
 // 다른 파일에서 타입을 참조할 수 있게 export.
 //   const u: User = ...    (조회 결과 타입)
@@ -396,37 +387,103 @@ export const licenseActivations = pgTable(
 export type LicenseActivation = typeof licenseActivations.$inferSelect;
 export type NewLicenseActivation = typeof licenseActivations.$inferInsert;
 
-// 30초 보고 치기 결과. 문제 세션은 Redis에서 짧게 보관하고 검증이 끝난
-// 요약 결과만 PostgreSQL에 남긴다. 원문 키 입력 스트림은 저장하지 않는다.
-export const typingGameResults = pgTable(
-  "typing_game_results",
+// ──────────────────────────────────────────────────────────────────────
+// Play Steno — 타자 게임 (kingoftyping 이식, STENO-PORTAL-PLAN.md §4.7)
+// 세 테이블: 게임 프로필(닉네임·꾸미기) · 콘텐츠(문장 풀) · 결과(순위표 원장).
+// 세션 상태 자체는 Redis에 있다가 검증 끝난 요약만 여기 남는다.
+// ──────────────────────────────────────────────────────────────────────
+
+export const gameNameColorEnum = pgEnum("game_name_color", [
+  "mint",
+  "coral",
+  "violet",
+  "sky",
+  "gold",
+]);
+export const gameBorderStyleEnum = pgEnum("game_border_style", [
+  "soft",
+  "line",
+  "glow",
+]);
+
+// game_profiles — users 와 분리된 게임 전용 프로필 (§4.7 안 C).
+// users 를 오염시키지 않고, 낱말지기 승인 상태와 무관하게 게임 프로필을 가질 수 있게 한다.
+// 닉네임은 최초 설정 후 불변 — DB는 unique 만 보장, 불변 강제는 서비스 레이어(profile.ts)에서.
+export const gameProfiles = pgTable("game_profiles", {
+  clerkId: text("clerk_id")
+    .primaryKey()
+    .references(() => users.clerkId, { onDelete: "cascade" }),
+  nickname: text("nickname").notNull().unique(),
+  nameColor: gameNameColorEnum("name_color").notNull().default("mint"),
+  borderStyle: gameBorderStyleEnum("border_style").notNull().default("soft"),
+  region: text("region"),
+  isStenographer: boolean("is_stenographer").notNull().default(false),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export type GameProfile = typeof gameProfiles.$inferSelect;
+export type NewGameProfile = typeof gameProfiles.$inferInsert;
+export type GameNameColor = (typeof gameNameColorEnum.enumValues)[number];
+export type GameBorderStyle = (typeof gameBorderStyleEnum.enumValues)[number];
+
+export const typingModeEnum = pgEnum("typing_mode", ["short", "long"]);
+
+// typing_contents — 지문 풀. 콘텐츠 등록·시딩은 Phase D 에서 채운다.
+export const typingContents = pgTable(
+  "typing_contents",
+  {
+    id: serial("id").primaryKey(),
+    mode: typingModeEnum("mode").notNull(),
+    body: text("body").notNull(),
+    source: text("source"),
+    isActive: boolean("is_active").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("typing_contents_mode_active_idx").on(table.mode, table.isActive),
+  ]
+);
+
+export type TypingContent = typeof typingContents.$inferSelect;
+export type NewTypingContent = typeof typingContents.$inferInsert;
+
+// typing_results — 지문 완주 1회 = 1행. 옛 "30초 스프린트" 방식이 아니라 지문 기반.
+// Phase E 가 세션(Redis) → 서버 재검증 → 여기 insert 흐름을 만든다.
+export const typingResults = pgTable(
+  "typing_results",
   {
     id: serial("id").primaryKey(),
     sessionId: text("session_id").notNull().unique(),
     clerkId: text("clerk_id")
       .notNull()
       .references(() => users.clerkId, { onDelete: "cascade" }),
-    score: integer("score").notNull(),
-    cpm: integer("cpm").notNull(),
+    contentId: integer("content_id")
+      .notNull()
+      .references(() => typingContents.id, { onDelete: "cascade" }),
+    netSpeed: integer("net_speed").notNull(),
+    rawSpeed: integer("raw_speed"),
     accuracyBasisPoints: integer("accuracy_basis_points").notNull(),
-    correctChars: integer("correct_chars").notNull(),
-    correctStrokes: integer("correct_strokes").notNull().default(0),
-    errorStrokes: integer("error_strokes").notNull().default(0),
-    // 1: 옛 음절 기준, 2: 한컴식 자소 기준. 서로 다른 버전은 같은 순위에 섞지 않는다.
-    metricVersion: integer("metric_version").notNull().default(1),
     errorCount: integer("error_count").notNull(),
-    completedPrompts: integer("completed_prompts").notNull(),
     durationMs: integer("duration_ms").notNull(),
+    suspicious: boolean("suspicious").notNull().default(false),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
   },
   (table) => [
-    index("typing_game_results_clerk_id_idx").on(table.clerkId),
-    index("typing_game_results_created_at_idx").on(table.createdAt),
-    index("typing_game_results_score_idx").on(table.score),
+    index("typing_results_clerk_id_idx").on(table.clerkId),
+    index("typing_results_content_id_idx").on(table.contentId),
+    index("typing_results_created_at_idx").on(table.createdAt),
+    index("typing_results_net_speed_idx").on(table.netSpeed),
   ]
 );
 
-export type TypingGameResult = typeof typingGameResults.$inferSelect;
-export type NewTypingGameResult = typeof typingGameResults.$inferInsert;
+export type TypingResult = typeof typingResults.$inferSelect;
+export type NewTypingResult = typeof typingResults.$inferInsert;
