@@ -9,8 +9,11 @@ import {
 } from "@/features/typing-game/types";
 import type { GameProfile } from "@/infrastructure/db/schema";
 
-// 실제 검증은 서버(API 라우트 → profile.ts)가 최종 권위. 여기선 버튼 활성화용 UX 힌트만.
+// 실제 검증은 서버(API 라우트 → profile.ts)가 최종 권위. 여기선 버튼 활성화용 UX 힌트만
+// — profile.ts의 RESERVED_NICKNAMES와 같은 목록을 유지해야 "형식은 맞는데 버튼이 눌려도
+// 서버가 막는" 혼란(운영자 등)을 미리 걸러낼 수 있다.
 const NICKNAME_HINT_PATTERN = /^[가-힣A-Za-z0-9]{2,10}$/;
+const RESERVED_NICKNAME_HINT = /^(관리자|운영자|admin|playsteno|플레이스테노)$/i;
 
 interface Props {
   onSaved: (profile: GameProfile) => void;
@@ -23,7 +26,10 @@ export function TypingProfileSetup({ onSaved }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const looksValid = NICKNAME_HINT_PATTERN.test(nickname.trim());
+  const trimmedNickname = nickname.trim();
+  const looksValid =
+    NICKNAME_HINT_PATTERN.test(trimmedNickname) && !RESERVED_NICKNAME_HINT.test(trimmedNickname);
+  const isReserved = RESERVED_NICKNAME_HINT.test(trimmedNickname);
 
   const handleSubmit = async () => {
     if (!looksValid || saving) return;
@@ -56,12 +62,16 @@ export function TypingProfileSetup({ onSaved }: Props) {
       <p className="ko-copy text-sm text-muted">
         닉네임을 정하면 리더보드에 표시돼요. (최초 설정 후 변경 불가)
       </p>
+      <p className="ko-copy text-xs font-bold text-warning">
+        ⚠ 실명은 사용하지 말아주세요 — 리더보드는 누구나 볼 수 있어요. 별명이나 애칭으로
+        정해주세요.
+      </p>
       <div className="flex flex-wrap gap-3">
         <input
           value={nickname}
           onChange={(event) => setNickname(event.target.value)}
           maxLength={10}
-          placeholder="닉네임 (한글·영문·숫자 2~10자)"
+          placeholder="닉네임 (한글·영문·숫자 2~10자, 실명 금지)"
           className="min-w-0 flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
         />
         <button
@@ -73,6 +83,9 @@ export function TypingProfileSetup({ onSaved }: Props) {
           {saving ? "저장 중..." : "닉네임 확정"}
         </button>
       </div>
+      {isReserved && (
+        <p className="text-sm text-danger">운영자·관리자로 오해할 수 있는 닉네임은 사용할 수 없어요.</p>
+      )}
       <div className="flex flex-wrap gap-2">
         {TYPING_NAME_COLORS.map((color) => (
           <button

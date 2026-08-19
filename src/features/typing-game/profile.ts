@@ -9,18 +9,29 @@ import {
 } from "@/infrastructure/db/schema";
 import type { TypingBorderStyle, TypingNameColor } from "@/features/typing-game/types";
 
+// 관리자/운영자 사칭 방지용 예약어 — 형식은 정상이라도 이 목록에 걸리면 거부.
+const RESERVED_NICKNAMES = /^(관리자|운영자|admin|playsteno|플레이스테노)$/i;
+
 export function normalizeTypingNickname(value: string) {
   return value.normalize("NFC").trim().replace(/\s+/g, " ");
 }
 
 export function isValidTypingNickname(value: string) {
-  const normalized = normalizeTypingNickname(value);
-  return (
-    normalized.length >= 2 &&
-    normalized.length <= 10 &&
-    /^[가-힣A-Za-z0-9]+$/.test(normalized) &&
-    !/^(관리자|운영자|playsteno|플레이스테노)$/i.test(normalized)
-  );
+  return getNicknameValidationError(normalizeTypingNickname(value)) === null;
+}
+
+// 형식 오류와 예약어 거부를 구분해서 사용자에게 정확한 이유를 보여주기 위한 헬퍼.
+export function getNicknameValidationError(normalized: string): string | null {
+  if (normalized.length < 2 || normalized.length > 10) {
+    return "닉네임은 2~10자로 입력해주세요.";
+  }
+  if (!/^[가-힣A-Za-z0-9]+$/.test(normalized)) {
+    return "닉네임은 한글, 영문, 숫자만 사용할 수 있어요.";
+  }
+  if (RESERVED_NICKNAMES.test(normalized)) {
+    return "운영자·관리자로 오해할 수 있는 닉네임은 사용할 수 없어요.";
+  }
+  return null;
 }
 
 export async function getGameProfile(clerkId: string): Promise<GameProfile | null> {
@@ -41,8 +52,9 @@ export async function createOrGetGameProfile(input: {
   borderStyle: TypingBorderStyle;
 }): Promise<GameProfile> {
   const nickname = normalizeTypingNickname(input.nickname);
-  if (!isValidTypingNickname(nickname)) {
-    throw new Error("닉네임은 한글, 영문, 숫자 2~10자로 입력해주세요.");
+  const validationError = getNicknameValidationError(nickname);
+  if (validationError) {
+    throw new Error(validationError);
   }
 
   const existing = await getGameProfile(input.clerkId);
