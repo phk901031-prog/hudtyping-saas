@@ -1,7 +1,8 @@
 // src/app/(marketing)/page.tsx
-// PlaySteno 포털 홈 — 3-카테고리(Work/Play/Study) 진입 페이지.
-// 각 카테고리를 색으로 구분하고, 지금 있는 기능 + 앞으로 추가될 기능을 함께 보여줘서
-// "속기의 모든 것이 모이는 곳"이라는 확장성이 드러나도록 한다.
+// PlaySteno 포털 홈 — 3-카테고리(Work/Play/Study)를 색으로 구분한 가로 밴드로 배치.
+// 각 밴드 안 세부 항목은 실제 사용 가능한 크기의 버튼으로 — 라이브 항목은 진하게
+// 채운 색, 준비 중 항목은 점선 테두리로 구분해서 지금 있는 것과 앞으로 채워질 것이
+// 한눈에 보이도록 한다.
 // 낱말지기 랜딩 상세는 /work/natmalgi 로, Play 는 /play/typing, Study 는 /study/bogochigi 로.
 
 import Link from "next/link";
@@ -9,8 +10,9 @@ import type { Metadata } from "next";
 import {
   ArrowRight,
   BookOpen,
+  CloudRain,
   Headphones,
-  Keyboard,
+  ListChecks,
   Sparkles,
   Wrench,
   Zap,
@@ -37,17 +39,61 @@ export const revalidate = 3600;
 
 type Tone = "accent" | "signal" | "success";
 
-interface SubItem {
+interface CategoryItem {
   label: string;
   href?: string; // 없으면 "준비 중"
   icon: LucideIcon;
 }
 
+interface Category {
+  tone: Tone;
+  eyebrow: string;
+  title: string;
+  icon: LucideIcon;
+  items: CategoryItem[];
+}
+
+const CATEGORIES: Category[] = [
+  {
+    tone: "accent",
+    eyebrow: "Work Steno",
+    title: "속기 실무 도구",
+    icon: Wrench,
+    items: [
+      { label: "낱말지기", href: "/work/natmalgi", icon: Wrench },
+      { label: "AI 속기 툴", icon: Sparkles },
+    ],
+  },
+  {
+    tone: "signal",
+    eyebrow: "Play Steno",
+    title: "속기 타자 게임",
+    icon: Zap,
+    items: [
+      { label: "단문 타자전", href: "/play/typing", icon: Zap },
+      { label: "장문 타자전", href: "/play/typing", icon: Zap },
+      { label: "산성비", icon: CloudRain },
+    ],
+  },
+  {
+    tone: "success",
+    eyebrow: "Study Steno",
+    title: "속기 공부",
+    icon: BookOpen,
+    items: [
+      { label: "듣고치기", icon: Headphones },
+      { label: "보고치기", href: "/study/bogochigi", icon: BookOpen },
+      { label: "약어 연습", icon: Sparkles },
+      { label: "학습 관리", icon: ListChecks },
+    ],
+  },
+];
+
 export default function HomePage() {
   return (
     <main className="flex flex-1 flex-col bg-background text-foreground">
-      <section className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8 lg:py-20">
-        <div className="flex flex-col items-center gap-4 text-center">
+      <section className="mx-auto w-full max-w-6xl px-5 py-12 sm:px-8 lg:py-16">
+        <div className="flex flex-col items-center gap-3 text-center">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">
             PlaySteno · 속기사의 놀이터
           </p>
@@ -60,47 +106,10 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className="mt-12 grid gap-5 lg:grid-cols-3">
-          <PortalCard
-            tone="accent"
-            eyebrow="Work Steno"
-            title="속기 실무 도구"
-            body="한글 문서 위에서 우리말샘 뜻풀이 · 예문을 바로 확인하는 Windows HUD."
-            icon={Wrench}
-            href="/work/natmalgi"
-            cta="낱말지기 자세히 보기"
-            subItems={[
-              { label: "낱말지기", href: "/work/natmalgi", icon: Wrench },
-              { label: "AI 속기 툴", icon: Sparkles },
-            ]}
-          />
-          <PortalCard
-            tone="signal"
-            eyebrow="Play Steno"
-            title="속기 타자 게임"
-            body="속기 문장으로 타자 속도와 정확도를 겨루는 게임. 가입 없이 바로 플레이."
-            icon={Keyboard}
-            href="/play/typing"
-            cta="지금 플레이"
-            subItems={[
-              { label: "단문·장문 타자전", href: "/play/typing", icon: Zap },
-              { label: "미니게임", icon: Sparkles },
-            ]}
-          />
-          <PortalCard
-            tone="success"
-            eyebrow="Study Steno"
-            title="속기 시험 준비"
-            body="원하는 글을 붙여넣고 원하는 속도로 보고치기 연습. 한글속기 채점기준으로 채점."
-            icon={BookOpen}
-            href="/study/bogochigi"
-            cta="보고치기 연습하러 가기"
-            subItems={[
-              { label: "보고치기", href: "/study/bogochigi", icon: BookOpen },
-              { label: "듣고치기", icon: Headphones },
-              { label: "약어 연습", icon: Sparkles },
-            ]}
-          />
+        <div className="mt-10 flex flex-col gap-5">
+          {CATEGORIES.map((category) => (
+            <CategoryBand key={category.eyebrow} category={category} />
+          ))}
         </div>
       </section>
     </main>
@@ -108,100 +117,88 @@ export default function HomePage() {
 }
 
 // ═════════════════════════════════════════════════════════════════
-// PortalCard — 3-카테고리 진입 카드
+// CategoryBand — 카테고리 하나를 가로로 꽉 채우는 색 밴드
 // ═════════════════════════════════════════════════════════════════
 
 const TONE_CLASSES: Record<
   Tone,
-  { border: string; wash: string; iconBadge: string; text: string; chipActive: string }
+  {
+    border: string;
+    wash: string;
+    iconBadge: string;
+    text: string;
+    pillLive: string;
+    pillLiveHover: string;
+  }
 > = {
   accent: {
-    border: "border-accent/35 hover:border-accent",
-    wash: "bg-accent/[0.05] hover:bg-accent/[0.09]",
+    border: "border-accent/30",
+    wash: "bg-accent/[0.05]",
     iconBadge: "bg-accent/15 text-accent",
     text: "text-accent",
-    chipActive: "border-accent/40 bg-accent/10 text-accent",
+    pillLive: "bg-accent text-white",
+    pillLiveHover: "hover:bg-accent-hover",
   },
   signal: {
-    border: "border-signal/35 hover:border-signal",
-    wash: "bg-signal/[0.05] hover:bg-signal/[0.09]",
+    border: "border-signal/30",
+    wash: "bg-signal/[0.05]",
     iconBadge: "bg-signal/15 text-signal",
     text: "text-signal",
-    chipActive: "border-signal/40 bg-signal/10 text-signal",
+    pillLive: "bg-signal text-white",
+    pillLiveHover: "hover:brightness-110",
   },
   success: {
-    border: "border-success/35 hover:border-success",
-    wash: "bg-success/[0.05] hover:bg-success/[0.09]",
+    border: "border-success/30",
+    wash: "bg-success/[0.05]",
     iconBadge: "bg-success/15 text-success",
     text: "text-success",
-    chipActive: "border-success/40 bg-success/10 text-success",
+    pillLive: "bg-success text-white",
+    pillLiveHover: "hover:brightness-110",
   },
 };
 
-function PortalCard({
-  tone,
-  eyebrow,
-  title,
-  body,
-  icon: Icon,
-  href,
-  cta,
-  subItems,
-}: {
-  tone: Tone;
-  eyebrow: string;
-  title: string;
-  body: string;
-  icon: LucideIcon;
-  href: string;
-  cta: string;
-  subItems: SubItem[];
-}) {
-  const t = TONE_CLASSES[tone];
+function CategoryBand({ category }: { category: Category }) {
+  const t = TONE_CLASSES[category.tone];
+  const Icon = category.icon;
 
   return (
-    <div className={`group relative flex flex-col gap-5 rounded-2xl border p-6 transition sm:p-7 ${t.border} ${t.wash}`}>
-      <div className="flex items-center justify-between">
-        <p className={`text-[11px] font-bold uppercase tracking-[0.18em] ${t.text}`}>{eyebrow}</p>
-        <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${t.iconBadge}`}>
-          <Icon size={20} />
+    <div className={`rounded-2xl border p-6 sm:p-8 ${t.border} ${t.wash}`}>
+      <div className="flex items-center gap-4">
+        <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${t.iconBadge}`}>
+          <Icon size={24} />
         </span>
+        <div>
+          <p className={`text-[11px] font-bold uppercase tracking-[0.18em] ${t.text}`}>
+            {category.eyebrow}
+          </p>
+          <p className="font-display text-2xl sm:text-3xl">{category.title}</p>
+        </div>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <p className="font-display text-2xl">{title}</p>
-        <p className="ko-copy text-sm leading-6 text-muted">{body}</p>
+      <div className="mt-6 flex flex-wrap gap-3">
+        {category.items.map((item) =>
+          item.href ? (
+            <Link
+              key={item.label}
+              href={item.href}
+              className={`group inline-flex items-center gap-2 rounded-xl px-5 py-3 text-base font-bold transition ${t.pillLive} ${t.pillLiveHover}`}
+            >
+              <item.icon size={18} />
+              {item.label}
+              <ArrowRight size={16} className="opacity-70 transition group-hover:translate-x-0.5" />
+            </Link>
+          ) : (
+            <span
+              key={item.label}
+              className="inline-flex items-center gap-2 rounded-xl border border-dashed border-border px-5 py-3 text-base font-bold text-muted"
+            >
+              <item.icon size={18} />
+              {item.label}
+              <span className="text-xs font-normal">준비 중</span>
+            </span>
+          )
+        )}
       </div>
-
-      <ul className="flex flex-col gap-1.5">
-        {subItems.map((item) => (
-          <li key={item.label}>
-            {item.href ? (
-              <Link
-                href={item.href}
-                className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-bold transition ${t.chipActive}`}
-              >
-                <item.icon size={12} />
-                {item.label}
-              </Link>
-            ) : (
-              <span className="inline-flex items-center gap-2 rounded-full border border-dashed border-border px-3 py-1 text-xs font-bold text-muted">
-                <item.icon size={12} />
-                {item.label}
-                <span className="text-[10px] font-normal">· 준비 중</span>
-              </span>
-            )}
-          </li>
-        ))}
-      </ul>
-
-      <Link
-        href={href}
-        className="mt-auto flex items-center gap-1.5 text-sm font-bold text-foreground"
-      >
-        <span className={t.text}>{cta}</span>
-        <ArrowRight size={16} className={`${t.text} transition group-hover:translate-x-0.5`} />
-      </Link>
     </div>
   );
 }
