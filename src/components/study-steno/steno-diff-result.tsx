@@ -12,9 +12,8 @@ interface Props {
 export function StenoDiffResult({ result, onRetry }: Props) {
   return (
     <div className="flex flex-col gap-6">
-      <div className="grid grid-cols-2 gap-4 rounded-2xl border border-border bg-card px-6 py-6 sm:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 rounded-2xl border border-border bg-card px-6 py-6 sm:grid-cols-3">
         <ScoreTile label="정확도" value={`${result.accuracy}%`} accent />
-        <ScoreTile label="점수" value={`${result.score} / ${result.totalScorable}`} />
         <ScoreTile label="합격 기준" value={result.passed ? "합격 (90% 이상)" : "미달"} warn={!result.passed} />
         <ScoreTile
           label="오자 · 탈자 · 첨자"
@@ -23,9 +22,9 @@ export function StenoDiffResult({ result, onRetry }: Props) {
       </div>
 
       <div className="flex flex-wrap items-center gap-4 text-xs">
-        <LegendItem swatchClassName="bg-danger/60" label="오자 (잘못 침)" />
-        <LegendItem swatchClassName="bg-warning/60" label="탈자 (빠뜨림)" />
-        <LegendItem swatchClassName="bg-accent/60" label="첨자 (더 침)" />
+        <LegendItem swatchClassName="bg-red-300" label="오자 (잘못 침)" />
+        <LegendItem swatchClassName="bg-yellow-300" label="탈자 (빠뜨림)" />
+        <LegendItem swatchClassName="bg-green-300" label="첨자 (더 침)" />
       </div>
 
       <div className="rounded-xl border border-border bg-card px-5 py-6">
@@ -54,7 +53,7 @@ function DiffSpan({ op }: { op: AlignOp }) {
     case "substitute":
       return (
         <span
-          className="rounded bg-danger/60 px-0.5 font-bold text-ink"
+          className="rounded bg-red-300 px-0.5 font-bold text-ink"
           title={`입력: ${op.typed || "∅"}`}
         >
           {op.original}
@@ -62,13 +61,13 @@ function DiffSpan({ op }: { op: AlignOp }) {
       );
     case "delete":
       return (
-        <span className="rounded bg-warning/60 px-0.5 font-bold text-ink underline decoration-ink/70 decoration-wavy decoration-2">
+        <span className="rounded bg-yellow-300 px-0.5 font-bold text-ink underline decoration-ink/70 decoration-wavy decoration-2">
           {op.original}
         </span>
       );
     case "insert":
       return (
-        <span className="mx-0.5 rounded bg-accent/60 px-1 align-super text-xs font-bold text-ink">
+        <span className="mx-0.5 rounded bg-green-300 px-1 align-super text-xs font-bold text-ink">
           {op.typed}
         </span>
       );
