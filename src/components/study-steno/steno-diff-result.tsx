@@ -12,19 +12,16 @@ interface Props {
 export function StenoDiffResult({ result, onRetry }: Props) {
   return (
     <div className="flex flex-col gap-6">
-      <div className="grid grid-cols-1 gap-4 rounded-2xl border border-border bg-card px-6 py-6 sm:grid-cols-3">
-        <ScoreTile label="정확도" value={`${result.accuracy}%`} accent />
-        <ScoreTile label="합격 기준" value={result.passed ? "합격 (90% 이상)" : "미달"} warn={!result.passed} />
-        <ScoreTile
-          label="오자 · 탈자 · 첨자"
-          value={`${result.ojaCount} · ${result.taljaCount} · ${result.cheomjaCount}`}
-        />
-      </div>
-
-      <div className="flex flex-wrap items-center gap-4 text-xs">
-        <LegendItem swatchClassName="bg-red-300" label="오자 (잘못 침)" />
-        <LegendItem swatchClassName="bg-yellow-300" label="탈자 (빠뜨림)" />
-        <LegendItem swatchClassName="bg-green-300" label="첨자 (더 침)" />
+      <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card px-6 py-6">
+        <div>
+          <p className="font-mono text-3xl font-bold text-accent">{result.accuracy}%</p>
+          <p className="text-xs text-muted">정확도</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <ErrorCountBadge label="오자" count={result.ojaCount} swatchClassName="bg-red-300" />
+          <ErrorCountBadge label="탈자" count={result.taljaCount} swatchClassName="bg-yellow-300" />
+          <ErrorCountBadge label="첨자" count={result.cheomjaCount} swatchClassName="bg-green-300" />
+        </div>
       </div>
 
       <div className="rounded-xl border border-border bg-card px-5 py-6">
@@ -74,31 +71,20 @@ function DiffSpan({ op }: { op: AlignOp }) {
   }
 }
 
-function ScoreTile({
+function ErrorCountBadge({
   label,
-  value,
-  accent,
-  warn,
+  count,
+  swatchClassName,
 }: {
   label: string;
-  value: string;
-  accent?: boolean;
-  warn?: boolean;
+  count: number;
+  swatchClassName: string;
 }) {
-  const toneClass = warn ? "text-danger" : accent ? "text-accent" : "text-foreground";
   return (
-    <div>
-      <p className={`font-mono text-xl font-bold ${toneClass}`}>{value}</p>
-      <p className="text-xs text-muted">{label}</p>
-    </div>
-  );
-}
-
-function LegendItem({ swatchClassName, label }: { swatchClassName: string; label: string }) {
-  return (
-    <span className="inline-flex items-center gap-1.5">
-      <span className={`inline-block h-3 w-3 rounded ${swatchClassName}`} />
-      <span className="text-muted">{label}</span>
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-bold text-ink ${swatchClassName}`}
+    >
+      {label} {count}
     </span>
   );
 }
