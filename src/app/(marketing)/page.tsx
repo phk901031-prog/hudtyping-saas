@@ -1,7 +1,6 @@
 // src/app/(marketing)/page.tsx
 // PlaySteno 포털 홈 — 3-카테고리 카드만 노출하는 짧은 진입 페이지.
-// 낱말지기 랜딩 상세는 /work/natmalgi 로 분리, Play 는 /play/typing (준비 중),
-// Study 는 링크 없이 "곧 공개" 자리표시자.
+// 낱말지기 랜딩 상세는 /work/natmalgi 로, Play 는 /play/typing, Study 는 /study/bogochigi 로.
 
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -68,11 +67,11 @@ export default function HomePage() {
           />
           <PortalCard
             eyebrow="Study Steno"
-            title="속기 공부"
-            body="자모 · 약자 학습, 자격증 정보, 연습 도구. 준비 중입니다."
+            title="보고치기 연습"
+            body="원하는 글을 붙여넣고 원하는 속도로 보고치기 연습. 한글속기 채점기준으로 채점."
             icon={BookOpen}
-            cta="곧 공개"
-            disabled
+            href="/study/bogochigi"
+            cta="연습하러 가기"
           />
         </div>
       </section>
