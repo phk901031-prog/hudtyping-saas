@@ -1,23 +1,14 @@
 // src/app/(marketing)/page.tsx
 // PlaySteno 포털 홈 — 3-카테고리(Work/Play/Study)를 색으로 구분한 가로 밴드로 배치.
-// 각 밴드 안 세부 항목은 실제 사용 가능한 크기의 버튼으로 — 라이브 항목은 진하게
-// 채운 색, 준비 중 항목은 점선 테두리로 구분해서 지금 있는 것과 앞으로 채워질 것이
-// 한눈에 보이도록 한다.
-// 낱말지기 랜딩 상세는 /work/natmalgi 로, Play 는 /play/typing, Study 는 /study/bogochigi 로.
+// 아이콘은 제네릭 UI 아이콘 대신 로고에 쓰던 키캡 모티프(.keycap, globals.css)를
+// 재사용하고, 각 밴드에 실시간 타이핑 느낌의 모노스페이스 미리보기 줄을 넣어
+// "타자와 관련된 사이트"라는 게 시각적으로 바로 느껴지게 한다.
+// 세 카테고리는 서로 다른 사람을 위한 것이다 — 낱말지기는 현직 속기사 실무 도구,
+// Study는 시험 준비생, Play는 누구나 가볍게. 하나로 뭉뚱그려 말하지 않는다.
 
 import Link from "next/link";
 import type { Metadata } from "next";
-import {
-  ArrowRight,
-  BookOpen,
-  CloudRain,
-  Headphones,
-  ListChecks,
-  Sparkles,
-  Wrench,
-  Zap,
-  type LucideIcon,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "PlaySteno · 속기사의 놀이터",
@@ -42,14 +33,15 @@ type Tone = "accent" | "signal" | "success";
 interface CategoryItem {
   label: string;
   href?: string; // 없으면 "준비 중"
-  icon: LucideIcon;
 }
 
 interface Category {
   tone: Tone;
   eyebrow: string;
+  keycapLetter: string;
   title: string;
-  icon: LucideIcon;
+  audience: string; // 이 카테고리는 누구를 위한 것인지 — 뭉뚱그리지 않고 명확하게
+  preview: string; // 모노스페이스 타이핑 미리보기 문구
   items: CategoryItem[];
 }
 
@@ -57,34 +49,40 @@ const CATEGORIES: Category[] = [
   {
     tone: "accent",
     eyebrow: "Work Steno",
+    keycapLetter: "W",
     title: "속기 실무 도구",
-    icon: Wrench,
+    audience: "현직 속기사가 실무에서 매일 쓰는 도구",
+    preview: "우리말샘 검색 중",
     items: [
-      { label: "낱말지기", href: "/work/natmalgi", icon: Wrench },
-      { label: "AI 속기 툴", icon: Sparkles },
+      { label: "낱말지기", href: "/work/natmalgi" },
+      { label: "AI 속기 툴" },
     ],
   },
   {
     tone: "signal",
     eyebrow: "Play Steno",
+    keycapLetter: "P",
     title: "속기 타자 게임",
-    icon: Zap,
+    audience: "쉬는 시간에 가볍게, 타자 실력을 겨루는 놀이",
+    preview: "189타 · 정확도 98%",
     items: [
-      { label: "단문 타자전", href: "/play/typing", icon: Zap },
-      { label: "장문 타자전", href: "/play/typing", icon: Zap },
-      { label: "산성비", icon: CloudRain },
+      { label: "단문 타자전", href: "/play/typing" },
+      { label: "장문 타자전", href: "/play/typing" },
+      { label: "산성비" },
     ],
   },
   {
     tone: "success",
     eyebrow: "Study Steno",
+    keycapLetter: "S",
     title: "속기 공부",
-    icon: BookOpen,
+    audience: "자격증을 준비하는 이들의 연습장",
+    preview: "오늘 5,320자 연습",
     items: [
-      { label: "듣고치기", icon: Headphones },
-      { label: "보고치기", href: "/study/bogochigi", icon: BookOpen },
-      { label: "약어 연습", icon: Sparkles },
-      { label: "학습 관리", icon: ListChecks },
+      { label: "듣고치기" },
+      { label: "보고치기", href: "/study/bogochigi" },
+      { label: "약어 연습" },
+      { label: "학습 관리" },
     ],
   },
 ];
@@ -101,8 +99,8 @@ export default function HomePage() {
             속기의 모든 것이 여기 모입니다.
           </h1>
           <p className="ko-copy mx-auto max-w-2xl text-sm leading-7 text-muted sm:text-base sm:leading-8">
-            실무 도구, 게임, 공부까지 — 필요한 곳을 골라 들어오세요. 각 카테고리는
-            계속 채워지고 있습니다.
+            현직 속기사의 실무 도구부터 시험 준비생의 연습장, 가볍게 즐기는 타자
+            게임까지 — 서로 다른 목적을 위한 세 공간입니다.
           </p>
         </div>
 
@@ -125,8 +123,8 @@ const TONE_CLASSES: Record<
   {
     border: string;
     wash: string;
-    iconBadge: string;
     text: string;
+    keycapColorVar: string;
     pillLive: string;
     pillLiveHover: string;
   }
@@ -134,24 +132,24 @@ const TONE_CLASSES: Record<
   accent: {
     border: "border-accent/30",
     wash: "bg-accent/[0.05]",
-    iconBadge: "bg-accent/15 text-accent",
     text: "text-accent",
+    keycapColorVar: "var(--accent)",
     pillLive: "bg-accent text-white",
     pillLiveHover: "hover:bg-accent-hover",
   },
   signal: {
     border: "border-signal/30",
     wash: "bg-signal/[0.05]",
-    iconBadge: "bg-signal/15 text-signal",
     text: "text-signal",
+    keycapColorVar: "var(--signal)",
     pillLive: "bg-signal text-white",
     pillLiveHover: "hover:brightness-110",
   },
   success: {
     border: "border-success/30",
     wash: "bg-success/[0.05]",
-    iconBadge: "bg-success/15 text-success",
     text: "text-success",
+    keycapColorVar: "var(--success)",
     pillLive: "bg-success text-white",
     pillLiveHover: "hover:brightness-110",
   },
@@ -159,20 +157,30 @@ const TONE_CLASSES: Record<
 
 function CategoryBand({ category }: { category: Category }) {
   const t = TONE_CLASSES[category.tone];
-  const Icon = category.icon;
 
   return (
-    <div className={`rounded-2xl border p-6 sm:p-8 ${t.border} ${t.wash}`}>
-      <div className="flex items-center gap-4">
-        <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${t.iconBadge}`}>
-          <Icon size={24} />
-        </span>
-        <div>
-          <p className={`text-[11px] font-bold uppercase tracking-[0.18em] ${t.text}`}>
-            {category.eyebrow}
-          </p>
-          <p className="font-display text-2xl sm:text-3xl">{category.title}</p>
+    <div className={`group rounded-2xl border p-6 sm:p-8 ${t.border} ${t.wash}`}>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <span
+            className="keycap h-14 w-14 shrink-0 text-2xl"
+            style={{ color: t.keycapColorVar }}
+          >
+            {category.keycapLetter}
+          </span>
+          <div>
+            <p className={`text-[11px] font-bold uppercase tracking-[0.18em] ${t.text}`}>
+              {category.eyebrow}
+            </p>
+            <p className="font-display text-2xl sm:text-3xl">{category.title}</p>
+            <p className="ko-copy mt-1 text-sm text-muted">{category.audience}</p>
+          </div>
         </div>
+
+        <p className="font-mono text-xs text-muted sm:text-sm">
+          {category.preview}
+          <span className="typing-caret">▌</span>
+        </p>
       </div>
 
       <div className="mt-6 flex flex-wrap gap-3">
@@ -181,9 +189,8 @@ function CategoryBand({ category }: { category: Category }) {
             <Link
               key={item.label}
               href={item.href}
-              className={`group inline-flex items-center gap-2 rounded-xl px-5 py-3 text-base font-bold transition ${t.pillLive} ${t.pillLiveHover}`}
+              className={`inline-flex items-center gap-2 rounded-xl px-5 py-3 text-base font-bold transition ${t.pillLive} ${t.pillLiveHover}`}
             >
-              <item.icon size={18} />
               {item.label}
               <ArrowRight size={16} className="opacity-70 transition group-hover:translate-x-0.5" />
             </Link>
@@ -192,7 +199,6 @@ function CategoryBand({ category }: { category: Category }) {
               key={item.label}
               className="inline-flex items-center gap-2 rounded-xl border border-dashed border-border px-5 py-3 text-base font-bold text-muted"
             >
-              <item.icon size={18} />
               {item.label}
               <span className="text-xs font-normal">준비 중</span>
             </span>
