@@ -1,5 +1,6 @@
 import "server-only";
 
+import { createHash } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { db } from "@/infrastructure/db";
 import {
@@ -76,6 +77,16 @@ export async function createOrGetGameProfile(input: {
     if (isUniqueViolation(error)) throw new Error("이미 사용 중인 닉네임입니다.");
     throw error;
   }
+}
+
+// 닉네임을 아직 정하지 않은 로그인 사용자를 리더보드에 표시할 때 쓰는 대체 별칭.
+export function getFallbackAlias(clerkId: string): string {
+  const suffix = createHash("sha256")
+    .update(`playsteno-game:${clerkId}`)
+    .digest("hex")
+    .slice(0, 6)
+    .toUpperCase();
+  return `플레이어 ${suffix}`;
 }
 
 function isUniqueViolation(error: unknown) {

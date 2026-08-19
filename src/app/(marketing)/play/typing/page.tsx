@@ -1,20 +1,31 @@
 // src/app/(marketing)/play/typing/page.tsx
-// Play Steno · 속기 타자 게임 — 임시 자리표시자.
-// Phase C~E 에서 실제 게임 (kingoftyping 이식) 붙일 위치. 지금은 준비 중 안내만.
+// Play Steno · 속기 타자 게임. 서버 컴포넌트는 초기 데이터(SSR)만 조회하고
+// 실제 플레이 상태는 <TypingPlayClient> 클라이언트 경계 하나에서 관리한다.
 
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowLeft, Keyboard } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { getOrCreateCurrentUser } from "@/features/users/service";
+import { getGameProfile } from "@/features/typing-game/profile";
+import { fetchLeaderboard } from "@/features/typing-game/leaderboard";
+import { TypingPlayClient } from "@/components/games/typing-play-client";
 
 export const metadata: Metadata = {
-  title: "속기 타자 게임 (준비 중) | Play Steno",
+  title: "속기 타자 게임 | Play Steno",
   description:
-    "속기 문장으로 타자 속도와 정확도를 겨루는 게임. 곧 공개됩니다.",
+    "속기 문장으로 타자 속도와 정확도를 겨루는 게임. 가입 없이 바로 플레이할 수 있어요.",
+  alternates: { canonical: "/play/typing" },
 };
 
-export default function PlayTypingPage() {
+export default async function PlayTypingPage() {
+  const user = await getOrCreateCurrentUser();
+  const [profile, leaderboard] = await Promise.all([
+    user ? getGameProfile(user.clerkId) : Promise.resolve(null),
+    fetchLeaderboard({ mode: "short", period: "daily" }),
+  ]);
+
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-10 px-6 py-16 sm:px-10">
+    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-16 sm:px-10">
       <Link
         href="/"
         className="inline-flex items-center gap-2 text-sm text-muted transition hover:text-foreground"
@@ -22,28 +33,20 @@ export default function PlayTypingPage() {
         <ArrowLeft size={16} /> PlaySteno 홈
       </Link>
 
-      <div className="flex flex-col items-center gap-6 rounded-2xl border border-dashed border-border bg-card px-6 py-16 text-center sm:py-20">
-        <Keyboard size={44} className="text-accent" />
-        <div className="flex flex-col gap-3">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">
-            Play Steno
-          </p>
-          <h1 className="font-display text-3xl leading-tight sm:text-4xl">
-            속기 타자 게임을 준비하고 있어요.
-          </h1>
-          <p className="ko-copy mx-auto max-w-md text-sm leading-7 text-muted">
-            속기 실무에 가까운 문장으로 타자 속도와 정확도를 겨루는 게임입니다.
-            <br />
-            비회원도 바로 플레이할 수 있도록 준비 중입니다.
-          </p>
-        </div>
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 rounded-md border border-border bg-background px-5 py-2.5 text-sm font-bold text-foreground transition hover:border-accent hover:text-accent"
-        >
-          PlaySteno 홈으로
-        </Link>
+      <div className="flex flex-col gap-3">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">Play Steno</p>
+        <h1 className="font-display text-3xl leading-tight sm:text-4xl">속기 타자 게임</h1>
+        <p className="ko-copy text-sm leading-7 text-muted">
+          속기 실무에 가까운 문장으로 타자 속도와 정확도를 겨뤄보세요. 가입 없이 바로
+          플레이할 수 있고, 로그인하면 기록이 리더보드에 남아요.
+        </p>
       </div>
+
+      <TypingPlayClient
+        signedIn={Boolean(user)}
+        initialProfile={profile}
+        initialLeaderboard={leaderboard}
+      />
     </main>
   );
 }

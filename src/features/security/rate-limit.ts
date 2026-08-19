@@ -24,7 +24,11 @@ export async function checkRateLimit(input: {
     | "admin-write"
     | "license-activate"
     | "license-checkin"
-    | "license-deactivate";
+    | "license-deactivate"
+    | "game-session-create"
+    | "game-result-submit"
+    | "game-leaderboard-read"
+    | "game-profile-write";
   subject: string;
   limit: number;
   windowSeconds?: number;
