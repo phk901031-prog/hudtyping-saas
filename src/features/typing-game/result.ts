@@ -12,8 +12,11 @@ import { getPersonalBest } from "@/features/typing-game/leaderboard";
 const IMPLAUSIBLE_STROKES_PER_MINUTE = 1500;
 const MIN_ELAPSED_MS_FLOOR = 1000;
 const MAX_REASONABLE_NET_SPEED = 3000;
-const SUSPICIOUS_NET_SPEED = 1000;
-const SUSPICIOUS_FAST_PERFECT_NET_SPEED = 700;
+// suspicious 플래그는 위 TOO_FAST 하한선(1500타/분)에 근접한, 진짜 이례적인 경우만
+// 표시한다. PlaySteno 타겟이 속기사라 600~800타대에 정확도 100%가 오히려 흔한
+// 정상 범위라, 예전엔 "700타 초과 + 정확도 100%"를 잡던 규칙이 실사용자의 정상
+// 기록을 대량으로 걸러버리는 오탐이었다 — 그 조합 규칙은 폐기.
+const SUSPICIOUS_NET_SPEED = 1400;
 
 export type SubmitOutcome =
   | {
@@ -67,10 +70,7 @@ export async function submitTypingResult(input: {
     return { ok: false, code: "INVALID_SPEED" };
   }
 
-  const suspicious =
-    score.netSpeed > SUSPICIOUS_NET_SPEED ||
-    (score.netSpeed > SUSPICIOUS_FAST_PERFECT_NET_SPEED &&
-      score.accuracyBasisPoints === 10000);
+  const suspicious = score.netSpeed > SUSPICIOUS_NET_SPEED;
 
   let saved = false;
   let prevBest: number | null = null;
