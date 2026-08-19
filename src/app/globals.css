@@ -627,6 +627,16 @@ body {
 .game-demo-caret { animation: game-caret-blink 0.85s steps(1) infinite; }
 .game-preview-progress { animation: game-preview-progress 4.5s ease-in-out infinite; }
 
+/* Play Steno 게임 시작 전 3·2·1 카운트다운 — 숫자가 튀어오르듯 나타났다 자리잡음 */
+.typing-countdown-pulse { animation: typing-countdown-pop 0.65s ease-out; }
+
+@keyframes typing-countdown-pop {
+  0% { transform: scale(0.4); opacity: 0; }
+  35% { transform: scale(1.15); opacity: 1; }
+  65% { transform: scale(1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 @keyframes game-caret-blink {
   0%, 55% { opacity: 1; }
   56%, 100% { opacity: 0; }
@@ -663,6 +673,10 @@ body {
   }
 
   .game-preview-progress { width: 62%; }
+
+  .typing-countdown-pulse {
+    animation: none;
+  }
 
   .keycap::after {
     animation: none;

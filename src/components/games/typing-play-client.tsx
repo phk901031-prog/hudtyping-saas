@@ -8,6 +8,7 @@ import type { GameProfile } from "@/infrastructure/db/schema";
 import { useTypingSession } from "./use-typing-session";
 import { useTypingInput } from "./use-typing-input";
 import { TypingModeTabs } from "./typing-mode-tabs";
+import { TypingCountdown } from "./typing-countdown";
 import { TypingPrompt } from "./typing-prompt";
 import { TypingLiveStats } from "./typing-live-stats";
 import { TypingResultPanel } from "./typing-result-panel";
@@ -29,6 +30,10 @@ export function TypingPlayClient({ signedIn, initialProfile, initialLeaderboard 
   const input = useTypingInput(targetLength);
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [now, setNow] = useState<number | null>(null);
+  // 카운트다운이 끝나기 전엔 세션(=지문)을 아예 서버에 요청하지 않는다 — 지문이 화면에
+  // 없으니 미리 복사해둘 수도 없다. 카운트다운이 끝나는 순간 start()를 호출해서
+  // 서버의 startedAt과 실제로 지문이 보이는 시점을 최대한 일치시킨다.
+  const [countingDown, setCountingDown] = useState(false);
 
   useEffect(() => {
     if (status !== "playing") return;
@@ -53,13 +58,18 @@ export function TypingPlayClient({ signedIn, initialProfile, initialLeaderboard 
 
   const handleStart = () => {
     input.reset();
+    setCountingDown(true);
+  };
+
+  const handleCountdownComplete = () => {
+    setCountingDown(false);
     void start();
   };
 
   const handleRetry = () => {
     input.reset();
     reset();
-    void start();
+    setCountingDown(true);
   };
 
   const elapsedMs = startedAt && now ? now - startedAt : 0;
@@ -72,8 +82,12 @@ export function TypingPlayClient({ signedIn, initialProfile, initialLeaderboard 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <TypingModeTabs mode={mode} onChange={setMode} disabled={status === "playing" || busy} />
-        {(status === "idle" || status === "error" || status === "loading") && (
+        <TypingModeTabs
+          mode={mode}
+          onChange={setMode}
+          disabled={countingDown || status === "playing" || busy}
+        />
+        {!countingDown && (status === "idle" || status === "error" || status === "loading") && (
           <button
             type="button"
             onClick={handleStart}
@@ -85,9 +99,11 @@ export function TypingPlayClient({ signedIn, initialProfile, initialLeaderboard 
         )}
       </div>
 
-      {error && <p className="text-sm text-danger">{error}</p>}
+      {error && !countingDown && <p className="text-sm text-danger">{error}</p>}
 
-      {(status === "playing" || status === "submitting") && session && (
+      {countingDown && <TypingCountdown onComplete={handleCountdownComplete} />}
+
+      {!countingDown && (status === "playing" || status === "submitting") && session && (
         <div className="flex flex-col gap-4">
           <TypingLiveStats
             elapsedMs={elapsedMs}
@@ -99,6 +115,8 @@ export function TypingPlayClient({ signedIn, initialProfile, initialLeaderboard 
             autoFocus
             value={input.rawValue}
             onChange={input.onChange}
+            onPaste={(event) => event.preventDefault()}
+            onDrop={(event) => event.preventDefault()}
             disabled={status === "submitting"}
             className="w-full rounded-md border border-border bg-background px-4 py-3 text-lg outline-none focus:border-accent disabled:opacity-60"
             placeholder="여기에 입력하세요"

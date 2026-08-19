@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 
 interface Props {
@@ -24,6 +25,18 @@ export function TypingResultPanel({
   onRetry,
 }: Props) {
   const diff = prevBest !== null ? netSpeed - prevBest : null;
+
+  // 스페이스/엔터로 바로 다시 하기 — 마우스로 버튼 클릭하러 손 옮길 필요 없게.
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.code === "Space" || event.code === "Enter") {
+        event.preventDefault();
+        onRetry();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onRetry]);
 
   return (
     <div className="flex flex-col gap-6 rounded-2xl border border-border bg-card px-6 py-8 text-center">
@@ -70,13 +83,16 @@ export function TypingResultPanel({
         </p>
       )}
 
-      <button
-        type="button"
-        onClick={onRetry}
-        className="mx-auto inline-flex items-center gap-2 rounded-md bg-accent px-5 py-2.5 text-sm font-bold text-white transition hover:bg-accent-hover"
-      >
-        다시 하기
-      </button>
+      <div className="flex flex-col items-center gap-2">
+        <button
+          type="button"
+          onClick={onRetry}
+          className="inline-flex items-center gap-2 rounded-md bg-accent px-5 py-2.5 text-sm font-bold text-white transition hover:bg-accent-hover"
+        >
+          다시 하기
+        </button>
+        <p className="text-xs text-muted">스페이스바나 엔터를 눌러도 바로 다시 할 수 있어요.</p>
+      </div>
     </div>
   );
 }
