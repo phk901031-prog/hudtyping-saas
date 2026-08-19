@@ -23,9 +23,9 @@ export function StenoDiffResult({ result, onRetry }: Props) {
       </div>
 
       <div className="flex flex-wrap items-center gap-4 text-xs">
-        <LegendItem swatchClassName="bg-danger/25 text-danger" label="오자 (잘못 침)" />
-        <LegendItem swatchClassName="bg-warning/25 text-warning" label="탈자 (빠뜨림)" />
-        <LegendItem swatchClassName="bg-accent/20 text-accent" label="첨자 (더 침)" />
+        <LegendItem swatchClassName="bg-danger/60" label="오자 (잘못 침)" />
+        <LegendItem swatchClassName="bg-warning/60" label="탈자 (빠뜨림)" />
+        <LegendItem swatchClassName="bg-accent/60" label="첨자 (더 침)" />
       </div>
 
       <div className="rounded-xl border border-border bg-card px-5 py-6">
@@ -53,19 +53,22 @@ function DiffSpan({ op }: { op: AlignOp }) {
       return <span>{op.original}</span>;
     case "substitute":
       return (
-        <span className="rounded bg-danger/25 text-danger" title={`입력: ${op.typed || "∅"}`}>
+        <span
+          className="rounded bg-danger/60 px-0.5 font-bold text-ink"
+          title={`입력: ${op.typed || "∅"}`}
+        >
           {op.original}
         </span>
       );
     case "delete":
       return (
-        <span className="rounded bg-warning/25 text-warning underline decoration-wavy decoration-2">
+        <span className="rounded bg-warning/60 px-0.5 font-bold text-ink underline decoration-ink/70 decoration-wavy decoration-2">
           {op.original}
         </span>
       );
     case "insert":
       return (
-        <span className="mx-0.5 rounded bg-accent/20 px-0.5 align-super text-xs font-bold text-accent">
+        <span className="mx-0.5 rounded bg-accent/60 px-1 align-super text-xs font-bold text-ink">
           {op.typed}
         </span>
       );
