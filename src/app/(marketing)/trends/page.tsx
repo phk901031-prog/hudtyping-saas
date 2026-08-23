@@ -13,7 +13,10 @@ export const metadata: Metadata = {
 };
 
 // 캐시 30분 — 검색 로그가 실시간까지 필요는 없음.
-export const revalidate = 1800;
+// 2026-08-26: Neon 컴퓨트 한도 초과로 DB가 막혀있는 동안, 이 페이지가 빌드 시점에
+// DB를 미리 조회하려다 전체 배포가 막히는 걸 우회하기 위해 요청 시점 렌더링으로 임시
+// 전환. 한도 정상화되면 되돌려도 됨(원래는 revalidate 정적 생성).
+export const dynamic = "force-dynamic";
 
 export default async function TrendsPage() {
   const { weekly, monthly } = await fetchTrendWindows();
