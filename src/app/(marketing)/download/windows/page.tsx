@@ -41,7 +41,7 @@ export default function WindowsDownloadPage() {
             설치 파일 다시 받기
           </a>
           <Link
-            href="/work/natmalgi/install-help"
+            href="/install-help"
             className="inline-flex items-center justify-center rounded-md border border-border px-5 py-3 text-sm font-bold transition hover:bg-muted-bg"
           >
             자세한 설치 도움말
@@ -114,7 +114,7 @@ export default function WindowsDownloadPage() {
               </p>
               <div className="flex flex-wrap gap-3 pt-2">
                 <Link
-                  href="/work/natmalgi/install-help"
+                  href="/install-help"
                   className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-4 py-2 text-sm font-bold transition hover:bg-muted-bg"
                 >
                   자세한 설치 도움말 →

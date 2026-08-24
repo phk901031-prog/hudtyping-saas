@@ -25,7 +25,7 @@ export default function SignUpPage() {
           </div>
 
           <Link
-            href="/work/natmalgi/help"
+            href="/help"
             className="mt-6 text-sm font-bold text-accent transition hover:text-accent-hover"
           >
             사용 가이드 먼저 보기

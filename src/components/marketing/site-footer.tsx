@@ -5,10 +5,10 @@ import { WINDOWS_RELEASE } from "@/config/release";
 import { OPENCHAT } from "@/config/community";
 
 const FOOTER_LINKS = [
-  { href: "/work/natmalgi/download/windows", label: "Windows 다운로드" },
-  { href: "/work/natmalgi/help", label: "사용 가이드" },
-  { href: "/work/natmalgi/updates", label: "업데이트 로그" },
-  { href: "/work/natmalgi/install-help", label: "설치 도움말" },
+  { href: "/download/windows", label: "Windows 다운로드" },
+  { href: "/help", label: "사용 가이드" },
+  { href: "/updates", label: "업데이트 로그" },
+  { href: "/install-help", label: "설치 도움말" },
   { href: "/terms", label: "이용약관" },
   { href: "/privacy", label: "개인정보 처리방침" },
 ] as const;

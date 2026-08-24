@@ -6,7 +6,7 @@ import { NATMALGI_ONLINE } from "@/config/product";
 export const metadata: Metadata = {
   title: "사용 가이드 — 낱말지기 온라인",
   description: "낱말지기 온라인 가입, 설치, 연결, 커서 앞 검색과 예문 창 사용 방법.",
-  alternates: { canonical: "/work/natmalgi/help" },
+  alternates: { canonical: "/help" },
 };
 
 export default function HelpPage() {
@@ -69,7 +69,7 @@ export default function HelpPage() {
           <li>메인 화면의 Windows 앱 다운로드 버튼으로 설치 파일을 받습니다.</li>
           <li>설치 파일을 실행합니다.</li>
           <li>Windows Defender 경고가 나오면 ‘추가 정보’를 누른 뒤 게시자와 파일 출처를 확인하고 실행합니다.</li>
-          <li>백신이 차단하면 <Link href="/work/natmalgi/install-help" className="text-accent underline">설치 문제 해결</Link>을 확인합니다.</li>
+          <li>백신이 차단하면 <Link href="/install-help" className="text-accent underline">설치 문제 해결</Link>을 확인합니다.</li>
         </ol>
       </section>
 

@@ -12,11 +12,12 @@ export const metadata: Metadata = {
   alternates: { canonical: "/trends" },
 };
 
-// 캐시 30분 — 검색 로그가 실시간까지 필요는 없음.
-// 2026-08-26: Neon 컴퓨트 한도 초과로 DB가 막혀있는 동안, 이 페이지가 빌드 시점에
-// DB를 미리 조회하려다 전체 배포가 막히는 걸 우회하기 위해 요청 시점 렌더링으로 임시
-// 전환. 한도 정상화되면 되돌려도 됨(원래는 revalidate 정적 생성).
-export const dynamic = "force-dynamic";
+// 캐시 30분 — 검색 로그가 실시간까지 필요는 없음. 로그인 없이 볼 수 있는 공개
+// 페이지라 캐시가 특히 중요하다 — revalidate 없이 매번 DB를 조회하면 누가 이
+// 페이지를 반복 새로고침하는 것만으로 컴퓨트 비용이 쌓인다(2026-08-26 Neon
+// 한도 초과 사고 이후 재확인된 원칙). 정적 생성 + 30분 재검증으로, 그 시간
+// 안에는 몇 번을 접속해도 DB를 안 건드리고 캐시된 페이지만 서빙한다.
+export const revalidate = 1800;
 
 export default async function TrendsPage() {
   const { weekly, monthly } = await fetchTrendWindows();

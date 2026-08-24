@@ -70,7 +70,7 @@ export default function ApiKeysPage() {
             {loading ? "발급 중" : "연결 코드 발급"}
           </button>
           <Link
-            href="/work/natmalgi/help"
+            href="/help"
             className="inline-flex items-center justify-center rounded-lg border border-border px-5 py-3 text-sm font-bold transition hover:bg-muted-bg"
           >
             사용 가이드 보기
