@@ -2,8 +2,13 @@ import { getOrCreateCurrentUser } from "@/features/users/service";
 import { checkRateLimit, getRequestSubject } from "@/features/security/rate-limit";
 import { createTypingSession } from "@/features/typing-game/session";
 import { isTypingMode } from "@/features/typing-game/content";
+import { PLAY_STENO_MAINTENANCE } from "@/config/maintenance";
 
 export async function POST(req: Request) {
+  if (PLAY_STENO_MAINTENANCE) {
+    return Response.json({ error: "점검 중입니다.", code: "MAINTENANCE" }, { status: 503 });
+  }
+
   // 게스트도 플레이 가능 — 낱말지기 승인 여부와 무관 (§4.9).
   const user = await getOrCreateCurrentUser();
 

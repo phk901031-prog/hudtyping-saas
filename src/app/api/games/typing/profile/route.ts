@@ -2,8 +2,13 @@ import { getOrCreateCurrentUser } from "@/features/users/service";
 import { checkRateLimit } from "@/features/security/rate-limit";
 import { createOrGetGameProfile } from "@/features/typing-game/profile";
 import { isTypingBorderStyle, isTypingNameColor } from "@/features/typing-game/types";
+import { PLAY_STENO_MAINTENANCE } from "@/config/maintenance";
 
 export async function POST(req: Request) {
+  if (PLAY_STENO_MAINTENANCE) {
+    return Response.json({ error: "점검 중입니다.", code: "MAINTENANCE" }, { status: 503 });
+  }
+
   const user = await getOrCreateCurrentUser();
   if (!user) {
     return Response.json({ error: "로그인이 필요합니다." }, { status: 401 });

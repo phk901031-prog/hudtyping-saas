@@ -1,10 +1,15 @@
 import { checkRateLimit, getRequestSubject } from "@/features/security/rate-limit";
 import { fetchLeaderboard, type LeaderboardPeriod } from "@/features/typing-game/leaderboard";
 import { isTypingMode } from "@/features/typing-game/content";
+import { PLAY_STENO_MAINTENANCE } from "@/config/maintenance";
 
 const PERIODS: LeaderboardPeriod[] = ["daily", "weekly", "monthly", "all"];
 
 export async function GET(req: Request) {
+  if (PLAY_STENO_MAINTENANCE) {
+    return Response.json({ error: "점검 중입니다.", code: "MAINTENANCE", rows: [] }, { status: 503 });
+  }
+
   const rateLimit = await checkRateLimit({
     scope: "game-leaderboard-read",
     subject: getRequestSubject(req),

@@ -38,7 +38,8 @@ type Tone = "accent" | "signal" | "success";
 
 interface CategoryItem {
   label: string;
-  href?: string; // 없으면 "준비 중"
+  href?: string; // 없으면 note 문구로 표시(기본 "준비 중")
+  note?: string;
 }
 
 interface Category {
@@ -72,8 +73,8 @@ const CATEGORIES: Category[] = [
     audience: "쉬는 시간에 가볍게, 타자 실력을 겨루는 놀이",
     Mockup: PlayStenoMockup,
     items: [
-      { label: "단문 타자전", href: "/play/typing" },
-      { label: "장문 타자전", href: "/play/typing" },
+      { label: "단문 타자전", note: "점검 중" },
+      { label: "장문 타자전", note: "점검 중" },
       { label: "산성비" },
     ],
   },
@@ -201,7 +202,7 @@ function CategoryBand({ category }: { category: Category }) {
                 className="inline-flex items-center gap-2 rounded-xl border border-dashed border-border px-5 py-3 text-base font-bold text-muted"
               >
                 {item.label}
-                <span className="text-xs font-normal">준비 중</span>
+                <span className="text-xs font-normal">{item.note ?? "준비 중"}</span>
               </span>
             )
           )}

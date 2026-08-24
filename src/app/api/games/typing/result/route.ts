@@ -1,6 +1,7 @@
 import { getOrCreateCurrentUser } from "@/features/users/service";
 import { checkRateLimit, getRequestSubject } from "@/features/security/rate-limit";
 import { submitTypingResult, type SubmitOutcome } from "@/features/typing-game/result";
+import { PLAY_STENO_MAINTENANCE } from "@/config/maintenance";
 
 const SESSION_ID_PATTERN = /^[0-9a-f-]{36}$/i;
 
@@ -12,6 +13,10 @@ const ERROR_MESSAGES: Record<Extract<SubmitOutcome, { ok: false }>["code"], stri
 };
 
 export async function POST(req: Request) {
+  if (PLAY_STENO_MAINTENANCE) {
+    return Response.json({ error: "점검 중입니다.", code: "MAINTENANCE" }, { status: 503 });
+  }
+
   const user = await getOrCreateCurrentUser();
 
   const rateLimit = await checkRateLimit({
