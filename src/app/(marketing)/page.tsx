@@ -13,8 +13,9 @@ import {
   Command,
   KeyRound,
   LineChart,
+  History,
+  Palette,
   Sparkles,
-  Zap,
   type LucideIcon,
 } from "lucide-react";
 import { auth } from "@/infrastructure/clerk";
@@ -237,7 +238,7 @@ export default async function NatmalgiPage() {
           <FeatureCard
             Icon={Command}
             title="커서 앞 자동 검색"
-            body="F3 한 번으로 커서 앞 어절을 잡아 검색. 연속으로 누르면 앞 단어까지 확장."
+            body="F3 한 번으로 커서 앞 어절을 안전하게 캡처. 문장부호를 정리하고 클립보드 내용은 원래대로 복원."
           />
           <FeatureCard
             Icon={BookOpen}
@@ -245,9 +246,19 @@ export default async function NatmalgiPage() {
             body="뜻풀이를 클릭하면 별도 창에 예문. 창 위·아래·좌·우 자유 부착."
           />
           <FeatureCard
-            Icon={Zap}
-            title="즉시 재검색"
-            body="자주 찾은 결과는 캐시를 활용해 반복 검색의 대기 시간을 줄입니다."
+            Icon={Sparkles}
+            title="글꼴을 지키는 자동수정"
+            body="확인된 사전 표기로 문서의 단어를 바로 수정. 붙여넣기 대신 직접 입력해 작업 중인 글꼴을 이어받도록 처리."
+          />
+          <FeatureCard
+            Icon={Palette}
+            title="내 화면에 맞춘 HUD"
+            body="강조색과 HUD 배경색, 투명도와 글자 크기를 조절하고 필요할 때 설정과 창 위치를 초기화."
+          />
+          <FeatureCard
+            Icon={History}
+            title="최근 검색과 키보드 탐색"
+            body="최근 검색어를 다시 선택하고 Ctrl+L로 검색창 이동, Esc로 입력과 결과를 빠르게 정리."
           />
           <FeatureCard
             Icon={BellRing}
