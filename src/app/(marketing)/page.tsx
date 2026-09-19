@@ -4,14 +4,15 @@
 // 있던 페이지를 그대로 홈으로 옮긴 것 — 히어로 · 시작하기 · 작동방식 · 특징 ·
 // 지원 · 업데이트 · FAQ.
 //
-// 2026-09-19: "AI 스타트업 느낌" 제거 재설계. 남색 풀블리드 배너 3개(히어로·작동방식·
-// 최종 CTA)를 전부 크림 배경으로 바꾸고, 어두운 톤은 실제 HUD 화면을 보여주는
-// 데모 조각에만 남겼다. 아이콘 배지 기능 그리드는 구분선 기반 텍스트 목록으로,
-// FAQ 아코디언은 항상 펼쳐진 정적 Q&A 블록으로 바꿨다.
+// 2026-09-19: "AI 스타트업 느낌" 제거 재설계 2단계. 1단계(색 토큰 교체)로도
+// "여전히 AI스럽다"는 피드백을 받아, 구조 자체를 바꿨다 — eyebrow 라벨·가운데
+// 정렬 섹션 인트로·배경색 번갈아 칠하기·알약 배지·아이콘 사각 배지·버튼 화살표를
+// 전부 제거하고, max-w-3xl 한 폭으로 통일해 하나의 연속된 문서처럼 위에서
+// 아래로 읽히게 재구성했다. 참고한 에디토리얼 튜토리얼 디자인처럼 왼쪽 정렬
+// 제목 + 본문 흐름 + 필요한 곳에만 실제 화면 스크린샷을 끼워 넣는 방식.
 
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowRight, Sparkles } from "lucide-react";
 import { auth } from "@/infrastructure/clerk";
 import { WINDOWS_RELEASE } from "@/config/release";
 import { NATMALGI_ONLINE } from "@/config/product";
@@ -48,83 +49,69 @@ export default async function NatmalgiPage() {
   const latestRelease = releases[0] ?? null;
 
   return (
-    <main className="flex flex-1 flex-col bg-background text-foreground">
+    <main className="mx-auto flex w-full max-w-3xl flex-col bg-background px-5 py-16 text-foreground sm:px-8 sm:py-20">
       {/* ─────────────  1. HERO  ───────────── */}
       <section id="product" className="scroll-mt-28">
-        <div className="mx-auto grid w-full max-w-7xl gap-12 px-5 pb-20 pt-14 sm:px-8 sm:pt-16 xl:min-h-[680px] xl:grid-cols-[minmax(0,1.05fr)_minmax(520px,0.95fr)] xl:items-center xl:gap-14 xl:py-20">
-          <div className="flex max-w-3xl flex-col justify-center gap-7 xl:max-w-none">
-            <div className="flex flex-wrap items-center gap-2 text-xs">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-success/40 bg-success/10 px-3 py-1 font-bold text-success">
-                <span className="status-led" />
-                무료 베타 운영 중
-              </span>
-              <span className="text-muted">·</span>
-              <span className="font-mono text-muted">
-                Windows v{WINDOWS_RELEASE.version}
-              </span>
-            </div>
+        <p className="flex items-center gap-2 text-sm text-muted">
+          <span className="status-led" />
+          무료 베타 운영 중 · Windows v{WINDOWS_RELEASE.version}
+        </p>
 
-            <h1 className="ko-heading font-display text-4xl font-bold leading-[1.12] tracking-tight sm:text-5xl xl:text-[3.5rem]">
-              <span className="block">작업 흐름은 그대로,</span>
-              <span className="mt-1 block text-accent">필요한 단어는 바로 확인하세요.</span>
-            </h1>
+        <h1 className="ko-heading font-display mt-4 text-4xl font-bold leading-[1.15] tracking-tight sm:text-5xl">
+          작업 흐름은 그대로,{" "}
+          <span className="text-accent">필요한 단어는 바로 확인하세요.</span>
+        </h1>
 
-            <p className="ko-copy max-w-xl text-lg leading-8 text-foreground/85">
-              커서 앞 단어의 뜻풀이와 예문을 작은 HUD에서 확인합니다.
-            </p>
+        <p className="ko-copy mt-5 max-w-xl text-lg leading-8 text-foreground/85">
+          커서 앞 단어의 뜻풀이와 예문을 작은 HUD에서 확인합니다.
+        </p>
 
-            <p className="ko-copy max-w-xl text-sm leading-7 text-muted">
-              한글 문서에서 벗어나지 않고 지정 키를 누르면 우리말샘 검색 결과가 표시됩니다.
-              연속으로 누르면 앞 어절까지 검색 범위를 넓힐 수 있습니다.
-            </p>
+        <p className="ko-copy mt-3 max-w-xl text-[15px] leading-7 text-muted">
+          한글 문서에서 벗어나지 않고 지정 키를 누르면 우리말샘 검색 결과가 표시됩니다.
+          연속으로 누르면 앞 어절까지 검색 범위를 넓힐 수 있습니다.{" "}
+          {NATMALGI_ONLINE.supportedEnvironment} · 승인 계정 전용 · 월 기본{" "}
+          {NATMALGI_ONLINE.monthlySearchLimit}회.
+        </p>
 
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <a
-                href={DOWNLOAD_URL}
-                className="inline-flex items-center justify-center gap-2 rounded-md bg-accent px-7 py-4 text-base font-bold text-white transition hover:bg-accent-hover"
-              >
-                낱말지기 다운로드
-                <span aria-hidden="true">↓</span>
-              </a>
-              {!isSignedIn && (
-                <Link
-                  href="/sign-up"
-                  className="inline-flex items-center justify-center rounded-md border border-border bg-card px-7 py-4 text-base font-bold text-foreground transition hover:bg-panel"
-                >
-                  무료로 시작하기
-                </Link>
-              )}
-              {isSignedIn && (
-                <Link
-                  href="/api-keys"
-                  className="inline-flex items-center justify-center rounded-md border border-border bg-card px-7 py-4 text-base font-bold text-foreground transition hover:bg-panel"
-                >
-                  연결 코드 발급
-                </Link>
-              )}
-            </div>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+          <a
+            href={DOWNLOAD_URL}
+            className="inline-flex items-center justify-center rounded-md bg-accent px-6 py-3 text-sm font-bold text-white transition hover:bg-accent-hover"
+          >
+            낱말지기 다운로드
+          </a>
+          {!isSignedIn && (
+            <Link
+              href="/sign-up"
+              className="inline-flex items-center justify-center rounded-md border border-border px-6 py-3 text-sm font-bold text-foreground transition hover:bg-panel"
+            >
+              무료로 시작하기
+            </Link>
+          )}
+          {isSignedIn && (
+            <Link
+              href="/api-keys"
+              className="inline-flex items-center justify-center rounded-md border border-border px-6 py-3 text-sm font-bold text-foreground transition hover:bg-panel"
+            >
+              연결 코드 발급
+            </Link>
+          )}
+        </div>
 
-            <p className="ko-copy text-sm text-muted">
-              {NATMALGI_ONLINE.supportedEnvironment} · 승인 계정 전용 · 월 기본 {NATMALGI_ONLINE.monthlySearchLimit}회
-            </p>
-          </div>
-
-          <div className="mx-auto w-full max-w-2xl xl:max-w-none">
-            <NatmalgiDemo />
-          </div>
+        <div className="mt-10">
+          <NatmalgiDemo />
         </div>
       </section>
 
       {/* ─────────────  2. GETTING STARTED  ───────────── */}
-      <section id="start" className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 lg:py-24">
-        <SectionIntro
-          eyebrow="시작하기"
-          title="3단계로 시작합니다"
-          description="가입 승인부터 첫 검색까지 순서대로 안내합니다."
-        />
+      <section id="start" className="mt-16 border-t border-border pt-16">
+        <h2 className="ko-heading font-display text-2xl sm:text-3xl">3단계로 시작합니다</h2>
+        <p className="ko-copy mt-2 text-[15px] leading-7 text-muted">
+          가입 승인부터 첫 검색까지 순서대로 안내합니다.
+        </p>
 
-        <div className="mt-12 grid gap-10 lg:grid-cols-3 lg:divide-x lg:divide-border">
-          <StartStepCard
+        <div className="mt-8 flex flex-col divide-y divide-border">
+          <StartStep
             number="01"
             title="가입 승인"
             body="이메일과 실명으로 가입하면 관리자가 승인합니다."
@@ -134,13 +121,13 @@ export default async function NatmalgiPage() {
                 : { label: "가입 승인 요청", href: "/sign-up" }
             }
           />
-          <StartStepCard
+          <StartStep
             number="02"
             title="Windows 앱 다운로드"
             body="최신 설치 파일을 받아 실행합니다."
             cta={{ label: "다운로드", href: DOWNLOAD_URL }}
           />
-          <StartStepCard
+          <StartStep
             number="03"
             title="연결 코드로 앱 연결"
             body="대시보드에서 10분짜리 코드를 받아 앱 설정에 붙여넣으면 끝."
@@ -153,76 +140,62 @@ export default async function NatmalgiPage() {
       </section>
 
       {/* ─────────────  3. HOW IT WORKS  ───────────── */}
-      <section className="border-y border-border bg-panel">
-        <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 lg:py-24">
-          <SectionIntro
-            eyebrow="작동 방식"
-            title="한글 문서에서, 키 한 번."
-            description="복사할 수 있는 커서 앞 텍스트를 가져와 검색하고, 결과를 작업 화면 위 HUD에 표시합니다."
-          />
+      <section className="mt-16 border-t border-border pt-16">
+        <h2 className="ko-heading font-display text-2xl sm:text-3xl">한글 문서에서, 키 한 번.</h2>
+        <p className="ko-copy mt-2 text-[15px] leading-7 text-muted">
+          복사할 수 있는 커서 앞 텍스트를 가져와 검색하고, 결과를 작업 화면 위 HUD에 표시합니다.
+        </p>
 
-          <div className="mt-12 grid gap-8 lg:grid-cols-3">
-            <HowStep
-              index="1"
-              title="커서 두기"
-              caption="검색할 단어 바로 뒤에 커서를 두고"
-            >
-              <div className="rounded-lg border border-border bg-card p-4">
-                <p className="text-xs font-bold uppercase tracking-wider text-muted">
-                  HWP
-                </p>
-                <p className="mt-3 font-mono text-sm text-foreground">
-                  회의 안건 정리
-                  <span className="typing-caret ml-0.5 inline-block h-4 w-[2px] translate-y-0.5 bg-accent" />
-                </p>
+        <div className="mt-8 flex flex-col gap-8">
+          <HowStep index="1" title="커서 두기" caption="검색할 단어 바로 뒤에 커서를 두고">
+            <div className="rounded-lg border border-border bg-card p-4">
+              <p className="text-xs font-bold uppercase tracking-wider text-muted">HWP</p>
+              <p className="mt-3 font-mono text-sm text-foreground">
+                회의 안건 정리
+                <span className="typing-caret ml-0.5 inline-block h-4 w-[2px] translate-y-0.5 bg-accent" />
+              </p>
+            </div>
+          </HowStep>
+          <HowStep
+            index="2"
+            title="지정 키 한 번"
+            caption="F3 · Insert · Pause · F4 등 원하는 키를 설정에서 자유롭게 지정"
+          >
+            <div className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-card p-4">
+              <KeyCap>F3</KeyCap>
+              <span className="text-xs text-muted">또는</span>
+              <KeyCap>Insert</KeyCap>
+              <span className="text-xs text-muted">또는</span>
+              <KeyCap dim>내가 정한 키</KeyCap>
+            </div>
+          </HowStep>
+          <HowStep index="3" title="HUD로 결과 확인" caption="작은 창에 뜻·품사·예문이 즉시">
+            <div className="max-w-xs rounded-lg border border-white/12 bg-[#041012] p-3">
+              <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                <span className="text-[10px] font-bold text-white/62">낱말지기</span>
+                <span className="rounded bg-accent/22 px-1.5 py-0.5 text-[9px] font-bold text-[#f3cbb8]">
+                  정리
+                </span>
               </div>
-            </HowStep>
-            <HowStep
-              index="2"
-              title="지정 키 한 번"
-              caption="F3 · Insert · Pause · F4 등 원하는 키를 설정에서 자유롭게 지정"
-            >
-              <div className="flex flex-wrap items-center justify-center gap-2 rounded-lg border border-border bg-card py-6">
-                <KeyCap>F3</KeyCap>
-                <span className="text-xs text-muted">또는</span>
-                <KeyCap>Insert</KeyCap>
-                <span className="text-xs text-muted">또는</span>
-                <KeyCap dim>내가 정한 키</KeyCap>
-              </div>
-            </HowStep>
-            <HowStep
-              index="3"
-              title="HUD로 결과 확인"
-              caption="작은 창에 뜻·품사·예문이 즉시"
-            >
-              <div className="rounded-lg border border-white/12 bg-[#041012] p-3">
-                <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                  <span className="text-[10px] font-bold text-white/62">
-                    낱말지기
-                  </span>
-                  <span className="rounded bg-accent/22 px-1.5 py-0.5 text-[9px] font-bold text-[#f3cbb8]">
-                    정리
-                  </span>
-                </div>
-                <p className="mt-2 text-sm font-bold text-white">정리</p>
-                <p className="mt-1 text-xs leading-5 text-white/70">
-                  일정한 기준에 따라 내용을 가지런히 바로잡음.
-                </p>
-              </div>
-            </HowStep>
-          </div>
+              <p className="mt-2 text-sm font-bold text-white">정리</p>
+              <p className="mt-1 text-xs leading-5 text-white/70">
+                일정한 기준에 따라 내용을 가지런히 바로잡음.
+              </p>
+            </div>
+          </HowStep>
         </div>
       </section>
 
       {/* ─────────────  4. FEATURES  ───────────── */}
-      <section id="features" className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 lg:py-24">
-        <SectionIntro
-          eyebrow="주요 기능"
-          title="기록 흐름을 지키는 실용적인 기능"
-          description="화면을 전환하거나 검색어를 다시 입력하는 반복을 줄였습니다."
-        />
+      <section id="features" className="mt-16 border-t border-border pt-16">
+        <h2 className="ko-heading font-display text-2xl sm:text-3xl">
+          기록 흐름을 지키는 실용적인 기능
+        </h2>
+        <p className="ko-copy mt-2 text-[15px] leading-7 text-muted">
+          화면을 전환하거나 검색어를 다시 입력하는 반복을 줄였습니다.
+        </p>
 
-        <div className="mt-12 grid gap-x-8 gap-y-8 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-8 grid gap-x-8 gap-y-8 sm:grid-cols-2">
           <FeatureCard
             title="커서 앞 자동 검색"
             body="F3 한 번으로 커서 앞 어절을 안전하게 캡처. 문장부호를 정리하고 클립보드 내용은 원래대로 복원."
@@ -259,52 +232,41 @@ export default async function NatmalgiPage() {
       </section>
 
       {/* ─────────────  5. SUPPORT  ───────────── */}
-      <section id="support" className="border-y border-border bg-panel">
-        <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 lg:py-24">
-          <OpenChatCard />
-        </div>
+      <section id="support" className="mt-16 border-t border-border pt-16">
+        <OpenChatCard />
       </section>
 
       {/* ─────────────  5.5 LIVE — Updates  ───────────── */}
-      <section className="mx-auto w-full max-w-4xl px-5 py-20 sm:px-8 lg:py-24">
-        <SectionIntro
-          eyebrow="최근 소식"
-          title="최근 업데이트"
-          description="새 버전과 개선 사항을 확인하세요."
-        />
+      <section className="mt-16 border-t border-border pt-16">
+        <h2 className="ko-heading font-display text-2xl sm:text-3xl">최근 업데이트</h2>
+        <p className="ko-copy mt-2 text-[15px] leading-7 text-muted">
+          새 버전과 개선 사항을 확인하세요.
+        </p>
 
-        <div className="mt-12">
+        <div className="mt-8">
           <LatestReleaseCard release={latestRelease} />
         </div>
       </section>
 
-      {/* ─────────────  5.8 FINAL CTA  ───────────── */}
-      <section className="border-t border-border bg-panel">
-        <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-6 px-5 py-20 text-center sm:px-8 lg:py-24">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent">
-            낱말지기 온라인
-          </p>
-          <h2 className="ko-heading font-display max-w-3xl text-3xl leading-tight sm:text-4xl">
-            필요한 순간 바로 확인하는 작업 환경을 만들어보세요.
-          </h2>
-          <p className="ko-copy max-w-xl text-lg leading-8 text-muted">
-            무료 베타 기간에는 승인된 계정으로 월 {NATMALGI_ONLINE.monthlySearchLimit}회까지 이용할 수 있습니다.
-          </p>
-          <a
-            href={DOWNLOAD_URL}
-            className="inline-flex items-center justify-center gap-2 rounded-md bg-accent px-8 py-4 text-base font-bold text-white transition hover:bg-accent-hover"
-          >
-            낱말지기 다운로드
-            <span aria-hidden="true">↓</span>
-          </a>
-        </div>
+      {/* ─────────────  5.8 CLOSING NOTE  ───────────── */}
+      <section className="mt-16 border-t border-border pt-16">
+        <p className="ko-copy text-[15px] leading-7 text-muted">
+          무료 베타 기간에는 승인된 계정으로 월 {NATMALGI_ONLINE.monthlySearchLimit}회까지
+          이용할 수 있습니다. 필요한 순간 바로 확인하는 작업 환경, 지금 시작해보세요.
+        </p>
+        <a
+          href={DOWNLOAD_URL}
+          className="mt-4 inline-flex items-center justify-center rounded-md bg-accent px-6 py-3 text-sm font-bold text-white transition hover:bg-accent-hover"
+        >
+          낱말지기 다운로드
+        </a>
       </section>
 
       {/* ─────────────  6. FAQ  ───────────── */}
-      <section className="mx-auto w-full max-w-4xl px-5 py-20 sm:px-8 lg:py-24">
-        <SectionIntro eyebrow="FAQ" title="자주 묻는 질문" />
+      <section className="mt-16 border-t border-border pt-16">
+        <h2 className="ko-heading font-display text-2xl sm:text-3xl">자주 묻는 질문</h2>
 
-        <div className="mt-12 flex flex-col divide-y divide-border">
+        <div className="mt-8 flex flex-col divide-y divide-border">
           <FaqItem question="어떤 편집기에서 되나요?">
             한글(HWP), MS Word, 텍스트 편집기처럼 커서 앞 텍스트를 복사할 수 있는
             Windows 프로그램에서 사용할 수 있습니다. 프로그램의 보안 설정이나 입력 방식에 따라
@@ -335,33 +297,7 @@ export default async function NatmalgiPage() {
 // SECTION HELPERS
 // ═════════════════════════════════════════════════════════════════
 
-function SectionIntro({
-  eyebrow,
-  title,
-  description,
-}: {
-  eyebrow: string;
-  title: string;
-  description?: React.ReactNode;
-}) {
-  return (
-    <div className="flex flex-col items-center gap-4 text-center">
-      <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent">
-        {eyebrow}
-      </p>
-      <h2 className="ko-heading font-display max-w-3xl text-3xl leading-tight sm:text-4xl lg:text-[2.75rem]">
-        {title}
-      </h2>
-      {description && (
-        <p className="ko-copy max-w-2xl text-base leading-7 text-muted sm:text-lg sm:leading-8">
-          {description}
-        </p>
-      )}
-    </div>
-  );
-}
-
-function StartStepCard({
+function StartStep({
   number,
   title,
   body,
@@ -373,22 +309,19 @@ function StartStepCard({
   cta: { label: string; href: string };
 }) {
   return (
-    <article className="flex flex-col gap-5 lg:px-8 lg:first:pl-0 lg:last:pr-0">
-      <span className="font-mono text-4xl font-bold text-muted">
+    <article className="flex flex-col gap-2 py-6 first:pt-0 last:pb-0 sm:flex-row sm:items-baseline sm:gap-6">
+      <span className="font-mono text-sm font-bold text-muted sm:w-8 sm:shrink-0">
         {number}
       </span>
-      <div className="flex flex-col gap-3">
-        <h3 className="ko-heading font-display text-2xl leading-tight">{title}</h3>
-        <p className="ko-copy text-[15px] leading-7 text-muted">
-          {body}
-        </p>
+      <div className="flex flex-1 flex-col gap-1.5">
+        <h3 className="ko-heading font-display text-lg leading-tight">{title}</h3>
+        <p className="ko-copy text-[15px] leading-7 text-muted">{body}</p>
       </div>
       <Link
         href={cta.href}
-        className="mt-auto inline-flex items-center gap-1.5 text-sm font-bold text-accent transition hover:text-accent-hover"
+        className="text-sm font-bold text-accent transition hover:text-accent-hover sm:shrink-0"
       >
-        {cta.label}
-        <span aria-hidden="true">→</span>
+        {cta.label} →
       </Link>
     </article>
   );
@@ -420,12 +353,10 @@ function HowStep({
   children: React.ReactNode;
 }) {
   return (
-    <article className="flex flex-col gap-4">
+    <article className="flex flex-col gap-3">
       <div className="flex items-baseline gap-3">
-        <span className="font-mono text-lg font-bold text-accent">
-          {index}
-        </span>
-        <h3 className="ko-heading text-lg font-bold text-foreground">{title}</h3>
+        <span className="font-mono text-sm font-bold text-muted">{index}</span>
+        <h3 className="ko-heading text-base font-bold text-foreground">{title}</h3>
       </div>
       {children}
       <p className="ko-copy text-sm leading-6 text-muted">{caption}</p>
@@ -450,53 +381,44 @@ function FeatureCard({
 
 function OpenChatCard() {
   return (
-    <div className="grid gap-6 rounded-xl border border-border bg-card p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center">
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-full bg-accent/12 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-accent">
-            공지 · 지원
-          </span>
-          <span className="text-xs font-medium text-muted">관리자 공지 채널</span>
-        </div>
-        <h2 className="ko-heading font-display max-w-2xl text-2xl leading-snug sm:text-3xl">
-          업데이트 소식과 문의는 카카오톡 오픈톡방에서.
-        </h2>
-        <p className="ko-copy max-w-3xl text-[15px] leading-7 text-muted">
-          업데이트 · 사용량 문의 · 기능 요청 · 가입 승인 요청을 오픈톡방에서 받습니다.
-          현재는 회원 커뮤니티가 아닌 관리자 공지·지원 채널로 운영합니다.
-        </p>
-        <div className="flex flex-wrap gap-3">
-          <a
-            href={OPENCHAT.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-5 py-3 text-sm font-bold text-white transition hover:bg-accent-hover"
-          >
-            공지·문의 채널 열기
-            <span aria-hidden="true">→</span>
-          </a>
-          <a
-            href={OPENCHAT.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center break-all rounded-lg border border-border bg-panel px-4 py-3 font-mono text-xs font-medium text-muted transition hover:text-foreground sm:text-sm"
-          >
-            open.kakao.com/o/pmT0WGGi
-          </a>
-        </div>
+    <div>
+      <h2 className="ko-heading font-display text-2xl sm:text-3xl">
+        업데이트 소식과 문의는 카카오톡 오픈톡방에서.
+      </h2>
+      <p className="ko-copy mt-2 max-w-xl text-[15px] leading-7 text-muted">
+        업데이트 · 사용량 문의 · 기능 요청 · 가입 승인 요청을 오픈톡방에서 받습니다.
+        현재는 회원 커뮤니티가 아닌 관리자 공지·지원 채널로 운영합니다.
+      </p>
+      <div className="mt-5 flex flex-wrap items-center gap-4">
+        <a
+          href={OPENCHAT.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center justify-center rounded-md bg-accent px-5 py-3 text-sm font-bold text-white transition hover:bg-accent-hover"
+        >
+          공지·문의 채널 열기
+        </a>
+        <a
+          href={OPENCHAT.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-mono text-sm text-muted underline transition hover:text-foreground"
+        >
+          open.kakao.com/o/pmT0WGGi
+        </a>
       </div>
-      <div className="flex flex-col items-center gap-2">
-        <div className="rounded-xl border border-border bg-background p-3">
+      <div className="mt-6 flex items-center gap-3">
+        <div className="rounded-lg border border-border bg-card p-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={OPENCHAT.qrSrc}
             alt="카카오톡 오픈톡방 QR 코드"
-            width={168}
-            height={168}
-            className="block h-[168px] w-[168px]"
+            width={120}
+            height={120}
+            className="block h-[120px] w-[120px]"
           />
         </div>
-        <p className="text-[11px] font-medium text-muted">QR 스캔으로 바로 입장</p>
+        <p className="text-xs text-muted">QR 스캔으로 바로 입장</p>
       </div>
     </div>
   );
@@ -508,47 +430,31 @@ function LatestReleaseCard({
   release: Awaited<ReturnType<typeof fetchReleases>>[number] | null;
 }) {
   return (
-    <article className="flex flex-col rounded-2xl border border-border bg-card p-8">
-      <div className="mb-4 flex items-center gap-2">
-        <span
-          aria-hidden="true"
-          className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-accent-soft text-accent"
-        >
-          <Sparkles size={16} strokeWidth={2.2} />
-        </span>
-        <span className="text-xs font-bold tracking-[0.14em] text-accent">
-          최신 업데이트
-        </span>
-      </div>
+    <article>
       {release ? (
         <>
-          <h3 className="ko-heading font-display text-2xl leading-tight">{release.title}</h3>
-          <p className="mt-2 font-mono text-xs text-muted">
+          <h3 className="ko-heading font-display text-xl leading-tight">{release.title}</h3>
+          <p className="mt-1 font-mono text-xs text-muted">
             {formatShortDate(release.publishedAt)} · {release.tag}
           </p>
-          <p className="ko-copy mt-4 line-clamp-4 text-[15px] leading-7 text-muted">
+          <p className="ko-copy mt-3 line-clamp-4 text-[15px] leading-7 text-muted">
             {stripMarkdown(release.bodyMarkdown)}
           </p>
         </>
       ) : (
         <>
-          <h3 className="ko-heading font-display text-2xl leading-tight">
+          <h3 className="ko-heading font-display text-xl leading-tight">
             곧 새 소식을 만나보세요
           </h3>
-          <p className="mt-2 text-[15px] text-muted">
-            아직 표시할 릴리스가 없습니다.
-          </p>
+          <p className="mt-2 text-[15px] text-muted">아직 표시할 릴리스가 없습니다.</p>
         </>
       )}
-      <div className="mt-auto pt-6">
-        <Link
-          href="/updates"
-          className="inline-flex items-center gap-1.5 text-sm font-bold text-accent transition hover:opacity-80"
-        >
-          업데이트 로그 전체 보기
-          <ArrowRight size={14} strokeWidth={2.4} />
-        </Link>
-      </div>
+      <Link
+        href="/updates"
+        className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-accent transition hover:text-accent-hover"
+      >
+        업데이트 로그 전체 보기 →
+      </Link>
     </article>
   );
 }
