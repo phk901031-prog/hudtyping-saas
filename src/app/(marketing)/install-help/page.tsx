@@ -1,6 +1,9 @@
 // src/app/install-help/page.tsx
 // 데스크톱 앱 설치 시 백신/SmartScreen 차단되는 경우 해결법.
 // 코드 서명 인증서 없는 베타 단계에서 자주 발생하는 문제.
+//
+// 2026-09-19: 백신별 안내를 개별 <ol> 섹션에서 실제 <table>(백신 | 해결 방법)로
+// 재구성 — 증상→해결 형태로 이미 구조화된 내용이라 표가 더 스캔하기 쉬움.
 
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -43,49 +46,76 @@ export default function InstallHelpPage() {
         </section>
 
         <section>
-          <h2 className="font-display text-xl mb-3">
-            1. 안랩 V3 / V3 Lite
-          </h2>
-          <ol className="list-decimal pl-5 flex flex-col gap-1.5">
-            <li>트레이 안랩 아이콘 우클릭 → 메인 화면 열기</li>
-            <li>좌측 메뉴 <strong>‘격리실’</strong> 또는 <strong>‘보안 검사 결과’</strong></li>
-            <li>
-              <code className="bg-muted-bg px-1.5 py-0.5 rounded text-xs">
-                hudtyping-Setup-{WINDOWS_RELEASE.version}.exe
-              </code>{" "}
-              찾아서 선택
-            </li>
-            <li><strong>‘복원’</strong> 또는 <strong>‘신뢰 처리’</strong> 클릭</li>
-            <li>
-              (재발 방지) 환경설정 → <strong>검사 예외</strong> → .exe 경로
-              추가
-            </li>
-            <li>다시 .exe 실행 → 설치 진행</li>
-          </ol>
+          <h2 className="font-display text-xl mb-3">백신별 해결 방법</h2>
+          <div className="overflow-x-auto rounded-lg border border-border">
+            <table className="w-full border-collapse text-sm">
+              <thead>
+                <tr className="border-b border-border bg-muted-bg text-left">
+                  <th scope="col" className="p-4 font-display font-bold align-top w-40">
+                    백신 · 증상
+                  </th>
+                  <th scope="col" className="p-4 font-display font-bold align-top">
+                    해결 방법
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-border align-top">
+                  <th scope="row" className="p-4 text-left font-semibold align-top">
+                    안랩 V3 / V3 Lite
+                  </th>
+                  <td className="p-4">
+                    <ol className="list-decimal pl-5 flex flex-col gap-1.5">
+                      <li>트레이 안랩 아이콘 우클릭 → 메인 화면 열기</li>
+                      <li>좌측 메뉴 <strong>‘격리실’</strong> 또는 <strong>‘보안 검사 결과’</strong></li>
+                      <li>
+                        <code className="bg-muted-bg px-1.5 py-0.5 rounded text-xs">
+                          hudtyping-Setup-{WINDOWS_RELEASE.version}.exe
+                        </code>{" "}
+                        찾아서 선택
+                      </li>
+                      <li><strong>‘복원’</strong> 또는 <strong>‘신뢰 처리’</strong> 클릭</li>
+                      <li>
+                        (재발 방지) 환경설정 → <strong>검사 예외</strong> → .exe 경로
+                        추가
+                      </li>
+                      <li>다시 .exe 실행 → 설치 진행</li>
+                    </ol>
+                  </td>
+                </tr>
+                <tr className="border-b border-border align-top">
+                  <th scope="row" className="p-4 text-left font-semibold align-top">
+                    알약
+                  </th>
+                  <td className="p-4">
+                    <ol className="list-decimal pl-5 flex flex-col gap-1.5">
+                      <li>알약 메인 화면 → <strong>격리실</strong></li>
+                      <li>해당 파일 선택 → <strong>복원</strong></li>
+                      <li>환경설정 → 검사 예외 → 추가</li>
+                    </ol>
+                  </td>
+                </tr>
+                <tr className="align-top">
+                  <th scope="row" className="p-4 text-left font-semibold align-top">
+                    Windows Defender /<br />SmartScreen
+                  </th>
+                  <td className="p-4">
+                    <ol className="list-decimal pl-5 flex flex-col gap-1.5">
+                      <li>.exe 실행 시 ‘Windows의 PC 보호’ 파란 창</li>
+                      <li>
+                        <strong>‘추가 정보’</strong> 글자 클릭 (오른쪽 위 작게 표시됨)
+                      </li>
+                      <li>파일 출처와 이름을 확인한 뒤 ‘실행’ 버튼 클릭</li>
+                    </ol>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </section>
 
         <section>
-          <h2 className="font-display text-xl mb-3">2. 알약</h2>
-          <ol className="list-decimal pl-5 flex flex-col gap-1.5">
-            <li>알약 메인 화면 → <strong>격리실</strong></li>
-            <li>해당 파일 선택 → <strong>복원</strong></li>
-            <li>환경설정 → 검사 예외 → 추가</li>
-          </ol>
-        </section>
-
-        <section>
-          <h2 className="font-display text-xl mb-3">3. Windows Defender / SmartScreen</h2>
-          <ol className="list-decimal pl-5 flex flex-col gap-1.5">
-            <li>.exe 실행 시 ‘Windows의 PC 보호’ 파란 창</li>
-            <li>
-              <strong>‘추가 정보’</strong> 글자 클릭 (오른쪽 위 작게 표시됨)
-            </li>
-            <li>파일 출처와 이름을 확인한 뒤 ‘실행’ 버튼 클릭</li>
-          </ol>
-        </section>
-
-        <section>
-          <h2 className="font-display text-xl mb-3">4. 그래도 안 되면</h2>
+          <h2 className="font-display text-xl mb-3">그래도 안 되면</h2>
           <ul className="list-disc pl-5 flex flex-col gap-1.5">
             <li>
               백신을 끄지 말고 격리 내역과 탐지명을 확인한 뒤 문의

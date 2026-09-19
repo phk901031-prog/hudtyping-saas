@@ -88,7 +88,7 @@ export default function ApiKeysPage() {
             <button
               type="button"
               onClick={handleCopy}
-              className="rounded-lg bg-ink px-4 py-3 text-sm font-bold text-white transition hover:opacity-90"
+              className="rounded-lg border border-white/10 bg-ink px-4 py-3 text-sm font-bold text-white transition hover:opacity-90"
             >
               {copied ? "복사됨" : "복사"}
             </button>
