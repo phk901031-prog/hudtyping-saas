@@ -4,16 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-const STORAGE_KEY = "playsteno-work-steno-announcement";
-
 export function WorkStenoAnnouncement() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    if (window.sessionStorage.getItem(STORAGE_KEY) !== "seen") {
-      const timer = window.setTimeout(() => setIsOpen(true), 0);
-      return () => window.clearTimeout(timer);
-    }
+    const timer = window.setTimeout(() => setIsOpen(true), 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -34,7 +30,6 @@ export function WorkStenoAnnouncement() {
   }, [isOpen]);
 
   function close() {
-    window.sessionStorage.setItem(STORAGE_KEY, "seen");
     setIsOpen(false);
   }
 
