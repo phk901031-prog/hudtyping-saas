@@ -4,6 +4,7 @@ import { auth } from "@/infrastructure/clerk";
 import { WINDOWS_RELEASE } from "@/config/release";
 import { OPENCHAT } from "@/config/community";
 import { fetchReleases } from "@/features/updates/releases";
+import { WorkStenoAnnouncement } from "@/components/marketing/work-steno-announcement";
 
 const DOWNLOAD_URL = "/download/windows";
 
@@ -32,6 +33,7 @@ export default async function HomePage() {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-5 pb-24 pt-14 sm:px-8 sm:pb-28 sm:pt-20">
+      <WorkStenoAnnouncement />
       <section aria-labelledby="home-title">
         <p className="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-muted">
           낱말지기 온라인 · Windows {WINDOWS_RELEASE.version}
@@ -60,6 +62,26 @@ export default async function HomePage() {
           </Link>
         </div>
       </section>
+
+      <Link
+        href="/work-steno"
+        className="group mt-12 grid gap-4 border-y border-border py-6 transition hover:border-accent sm:grid-cols-[1fr_auto] sm:items-center sm:py-7"
+      >
+        <div>
+          <p className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-accent">
+            Beta testing · Coming soon
+          </p>
+          <p className="ko-heading mt-2 text-xl font-black tracking-[-0.025em] sm:text-2xl">
+            속기사의 실제 작업 방식으로 만드는 WORK STENO
+          </p>
+          <p className="ko-copy mt-2 text-sm leading-6 text-muted">
+            업무 유형, 참고자료, 화자 구분과 원고 완성까지. 현재 베타테스터와 함께 검증하고 있습니다.
+          </p>
+        </div>
+        <span className="text-sm font-bold text-accent underline decoration-accent/40 underline-offset-4 group-hover:decoration-accent">
+          내용 보기 →
+        </span>
+      </Link>
 
       <section aria-labelledby="example-title" className="editorial-section">
         <SectionHeading
@@ -173,80 +195,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section id="work-steno" aria-labelledby="work-steno-title" className="editorial-section scroll-mt-8">
-        <p className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-accent">
-          Coming soon · Work Steno
-        </p>
-        <h2
-          id="work-steno-title"
-          className="ko-heading mt-4 max-w-2xl text-3xl font-black leading-[1.2] tracking-[-0.03em] sm:text-4xl"
-        >
-          웹에서 맡기고, 연결된 PC에서 음성을 글로.
-        </h2>
-        <p className="ko-copy mt-5 max-w-2xl text-[16px] leading-8 text-foreground/85">
-          속기사의 음성 변환 작업을 위한 <strong>WORK STENO</strong>를 만들고 있습니다. 사용자가
-          온라인에서 음성과 참고자료를 등록하면, 연결된 전용 PC가 로컬 음성인식 엔진으로 처리하고
-          결과를 다시 온라인에서 확인하는 방식입니다.
-        </p>
-
-        <div className="mt-8 overflow-hidden rounded-[0.9rem] bg-ink px-5 py-7 text-white sm:px-7 sm:py-8">
-          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/45">준비 중인 연결 방식</p>
-          <ol className="mt-5 grid gap-6 sm:grid-cols-3 sm:gap-0">
-            <WorkStenoStep
-              number="01"
-              title="온라인에서 작업 등록"
-              body="음성 파일, 작업 유형, 참고자료를 선택합니다."
-            />
-            <WorkStenoStep
-              number="02"
-              title="연결된 PC에서 변환"
-              body="Whisper Large-v3 기반 로컬 엔진이 작업을 처리합니다."
-            />
-            <WorkStenoStep
-              number="03"
-              title="온라인에서 결과 확인"
-              body="진행 상태와 완성된 원고를 웹에서 확인합니다."
-            />
-          </ol>
-        </div>
-
-        <div className="mt-9 grid gap-9 sm:grid-cols-2 sm:gap-10">
-          <div>
-            <h3 className="ko-heading text-lg font-bold">데스크톱 앱에 준비된 기능</h3>
-            <ul className="ko-copy mt-4 list-disc space-y-3 pl-5 text-[15px] leading-7 text-muted marker:text-accent">
-              <li>일반·의회·학폭위·통화·현장·방송 등 작업 유형별 설정</li>
-              <li>음성 파일별 참고자료와 반복 사용하는 사전 자료 연결</li>
-              <li>화자 변경 지점 분석과 선택형 AI 문맥 교정</li>
-              <li>여러 파일 작업 대기열, 최종 원고와 중간 결과 보존</li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="ko-heading text-lg font-bold">온라인에서 이어질 기능</h3>
-            <ul className="ko-copy mt-4 list-disc space-y-3 pl-5 text-[15px] leading-7 text-muted marker:text-accent">
-              <li>장소가 달라도 웹에서 새 음성 작업 접수</li>
-              <li>처리 PC의 연결 여부와 작업 대기·진행·완료 상태 확인</li>
-              <li>작업 유형과 자료를 파일마다 따로 지정</li>
-              <li>완성된 결과 원고 확인·내려받기</li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="mt-9 border-l-2 border-accent pl-4 sm:pl-5">
-          <p className="ko-copy text-sm leading-6 text-muted">
-            온라인 연결 기능은 현재 개발 예정 단계입니다. 출시 일정과 이용 방식은 보안·파일 전송·운영
-            정책을 확정한 뒤 공개합니다.
-          </p>
-          <a
-            href={OPENCHAT.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-3 inline-block text-sm font-bold text-accent underline underline-offset-4"
-          >
-            개발 소식 받기 →
-          </a>
-        </div>
-      </section>
-
       <section aria-labelledby="news-title" className="editorial-section">
         <SectionHeading id="news-title" title="최근 소식" />
         <div className="mt-7 grid gap-8 sm:grid-cols-2">
@@ -338,19 +286,6 @@ function Note({ title, body }: { title: string; body: string }) {
       <h3 className="ko-heading text-lg font-bold leading-7">{title}</h3>
       <p className="ko-copy text-[15px] leading-7 text-muted">{body}</p>
     </article>
-  );
-}
-
-function WorkStenoStep({ number, title, body }: { number: string; title: string; body: string }) {
-  return (
-    <li className="relative sm:px-5 sm:first:pl-0 sm:last:pr-0">
-      <span className="font-mono text-xs font-bold text-[#e2895f]">{number}</span>
-      <h3 className="ko-heading mt-2 text-base font-bold">{title}</h3>
-      <p className="ko-copy mt-2 text-sm leading-6 text-white/60">{body}</p>
-      {number !== "03" && (
-        <span aria-hidden="true" className="absolute -right-px top-0 hidden h-full w-px bg-white/12 sm:block" />
-      )}
-    </li>
   );
 }
 

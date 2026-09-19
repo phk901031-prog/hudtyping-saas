@@ -2,7 +2,7 @@ import Link from "next/link";
 import { OPENCHAT } from "@/config/community";
 
 const FOOTER_LINKS = [
-  { href: "/#work-steno", label: "WORK STENO 예고" },
+  { href: "/work-steno", label: "WORK STENO" },
   { href: "/download/windows", label: "Windows 다운로드" },
   { href: "/help", label: "사용 가이드" },
   { href: "/updates", label: "업데이트 로그" },
