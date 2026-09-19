@@ -2,7 +2,6 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { auth } from "@/infrastructure/clerk";
 import { WINDOWS_RELEASE } from "@/config/release";
-import { NATMALGI_ONLINE } from "@/config/product";
 import { OPENCHAT } from "@/config/community";
 import { fetchReleases } from "@/features/updates/releases";
 
@@ -41,15 +40,14 @@ export default async function HomePage() {
           id="home-title"
           className="ko-heading mt-5 max-w-2xl text-[2.55rem] font-black leading-[1.12] tracking-[-0.035em] sm:text-[4rem]"
         >
-          한글에서 단어 뒤에 커서를 놓고 <span className="text-accent">F3</span>을 누르세요.
+          한글에서 단어 뒤에 커서를 놓고 <span className="text-accent">지정한 키</span>를 누르세요.
         </h1>
         <p className="ko-copy mt-7 max-w-2xl text-lg leading-8 text-foreground/90 sm:text-xl sm:leading-9">
           우리말샘 뜻풀이가 문서 위 작은 창에 뜹니다. 브라우저를 열거나 검색어를 다시
           입력하지 않아도 됩니다.
         </p>
         <p className="ko-copy mt-4 max-w-xl text-[15px] leading-7 text-muted">
-          속기사와 회의록 작성자를 위한 Windows 도구입니다. 현재 승인 계정에 한해 월{" "}
-          {NATMALGI_ONLINE.monthlySearchLimit}회까지 무료로 운영하고 있습니다.
+          속기사와 회의록 작성자를 위한 Windows 도구입니다. 현재 무료로 운영하고 있습니다.
         </p>
 
         <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
@@ -82,7 +80,7 @@ export default async function HomePage() {
               </p>
               <div className="mt-7 border-l-2 border-accent pl-4 sm:pl-5">
                 <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/45">
-                  F3을 한 번 누른 결과
+                  지정한 키를 한 번 누른 결과
                 </p>
                 <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
                   <strong className="text-2xl">정리</strong>
@@ -137,7 +135,7 @@ export default async function HomePage() {
         <div className="mt-8 space-y-8">
           <Note
             title="한 번 더 누르면 검색 범위가 넓어집니다"
-            body="‘회의 안건 정리’ 뒤에서 F3을 한 번 누르면 ‘정리’, 두 번 누르면 ‘안건 정리’, 세 번 누르면 ‘회의 안건 정리’를 찾습니다."
+            body="‘회의 안건 정리’ 뒤에서 지정한 키를 한 번 누르면 ‘정리’, 두 번 누르면 ‘안건 정리’, 세 번 누르면 ‘회의 안건 정리’를 찾습니다."
           />
           <Note
             title="확인한 표기로 문서 안에서 바로 고칠 수 있습니다"
@@ -145,7 +143,7 @@ export default async function HomePage() {
           />
           <Note
             title="HUD는 필요한 자리에 둘 수 있습니다"
-            body="화면 위·아래·좌·우에 붙이고 배경색, 투명도, 글자 크기를 조절할 수 있습니다. 단축키도 F3, Insert, Pause 등으로 바꿀 수 있습니다."
+            body="화면 위·아래·좌·우에 붙이고 배경색, 투명도, 글자 크기를 조절할 수 있습니다. 단축키는 F3, Insert, Pause 등 원하는 키로 직접 정할 수 있습니다."
           />
         </div>
         <Link
@@ -222,8 +220,8 @@ export default async function HomePage() {
             키를 직접 지정할 수 있습니다.
           </Faq>
           <Faq question="무료인가요?">
-            현재는 승인된 계정에 월 {NATMALGI_ONLINE.monthlySearchLimit}회의 검색량을 무료로
-            제공합니다. 정책이 바뀌면 홈페이지와 업데이트 로그에서 먼저 안내합니다.
+            현재 무료로 운영하고 있습니다. 운영 정책이 바뀌면 홈페이지와 업데이트 로그에서 먼저
+            안내합니다.
           </Faq>
         </div>
       </section>
