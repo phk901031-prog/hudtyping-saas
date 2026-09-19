@@ -53,20 +53,43 @@
   }
 }
 
-/* 서비스 상태 점 — "무료 베타 운영 중" 옆 고정 점. 펄스 없이 정적으로. */
-.status-led {
-  display: inline-flex;
-  width: 9px;
-  height: 9px;
-  flex-shrink: 0;
-  border-radius: 999px;
-  background: var(--success);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--success), transparent 82%);
+/* 마케팅 화면은 종이색 편집 디자인을 유지한다. 대시보드의 시스템 다크 모드는 그대로 둔다. */
+.marketing-shell {
+  --background: #f7f2e8;
+  --foreground: #221d17;
+  --muted: #6b6154;
+  --muted-bg: #ece3d1;
+  --border: #ddd2ba;
+  --card: #fffcf5;
+  --panel: #f0e9db;
+  --ink: #120d09;
+  --accent: #a8452a;
+  --accent-hover: #8f3a22;
+  --accent-soft: #f1e0d1;
+  color-scheme: light;
 }
 
-/* 문서 커서 깜빡임 — 데모에 남긴 유일한 모션 */
-.typing-caret {
-  animation: caret-blink 1s steps(1, end) infinite;
+.editorial-section {
+  margin-top: 5rem;
+  border-top: 1px solid var(--border);
+  padding-top: 4rem;
+}
+
+.editorial-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+  background: var(--accent);
+  padding: 0.8rem 1.2rem;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 800;
+  transition: background-color 0.18s ease;
+}
+
+.editorial-button:hover {
+  background: var(--accent-hover);
 }
 
 /* 카드 hover — border-color 전환만. transform/box-shadow 확산 없음.
@@ -77,17 +100,6 @@
 
 .feature-card:hover {
   border-color: color-mix(in srgb, var(--accent), var(--border) 35%);
-}
-
-@keyframes caret-blink {
-  0%,
-  49% {
-    opacity: 1;
-  }
-  50%,
-  100% {
-    opacity: 0;
-  }
 }
 
 @theme inline {
@@ -167,8 +179,9 @@ body {
   font-weight: 700;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .typing-caret {
-    animation: none;
+@media (max-width: 640px) {
+  .editorial-section {
+    margin-top: 4rem;
+    padding-top: 3rem;
   }
 }

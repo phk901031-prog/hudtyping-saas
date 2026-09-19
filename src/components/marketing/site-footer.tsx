@@ -1,7 +1,4 @@
-import Image from "next/image";
 import Link from "next/link";
-import { BRAND, NATMALGI_ONLINE } from "@/config/product";
-import { WINDOWS_RELEASE } from "@/config/release";
 import { OPENCHAT } from "@/config/community";
 
 const FOOTER_LINKS = [
@@ -15,20 +12,18 @@ const FOOTER_LINKS = [
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border bg-card">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-5 py-10 sm:px-8 md:flex-row md:items-start md:justify-between">
-        <div className="flex items-start gap-3">
-          <Image src="/logo.png" alt="" width={40} height={40} className="h-10 w-10 rounded-xl" />
-          <div>
-            <p className="font-display text-lg">{BRAND.name}</p>
-            <p className="ko-copy mt-1 text-xs leading-5 text-muted">
-              {BRAND.tagline}<br />
-              {NATMALGI_ONLINE.name} · Windows v{WINDOWS_RELEASE.version}
-            </p>
-          </div>
+    <footer className="border-t border-border bg-background">
+      <div className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-5 py-10 sm:px-8">
+        <div>
+          <p className="text-base font-black tracking-[-0.025em]">
+            PLAYSTENO<span className="text-accent">.</span>
+          </p>
+          <p className="ko-copy mt-2 text-xs leading-5 text-muted">
+            속기사의 기록 작업을 돕는 작은 도구를 만듭니다.
+          </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm sm:grid-cols-3">
+        <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs">
           {FOOTER_LINKS.map((link) => (
             <Link key={link.href} href={link.href} className="text-muted transition hover:text-foreground">
               {link.label}
@@ -38,6 +33,7 @@ export function SiteFooter() {
             공지·문의 채널
           </a>
         </div>
+        <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted">© PlaySteno</p>
       </div>
     </footer>
   );

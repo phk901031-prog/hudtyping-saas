@@ -7,13 +7,13 @@ export function AccountActions() {
   const { isLoaded, isSignedIn } = useAuth();
 
   if (!isLoaded) {
-    return <span aria-hidden="true" className="h-9 w-24 rounded-lg bg-muted-bg" />;
+    return <span aria-hidden="true" className="h-5 w-16 bg-muted-bg" />;
   }
 
   if (isSignedIn) {
     return (
       <>
-        <Link href="/dashboard" className="rounded-lg border border-border px-3 py-2 text-sm font-semibold transition hover:bg-muted-bg sm:px-4">
+        <Link href="/dashboard" className="text-sm font-bold text-foreground underline decoration-border underline-offset-4 transition hover:decoration-accent">
           대시보드
         </Link>
         <UserButton />
@@ -26,8 +26,8 @@ export function AccountActions() {
       <Link href="/sign-in" className="hidden text-sm font-medium text-muted transition hover:text-foreground sm:inline">
         로그인
       </Link>
-      <Link href="/sign-up" className="whitespace-nowrap rounded-lg bg-foreground px-3 py-2 text-sm font-semibold text-background transition hover:opacity-90 sm:px-4">
-        시작하기
+      <Link href="/sign-up" className="ml-4 whitespace-nowrap text-sm font-bold text-foreground underline decoration-border underline-offset-4 transition hover:decoration-accent">
+        가입하기
       </Link>
     </>
   );
