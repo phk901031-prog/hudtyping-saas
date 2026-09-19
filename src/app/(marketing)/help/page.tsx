@@ -44,7 +44,7 @@ export default function HelpPage() {
             rel="noopener noreferrer"
             className="text-accent underline"
           >
-            오픈톡방
+            문의 채널
           </a>
           에서 가입한 이메일과 성명을 알려주세요.
         </p>
@@ -170,7 +170,7 @@ export default function HelpPage() {
               rel="noopener noreferrer"
               className="text-accent underline"
             >
-              오픈톡방
+              문의 채널
             </a>
             으로 보내주세요.
           </p>

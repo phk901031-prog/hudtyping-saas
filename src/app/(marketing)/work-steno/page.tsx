@@ -25,8 +25,8 @@ export default function WorkStenoPage() {
           WORK STENO는 속기사가 실제로 원고를 만드는 업무 과정에 초점을 맞춥니다.
         </p>
         <p className="ko-copy mt-4 max-w-2xl text-[15px] leading-7 text-muted">
-          업무별 속기사의 실제 작업 환경과 데이터를 토대로 개발하고 있으며, 현재 베타테스터와 함께 기능과
-          작업 흐름을 검증하고 있습니다. 출시 일정과 이용 방식은 테스트 결과를 반영해 확정합니다.
+          업무별 속기사의 실제 작업 환경과 데이터를 토대로 개발하고 있으며, 현재 함께 기능과 작업 흐름을
+          검증할 속기사 베타테스터를 모집하고 있습니다. 출시 일정과 이용 방식은 테스트 결과를 반영해 확정합니다.
         </p>
       </section>
 
@@ -99,15 +99,30 @@ export default function WorkStenoPage() {
       </section>
 
       <section className="editorial-section" aria-labelledby="beta-title">
-        <div className="border-y border-border py-9 sm:py-11">
-          <p className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-accent">Now in beta</p>
-          <h2 id="beta-title" className="ko-heading mt-3 text-2xl font-black tracking-[-0.025em] sm:text-3xl">현장의 속기사와 함께 확인하고 있습니다</h2>
-          <p className="ko-copy mt-4 max-w-2xl text-[15px] leading-7 text-muted">
-            지금은 베타테스터가 실제 작업에 사용하며 업무 유형별 흐름, 인식 결과, 자료 적용 방식을 검증하는 단계입니다.
-            확정되지 않은 일정이나 요금은 먼저 약속하지 않고, 준비되는 내용부터 공개하겠습니다.
-          </p>
-          <a href={OPENCHAT.url} target="_blank" rel="noopener noreferrer" className="editorial-button mt-6 inline-flex">
-            개발 소식 받기
+        <div className="grid gap-8 border-y border-border py-9 sm:grid-cols-[1fr_auto] sm:items-center sm:gap-12 sm:py-11">
+          <div>
+            <p className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-accent">Beta testers wanted</p>
+            <h2 id="beta-title" className="ko-heading mt-3 text-2xl font-black tracking-[-0.025em] sm:text-3xl">WORK STENO 베타테스터를 모집합니다</h2>
+            <p className="ko-copy mt-4 max-w-2xl text-[15px] leading-7 text-muted">
+              실제 속기 작업에 사용해 보고 업무 유형별 흐름, 인식 결과, 자료 적용 방식에 의견을 주실 속기사를 찾고 있습니다.
+              참여를 희망하거나 궁금한 점이 있다면 카카오톡 문의 채널로 연락해 주세요.
+            </p>
+            <p className="ko-copy mt-3 max-w-2xl text-sm leading-6 text-muted">
+              출시 일정과 이용 방식은 베타테스트 결과를 반영해 확정하며, 준비되는 내용부터 공개하겠습니다.
+            </p>
+            <a href={OPENCHAT.url} target="_blank" rel="noopener noreferrer" className="editorial-button mt-6 inline-flex">
+              베타테스터 신청·문의
+            </a>
+          </div>
+          <a
+            href={OPENCHAT.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-fit rounded-xl border border-border bg-white p-3 transition hover:border-accent"
+            aria-label="카카오톡에서 WORK STENO 베타테스터 문의하기"
+          >
+            <Image src={OPENCHAT.qrSrc} alt="카카오톡 문의 채널 QR 코드" width={176} height={176} />
+            <span className="mt-2 block text-center text-xs font-bold text-foreground">카메라로 QR 스캔</span>
           </a>
         </div>
       </section>

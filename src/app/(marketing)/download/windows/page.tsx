@@ -125,7 +125,7 @@ export default function WindowsDownloadPage() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-4 py-2 text-sm font-bold transition hover:bg-muted-bg"
                 >
-                  공지·문의 채널 →
+                  카카오톡 문의 →
                 </a>
               </div>
             </div>

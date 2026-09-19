@@ -35,7 +35,7 @@ export default function ErrorPage({
           rel="noopener noreferrer"
           className="font-bold text-accent underline"
         >
-          오픈톡방
+          문의 채널
         </a>
         에 알려주세요.
       </p>

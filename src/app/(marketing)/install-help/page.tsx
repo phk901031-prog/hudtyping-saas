@@ -132,7 +132,7 @@ export default function InstallHelpPage() {
                 rel="noopener noreferrer"
                 className="font-bold text-accent underline"
               >
-                오픈톡방
+                문의 채널
               </a>
               에 파일명, 앱 버전, 탐지명을 알려주세요. 내용을 확인한 뒤 필요한 경우
               백신사에 오진 신고를 진행합니다.
@@ -145,7 +145,7 @@ export default function InstallHelpPage() {
           <p className="text-sm leading-relaxed">
             아래 공식 GitHub Releases에서 받은 파일인지 먼저 확인하세요. 파일명이나
             다운로드 주소가 다르거나 백신이 구체적인 악성코드명을 탐지하면 실행하지 말고
-            공지·문의 채널로 확인을 요청해 주세요.
+            카카오톡 문의 채널로 확인을 요청해 주세요.
           </p>
           <p className="text-xs mt-3">
             <a

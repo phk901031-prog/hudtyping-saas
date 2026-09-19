@@ -31,7 +31,7 @@ export function SiteFooter() {
             </Link>
           ))}
           <a href={OPENCHAT.url} target="_blank" rel="noopener noreferrer" className="text-muted transition hover:text-foreground">
-            공지·문의 채널
+            카카오톡 문의
           </a>
         </div>
         <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted">© PlaySteno</p>

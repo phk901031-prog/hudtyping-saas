@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { OPENCHAT } from "@/config/community";
 
 export function WorkStenoAnnouncement() {
   const [isOpen, setIsOpen] = useState(false);
@@ -84,13 +85,22 @@ export function WorkStenoAnnouncement() {
               업무별 속기사의 실제 작업 환경과 데이터를 토대로 만들고 있습니다.
             </p>
             <p className="ko-copy mt-3 text-[15px] font-semibold leading-7 text-foreground">
-              현재 속기사 베타테스터와 함께 검증 중이며, 출시 일정과 이용 방식은 테스트 이후 확정합니다.
+              현재 WORK STENO를 함께 검증할 속기사 베타테스터를 모집하고 있습니다. 참여를 희망하면 카카오톡으로 연락해 주세요.
             </p>
 
             <div className="mt-6 flex flex-wrap items-center gap-4">
               <Link href="/work-steno" onClick={close} className="editorial-button">
                 내용 보기
               </Link>
+              <a
+                href={OPENCHAT.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={close}
+                className="text-sm font-bold text-accent underline underline-offset-4"
+              >
+                베타테스터 문의
+              </a>
               <button type="button" onClick={close} className="text-sm font-bold text-muted underline underline-offset-4 hover:text-foreground">
                 닫기
               </button>

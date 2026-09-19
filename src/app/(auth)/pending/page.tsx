@@ -42,7 +42,7 @@ export default async function PendingPage() {
             rel="noopener noreferrer"
             className="font-bold text-accent underline"
           >
-            오픈톡방
+            문의 채널
           </a>
           에 가입 이메일과 성명을 남겨주세요.
         </p>
@@ -60,7 +60,7 @@ export default async function PendingPage() {
               rel="noopener noreferrer"
               className="mt-1 block text-sm text-accent underline underline-offset-2 hover:opacity-80"
             >
-              카카오톡 오픈톡방 →
+              카카오톡 문의 채널 →
             </a>
           </div>
         </div>

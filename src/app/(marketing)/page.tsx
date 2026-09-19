@@ -75,7 +75,7 @@ export default async function HomePage() {
             속기사의 실제 작업 방식으로 만드는 WORK STENO
           </p>
           <p className="ko-copy mt-2 text-sm leading-6 text-muted">
-            업무 유형, 참고자료, 화자 구분과 원고 완성까지. 현재 베타테스터와 함께 검증하고 있습니다.
+            업무 유형, 참고자료, 화자 구분과 원고 완성까지. 현재 함께 검증할 속기사 베타테스터를 모집하고 있습니다.
           </p>
         </div>
         <span className="text-sm font-bold text-accent underline decoration-accent/40 underline-offset-4 group-hover:decoration-accent">
@@ -130,7 +130,7 @@ export default async function HomePage() {
           <Instruction
             number="01"
             title="계정을 만들고 승인을 기다립니다"
-            body="이메일과 실명으로 가입해 주세요. 빠른 승인이 필요하면 가입한 이메일을 공지·문의 채널로 보내면 됩니다."
+            body="이메일과 실명으로 가입해 주세요. 빠른 승인이 필요하면 가입한 이메일을 카카오톡 문의 채널로 보내면 됩니다."
             link={{ href: isSignedIn ? "/dashboard" : "/sign-up", label: isSignedIn ? "대시보드" : "가입하기" }}
           />
           <Instruction
@@ -214,9 +214,9 @@ export default async function HomePage() {
           </article>
           <article>
             <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">문의</p>
-            <h3 className="ko-heading mt-2 text-lg font-bold">가입 승인과 오류 제보는 오픈톡방에서 받습니다</h3>
+            <h3 className="ko-heading mt-2 text-lg font-bold">문의 사항은 카카오톡으로 보내주세요</h3>
             <p className="ko-copy mt-2 text-sm leading-6 text-muted">
-              관리자 공지·지원 채널이라 대화 알림 없이 새 버전 소식도 확인할 수 있습니다.
+              가입 승인, 사용 방법, 오류 제보와 기능 건의를 한곳에서 확인하고 답변드립니다.
             </p>
             <a
               href={OPENCHAT.url}
@@ -224,7 +224,7 @@ export default async function HomePage() {
               rel="noopener noreferrer"
               className="mt-4 inline-block text-sm font-bold text-accent underline underline-offset-4"
             >
-              공지·문의 채널 열기 →
+              카카오톡 문의하기 →
             </a>
           </article>
         </div>
