@@ -16,6 +16,8 @@ interface Props {
   currentStatus: Status;
   currentRole: Role;
   currentMonthlyLimit: number;
+  /** true면 이 사용자만의 개별 한도, false면 전역 기본값을 따르는 중 */
+  currentMonthlyLimitIsCustom: boolean;
   currentUnlimitedUntil: Date | null;
   currentUnlimitedPermanent: boolean;
   currentUnlimitedActive: boolean;
@@ -29,6 +31,7 @@ export function UserActionButtons({
   currentStatus,
   currentRole,
   currentMonthlyLimit,
+  currentMonthlyLimitIsCustom,
   currentUnlimitedUntil,
   currentUnlimitedPermanent,
   currentUnlimitedActive,
@@ -180,6 +183,21 @@ export function UserActionButtons({
             className="text-xs px-3 py-1 rounded border border-amber-300 text-amber-700 dark:border-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/30 disabled:opacity-50 transition"
           >
             한도 조정
+          </button>
+        )}
+        {/* 개별 override가 있을 때만 — 전역 기본값으로 되돌리기 */}
+        {currentRole === "user" && currentMonthlyLimitIsCustom && (
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => {
+              if (confirm("개별 설정된 한도를 해제하고 전역 기본값을 따르게 할까요?")) {
+                patch({ monthlyLimit: null });
+              }
+            }}
+            className="text-xs px-3 py-1 rounded border border-zinc-300 text-zinc-600 dark:border-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900 disabled:opacity-50 transition"
+          >
+            기본값으로
           </button>
         )}
         {/* 무제한 부여/변경 — admin 은 이미 무제한이므로 일반 사용자에게만 */}

@@ -6,6 +6,7 @@ import {
   getUserSearchActivity,
   getUserSearchHistory,
 } from "@/features/admin/users";
+import { getDefaultMonthlyLimit } from "@/features/quota/service";
 import type { UserStatus } from "@/infrastructure/db/schema";
 
 export default async function AdminUserDetailPage({
@@ -17,10 +18,13 @@ export default async function AdminUserDetailPage({
   const user = await getUserById(clerkId);
   if (!user) notFound();
 
-  const [activity, history] = await Promise.all([
+  const [activity, history, defaultMonthlyLimit] = await Promise.all([
     getUserSearchActivity(clerkId),
     getUserSearchHistory(clerkId, 100),
+    getDefaultMonthlyLimit(),
   ]);
+  const monthlyLimit = user.monthlyLimit ?? defaultMonthlyLimit;
+  const monthlyLimitIsCustom = user.monthlyLimit !== null;
 
   const cacheHitRate =
     activity.total > 0 ? (activity.cacheHits / activity.total) * 100 : 0;
@@ -47,7 +51,9 @@ export default async function AdminUserDetailPage({
             <StatusBadge status={user.status} />
             {user.role === "admin" && <span className="rounded bg-purple-100 px-2 py-1 font-bold text-purple-700 dark:bg-purple-950/30 dark:text-purple-300">admin</span>}
             <span className="rounded bg-zinc-100 px-2 py-1 dark:bg-zinc-900">
-              한도 {user.role === "admin" ? "무제한" : `${user.monthlyLimit.toLocaleString()}회`}
+              한도 {user.role === "admin"
+                ? "무제한"
+                : `${monthlyLimit.toLocaleString()}회${monthlyLimitIsCustom ? " (개별 설정)" : " (기본값)"}`}
             </span>
             <span className="rounded bg-zinc-100 px-2 py-1 dark:bg-zinc-900">
               가입 {formatDate(user.createdAt)}

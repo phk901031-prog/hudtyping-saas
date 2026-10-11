@@ -12,6 +12,7 @@ import {
   type UserStatus,
   type UserRole,
 } from "@/infrastructure/db/schema";
+import { getDefaultMonthlyLimit } from "@/features/quota/service";
 
 /** UTC 기준 이번달 시작 — quota/service.ts 와 동일 기준 */
 function startOfThisMonthUTC(): Date {
@@ -49,7 +50,11 @@ export async function listUsers(filter?: {
  *   3) clerk_id별 마지막 검색 (DISTINCT ON)
  * 사용자 수 30명 규모면 충분히 가볍다.
  */
-export type UserWithActivity = User & {
+export type UserWithActivity = Omit<User, "monthlyLimit"> & {
+  /** 개별 override가 있으면 그 값, 없으면 전역 기본값으로 이미 해석된 실제 적용 한도 */
+  monthlyLimit: number;
+  /** true면 이 사용자만의 개별 override, false면 전역 기본값을 따르는 중 */
+  monthlyLimitIsCustom: boolean;
   unlimitedActive: boolean;
   monthlyCount: number;
   totalCount: number;
@@ -69,6 +74,7 @@ export async function listUsersWithActivity(filter?: {
 
   const monthStart = startOfThisMonthUTC();
   const clerkIds = usersList.map((u) => u.clerkId);
+  const defaultMonthlyLimit = await getDefaultMonthlyLimit();
 
   const [monthlyRows, totalRows, lastRows] = await Promise.all([
     db
@@ -132,6 +138,8 @@ export async function listUsersWithActivity(filter?: {
     const last = lastMap.get(u.clerkId);
     return {
       ...u,
+      monthlyLimit: u.monthlyLimit ?? defaultMonthlyLimit,
+      monthlyLimitIsCustom: u.monthlyLimit !== null,
       unlimitedActive:
         u.unlimitedPermanent ||
         (u.unlimitedUntil !== null && u.unlimitedUntil.getTime() > nowMs),
@@ -178,10 +186,13 @@ export async function updateUserRole(
   return updated ?? null;
 }
 
-/** 월 검색 한도 변경 — 관리자가 사용자별로 조정 (예: VIP는 5000) */
+/**
+ * 월 검색 한도 변경 — 관리자가 사용자별로 조정 (예: VIP는 5000).
+ * monthlyLimit에 null을 주면 개별 override를 해제하고 전역 기본값을 따르게 한다.
+ */
 export async function updateUserMonthlyLimit(
   clerkId: string,
-  monthlyLimit: number
+  monthlyLimit: number | null
 ): Promise<User | null> {
   const [updated] = await db
     .update(users)
@@ -189,6 +200,24 @@ export async function updateUserMonthlyLimit(
     .where(eq(users.clerkId, clerkId))
     .returning();
   return updated ?? null;
+}
+
+/**
+ * 월 검색 한도를 여러 사용자에게 한 번에 적용 — /admin/users 체크박스 일괄 조정용.
+ * monthlyLimit에 null을 주면 선택한 사용자들의 개별 override를 모두 해제하고
+ * 전역 기본값을 따르게 한다.
+ */
+export async function bulkUpdateMonthlyLimit(
+  clerkIds: string[],
+  monthlyLimit: number | null
+): Promise<number> {
+  if (clerkIds.length === 0) return 0;
+  const updated = await db
+    .update(users)
+    .set({ monthlyLimit, updatedAt: new Date() })
+    .where(inArray(users.clerkId, clerkIds))
+    .returning({ clerkId: users.clerkId });
+  return updated.length;
 }
 
 // ──────────────────────────────────────────────────────────────────────

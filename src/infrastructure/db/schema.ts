@@ -51,9 +51,11 @@ export const users = pgTable("users", {
   role: userRoleEnum("role").notNull().default("user"),
 
   // 월 검색 한도. 매월 1일 0시(UTC) 리셋.
-  // - 일반 사용자: 기본 500회. 관리자가 사용자별로 조정 가능 (예: VIP에게 5000으로).
+  // - NULL(기본값) = app_settings.default_monthly_limit을 따름 — 관리자가 전체
+  //   사용자 기본 한도를 한 곳에서 바꾸면 이 컬럼이 NULL인 모든 사용자에게 즉시 반영.
+  // - 숫자가 들어있으면 그 사용자만의 개별 override (예: VIP에게 5000으로).
   // - admin은 role='admin'으로 한도 체크 자체를 스킵 (이 컬럼 값과 무관하게 무제한).
-  monthlyLimit: integer("monthly_limit").notNull().default(500),
+  monthlyLimit: integer("monthly_limit"),
 
   // 기간제 무제한 만료 시각(UTC). NULL이면 부여 안 됨. 이 시각 이전에는 monthly_limit
   // 을 무시하고 무제한 검색 허용. 만료되면 자동으로 원래 한도로 복귀 — 별도 크론 불필요.
@@ -81,6 +83,23 @@ export type NewUser = typeof users.$inferInsert;
 // enum 값 union — 입력 검증·타입 좁히기에 사용
 export type UserStatus = (typeof userStatusEnum.enumValues)[number]; // "pending" | "approved" | "rejected"
 export type UserRole = (typeof userRoleEnum.enumValues)[number]; // "user" | "admin"
+
+// ──────────────────────────────────────────────────────────────────────
+// app_settings — 전역 설정 싱글톤 row (id는 항상 1).
+// 지금은 월 검색 한도 기본값 하나뿐이라 범용 key-value 테이블 대신
+// 전용 컬럼으로 둔다. 설정이 늘어나면 그때 구조를 바꾼다.
+// ──────────────────────────────────────────────────────────────────────
+export const appSettings = pgTable("app_settings", {
+  id: integer("id").primaryKey(), // 항상 1
+  // users.monthly_limit이 NULL인 사용자가 따르는 전역 월 검색 한도.
+  // 관리자가 /admin/stats에서 바꾸면 개별 override 없는 모든 사용자에게 즉시 반영.
+  defaultMonthlyLimit: integer("default_monthly_limit").notNull().default(500),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export type AppSettings = typeof appSettings.$inferSelect;
 
 // ──────────────────────────────────────────────────────────────────────
 // official_binaries — 공식 빌드한 .exe 의 SHA-256 화이트리스트
@@ -117,6 +136,11 @@ export const searchLogs = pgTable(
       .references(() => users.clerkId, { onDelete: "cascade" }),
     query: text("query").notNull(),
     cacheHit: boolean("cache_hit").notNull(),
+    // cacheHit은 "서버 레디스/Neon 캐시 적중 여부"만 구분하던 boolean이라
+    // 데스크톱 앱의 로컬 오프라인 사전팩에서 처리된 검색을 구분하지 못한다.
+    // source로 별도 축을 둬서 관리자 통계의 "서버 캐시 적중률"이 로컬팩
+    // 히트와 섞이지 않게 한다. nullable — 기존 로그 행엔 값이 없다.
+    source: text("source"), // "server-cache" | "live-api" | "client-local-pack"
     status: text("status").notNull().default("success"),
     errorCode: text("error_code"),
     responseMs: integer("response_ms"),

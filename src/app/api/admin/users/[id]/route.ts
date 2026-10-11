@@ -54,7 +54,7 @@ export async function PATCH(
   const body = (await req.json().catch(() => ({}))) as {
     status?: string;
     role?: string;
-    monthlyLimit?: number;
+    monthlyLimit?: number | null;
     unlimited?:
       | { mode: "until"; until: string }
       | { mode: "permanent" }
@@ -88,14 +88,16 @@ export async function PATCH(
     }
     updated = await updateUserRole(targetClerkId, body.role as UserRole);
   } else if (body.monthlyLimit !== undefined) {
+    // null = 개별 override 해제 → 전역 기본값(app_settings)을 따름
     if (
-      typeof body.monthlyLimit !== "number" ||
-      !Number.isInteger(body.monthlyLimit) ||
-      body.monthlyLimit < 0 ||
-      body.monthlyLimit > MAX_MONTHLY_LIMIT
+      body.monthlyLimit !== null &&
+      (typeof body.monthlyLimit !== "number" ||
+        !Number.isInteger(body.monthlyLimit) ||
+        body.monthlyLimit < 0 ||
+        body.monthlyLimit > MAX_MONTHLY_LIMIT)
     ) {
       return Response.json(
-        { error: `monthlyLimit은 0~${MAX_MONTHLY_LIMIT.toLocaleString()} 사이의 정수여야 해요.` },
+        { error: `monthlyLimit은 0~${MAX_MONTHLY_LIMIT.toLocaleString()} 사이의 정수이거나 null(기본값 사용)이어야 해요.` },
         { status: 400 }
       );
     }

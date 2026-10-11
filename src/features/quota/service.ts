@@ -2,7 +2,7 @@
 // 월 검색 한도 비즈니스 로직 (② Application).
 //
 // 정책:
-//   - 일반 사용자: users.monthly_limit (기본 500회/월)
+//   - 일반 사용자: users.monthly_limit (개별 override) ?? app_settings.default_monthly_limit (전역 기본값)
 //   - 관리자(role='admin'): 무제한
 //   - 리셋: 매월 1일 0시 UTC
 //   - 캐시 hit/miss 모두 1회 카운트
@@ -17,7 +17,7 @@
 import { sql, and, eq, gte } from "drizzle-orm";
 import { db } from "@/infrastructure/db";
 import { redis } from "@/infrastructure/redis";
-import { searchLogs, type User } from "@/infrastructure/db/schema";
+import { appSettings, searchLogs, type User } from "@/infrastructure/db/schema";
 
 export type UnlimitedReason = "admin" | "permanent" | "timed";
 
@@ -37,6 +37,47 @@ export interface QuotaInfo {
 }
 
 const QUOTA_CACHE_TTL_SECONDS = 60;
+const DEFAULT_LIMIT_CACHE_KEY = "config:default-monthly-limit";
+const DEFAULT_LIMIT_CACHE_TTL_SECONDS = 300;
+// app_settings row(id=1)가 아직 없을 때만 쓰는 최후 폴백 — 정상 운영 중엔 안 쓰임.
+const DEFAULT_LIMIT_FALLBACK = 500;
+const APP_SETTINGS_ROW_ID = 1;
+
+/**
+ * 전역 월 검색 한도 기본값. users.monthly_limit이 NULL인 모든 사용자가 이 값을 따른다.
+ * Redis에 5분 캐시 — 검색마다 Neon을 추가로 타지 않게.
+ */
+export async function getDefaultMonthlyLimit(): Promise<number> {
+  const cached = await redis.get<number>(DEFAULT_LIMIT_CACHE_KEY);
+  if (cached !== null) return cached;
+
+  const [row] = await db
+    .select({ value: appSettings.defaultMonthlyLimit })
+    .from(appSettings)
+    .where(eq(appSettings.id, APP_SETTINGS_ROW_ID))
+    .limit(1);
+  const value = row?.value ?? DEFAULT_LIMIT_FALLBACK;
+
+  await redis.set(DEFAULT_LIMIT_CACHE_KEY, value, {
+    ex: DEFAULT_LIMIT_CACHE_TTL_SECONDS,
+  });
+  return value;
+}
+
+/** 관리자가 전역 월 검색 한도 기본값을 바꿀 때 호출. Neon에 upsert 후 Redis 캐시 갱신. */
+export async function setDefaultMonthlyLimit(value: number): Promise<number> {
+  await db
+    .insert(appSettings)
+    .values({ id: APP_SETTINGS_ROW_ID, defaultMonthlyLimit: value })
+    .onConflictDoUpdate({
+      target: appSettings.id,
+      set: { defaultMonthlyLimit: value, updatedAt: new Date() },
+    });
+  await redis.set(DEFAULT_LIMIT_CACHE_KEY, value, {
+    ex: DEFAULT_LIMIT_CACHE_TTL_SECONDS,
+  });
+  return value;
+}
 
 /** "2026-05" 형태의 월 키 — Redis 캐시 키에 포함되어 매월 자동 reset */
 function currentMonthKey(): string {
@@ -70,11 +111,13 @@ function quotaCacheKey(clerkId: string): string {
  */
 export async function getQuota(user: User): Promise<QuotaInfo> {
   const resetAt = startOfNextMonthUTC().toISOString();
+  // 개별 override(숫자)가 없으면 전역 기본값을 따른다.
+  const limit = user.monthlyLimit ?? (await getDefaultMonthlyLimit());
 
   if (user.role === "admin") {
     return {
       usage: 0,
-      limit: user.monthlyLimit,
+      limit,
       unlimited: true,
       unlimitedReason: "admin",
       resetAt,
@@ -84,7 +127,7 @@ export async function getQuota(user: User): Promise<QuotaInfo> {
   if (user.unlimitedPermanent) {
     return {
       usage: 0,
-      limit: user.monthlyLimit,
+      limit,
       unlimited: true,
       unlimitedReason: "permanent",
       resetAt,
@@ -94,7 +137,7 @@ export async function getQuota(user: User): Promise<QuotaInfo> {
   if (user.unlimitedUntil && user.unlimitedUntil.getTime() > Date.now()) {
     return {
       usage: 0,
-      limit: user.monthlyLimit,
+      limit,
       unlimited: true,
       unlimitedReason: "timed",
       unlimitedUntil: user.unlimitedUntil.toISOString(),
@@ -109,7 +152,7 @@ export async function getQuota(user: User): Promise<QuotaInfo> {
   if (cached !== null) {
     return {
       usage: cached,
-      limit: user.monthlyLimit,
+      limit,
       unlimited: false,
       resetAt,
     };
@@ -128,7 +171,7 @@ export async function getQuota(user: User): Promise<QuotaInfo> {
   const usage = row?.cnt ?? 0;
 
   await redis.set(cacheKey, usage, { ex: QUOTA_CACHE_TTL_SECONDS });
-  return { usage, limit: user.monthlyLimit, unlimited: false, resetAt };
+  return { usage, limit, unlimited: false, resetAt };
 }
 
 /**

@@ -2,11 +2,12 @@ import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { getGlobalStats } from "@/features/admin/stats";
 import { getOperatorDictionarySummary } from "@/features/admin/operator-dictionary";
+import { getDefaultMonthlyLimit } from "@/features/quota/service";
 
 export default async function AdminStatsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ prewarm?: string }>;
+  searchParams: Promise<{ prewarm?: string; defaultLimitUpdated?: string }>;
 }) {
   const [
     {
@@ -21,7 +22,12 @@ export default async function AdminStatsPage({
       slowRecentSearches,
     },
     operatorSummary,
-  ] = await Promise.all([getGlobalStats(), getOperatorDictionarySummary()]);
+    defaultMonthlyLimit,
+  ] = await Promise.all([
+    getGlobalStats(),
+    getOperatorDictionarySummary(),
+    getDefaultMonthlyLimit(),
+  ]);
   const params = await searchParams;
 
   const usersByStatus = Object.fromEntries(
@@ -76,6 +82,11 @@ export default async function AdminStatsPage({
             인기 검색어 {Number(params.prewarm).toLocaleString()}개를 서버 캐시에 미리 적재했습니다.
           </div>
         )}
+        {params.defaultLimitUpdated && (
+          <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-200">
+            전역 월 검색 한도를 {Number(params.defaultLimitUpdated).toLocaleString()}회로 변경했습니다. 개별 한도가 설정되지 않은 모든 사용자에게 적용됩니다.
+          </div>
+        )}
 
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <MetricCard label="전체 검색" value={`${searchSummary.total.toLocaleString()}건`} />
@@ -91,7 +102,7 @@ export default async function AdminStatsPage({
           <MetricCard label="5초 이상" value={`${searchSummary.slowSearches.toLocaleString()}건`} hint="즉시 개선 대상" tone={searchSummary.slowSearches > 0 ? "amber" : "green"} />
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <MetricCard label="서버 사전 캐시" value={`${dictionarySummary.total.toLocaleString()}개`} hint={`누적 사용 ${dictionarySummary.totalHits.toLocaleString()}회`} />
           <MetricCard label="운영자 표기" value={`${operatorSummary.enabled.toLocaleString()}개`} hint={`전체 ${operatorSummary.total.toLocaleString()}개 등록`} />
           <div className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950">
@@ -100,6 +111,16 @@ export default async function AdminStatsPage({
               <input type="number" name="limit" defaultValue={50} min={1} max={100} className="min-w-0 flex-1 rounded-lg border border-zinc-300 bg-transparent px-3 py-2 text-sm dark:border-zinc-700" />
               <button className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-bold text-white dark:bg-zinc-100 dark:text-zinc-950">
                 데우기
+              </button>
+            </form>
+          </div>
+          <div className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950">
+            <p className="text-xs font-medium text-zinc-500">전역 월 검색 한도</p>
+            <p className="mt-0.5 text-[11px] text-zinc-400">개별 한도가 없는 사용자 전체에 적용</p>
+            <form action="/api/admin/settings" method="post" className="mt-3 flex gap-2">
+              <input type="number" name="defaultMonthlyLimit" defaultValue={defaultMonthlyLimit} min={0} max={1000000} className="min-w-0 flex-1 rounded-lg border border-zinc-300 bg-transparent px-3 py-2 text-sm dark:border-zinc-700" />
+              <button className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-bold text-white dark:bg-zinc-100 dark:text-zinc-950">
+                저장
               </button>
             </form>
           </div>
