@@ -109,7 +109,7 @@ export default function WindowsDownloadPage() {
                 확인할 수 없다는 경고가 표시될 수 있습니다.
               </p>
               <p className="text-[15px] leading-7 text-muted [word-break:keep-all]">
-                설치 파일은 공식 GitHub Releases에서만 받으세요. 다운로드 주소나 파일명이
+                설치 파일은 PlaySteno 공식 홈페이지에서만 받으세요. 다운로드 주소나 파일명이
                 다르거나 백신이 구체적인 위협을 탐지하면 실행하지 말고 문의해 주세요.
               </p>
               <div className="flex flex-wrap gap-3 pt-2">
@@ -134,8 +134,7 @@ export default function WindowsDownloadPage() {
       </section>
 
       <p className="mx-auto mt-10 max-w-2xl text-center text-xs leading-6 text-muted">
-        파일은 GitHub Releases에 보관됩니다. 사용 안내와 설치 흐름은 PlaySteno에서
-        계속 확인하실 수 있습니다.
+        사용 안내와 설치 흐름은 PlaySteno에서 계속 확인하실 수 있습니다.
       </p>
     </main>
   );

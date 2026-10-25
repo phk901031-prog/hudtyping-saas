@@ -143,18 +143,13 @@ export default function InstallHelpPage() {
         <section className="rounded-2xl border border-accent/30 bg-accent-soft p-5">
           <h2 className="font-display text-lg mb-2">공식 설치 파일 확인</h2>
           <p className="text-sm leading-relaxed">
-            아래 공식 GitHub Releases에서 받은 파일인지 먼저 확인하세요. 파일명이나
+            PlaySteno 공식 홈페이지에서 받은 파일인지 먼저 확인하세요. 파일명이나
             다운로드 주소가 다르거나 백신이 구체적인 악성코드명을 탐지하면 실행하지 말고
             카카오톡 문의 채널로 확인을 요청해 주세요.
           </p>
           <p className="text-xs mt-3">
-            <a
-              href="https://github.com/phk901031-prog/hudtyping-saas/releases/latest"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline"
-            >
-              GitHub Releases 페이지 →
+            <a href="/download/windows" className="underline">
+              공식 다운로드 페이지 →
             </a>
           </p>
         </section>

@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { fetchReleases, type ReleaseInfo } from "@/features/updates/releases";
 import { ReleaseNotes } from "@/components/release-notes";
 
@@ -76,19 +76,8 @@ function ReleaseItem({ release }: { release: ReleaseInfo }) {
         </span>
       </div>
 
+      {/* GitHub 원문 링크는 계정명 노출 때문에 제거 (2026-10-25) */}
       <ReleaseNotes markdown={release.bodyMarkdown} />
-
-      <div className="mt-5 border-t border-border pt-4">
-        <a
-          href={release.htmlUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-muted transition hover:text-foreground"
-        >
-          GitHub 에서 보기
-          <ExternalLink size={12} strokeWidth={2.4} />
-        </a>
-      </div>
     </li>
   );
 }
