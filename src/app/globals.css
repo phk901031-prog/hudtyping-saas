@@ -92,6 +92,40 @@
   background: var(--accent-hover);
 }
 
+/* 속플레이어 제품 화면 — 실제 앱의 짙은 녹색 UI를 웹에서도 이어 간다. */
+.sog-theme {
+  --sog-bg: #071410;
+  --sog-panel: #0d211a;
+  --sog-text: #eef8f3;
+  --sog-accent: #6ee7b7;
+  --sog-accent-hover: #8ef0c9;
+}
+
+.sog-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.35rem;
+  background: var(--sog-accent);
+  padding: 0.8rem 1.2rem;
+  color: var(--sog-bg);
+  font-size: 0.875rem;
+  font-weight: 900;
+  transition: background-color 0.18s ease;
+}
+
+.sog-button:hover {
+  background: var(--sog-accent-hover);
+}
+
+.sog-grid {
+  background-image:
+    linear-gradient(rgb(110 231 183 / 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(110 231 183 / 0.06) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom, black, transparent 78%);
+}
+
 /* 카드 hover — border-color 전환만. transform/box-shadow 확산 없음.
    대시보드 dashboard-card.tsx도 이 클래스를 씀. */
 .feature-card {
