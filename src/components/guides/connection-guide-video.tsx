@@ -21,12 +21,6 @@ export function ConnectionGuideVideo({
           aria-label="낱말지기 가입, 연결 코드 발급, 프로그램 연결과 검색 방법 안내 영상"
         >
           <source src="/media/wordkeeper-connection-guide.mp4" type="video/mp4" />
-          <track
-            src="/media/wordkeeper-connection-guide.ko.vtt"
-            kind="captions"
-            srcLang="ko"
-            label="한국어"
-          />
           동영상 재생을 지원하지 않는 브라우저입니다.
         </video>
       </div>
