@@ -4,7 +4,6 @@ import { auth } from "@/infrastructure/clerk";
 import { WINDOWS_RELEASE } from "@/config/release";
 import { OPENCHAT } from "@/config/community";
 import { fetchReleases } from "@/features/updates/releases";
-import { NOTES } from "@/features/notes/notes";
 import { ConnectionGuideVideo } from "@/components/guides/connection-guide-video";
 import { HudDemo } from "@/components/marketing/hud-demo";
 
@@ -128,11 +127,11 @@ export default async function HomePage() {
           />
           <Note
             title="표제어 표기가 곧 띄어쓰기 답입니다"
-            body="띄어 쓴 표제어는 띄어 쓰고, ^ 표시는 띄어 쓰는 것이 원칙이되 붙여 써도 된다는 뜻입니다. - 표시는 한 단어의 짜임을 보여 줄 뿐이라 붙여 씁니다."
+            body="띄어 쓴 표제어는 띄어 씁니다. ^ 표시는 붙여 써도 된다(허용)는 뜻이라 붙여 씁니다. - 표시는 한 단어의 짜임을 보여 줄 뿐이라 붙여 씁니다."
           />
           <Note
-            title="검색되지 않으면 띄어 쓰는 것이 원칙입니다"
-            body="‘사실확인’처럼 우리말샘에 한 단어로 오르지 않은 말은 단어마다 띄어 씁니다(한글 맞춤법 제2항). 결과가 없다는 것도 판단 근거가 됩니다. 다만 전문 용어는 붙여 쓰는 것도 허용됩니다(제50항)."
+            title="검색되지 않으면 띄어 씁니다"
+            body="‘사실확인’처럼 우리말샘에 한 단어로 오르지 않은 말은 띄어 씁니다. 결과가 없다는 것도 판단 근거가 됩니다."
           />
           <Note
             title="한 번 더 누르면 앞말까지 넓혀 찾습니다"
@@ -217,34 +216,8 @@ export default async function HomePage() {
         </span>
       </Link>
 
-      {/* 8. 표기 노트 — 읽을거리 */}
-      <section aria-labelledby="notes-title" className="editorial-section">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <SectionHeading
-            id="notes-title"
-            title="표기 노트"
-            description="받아 적을 때 자주 헷갈리는 맞춤법과 띄어쓰기를 짧게 정리합니다."
-          />
-          <Link href="/notes" className="text-sm font-bold text-accent underline underline-offset-4">
-            전체 보기 →
-          </Link>
-        </div>
-        <div className="mt-8 grid gap-4 sm:grid-cols-3">
-          {NOTES.slice(0, 3).map((note) => (
-            <Link
-              key={note.slug}
-              href={`/notes/${note.slug}`}
-              className="feature-card flex flex-col rounded-xl border border-border bg-card p-5"
-            >
-              <h3 className="ko-heading text-base font-bold leading-6">{note.title}</h3>
-              <p className="ko-copy mt-2 flex-1 text-sm leading-6 text-muted">{note.summary}</p>
-              <span className="mt-4 text-xs font-bold text-accent">읽기 →</span>
-            </Link>
-          ))}
-        </div>
-      </section>
 
-      {/* 9. 최근 소식 */}
+      {/* 8. 최근 소식 */}
       <section aria-labelledby="news-title" className="editorial-section">
         <SectionHeading id="news-title" title="최근 소식" />
         <div className="mt-7 grid gap-8 sm:grid-cols-2">
@@ -280,7 +253,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 10. 자주 묻는 질문 — 접었다 펴는 방식 */}
+      {/* 9. 자주 묻는 질문 — 접었다 펴는 방식 */}
       <section aria-labelledby="faq-title" className="editorial-section">
         <SectionHeading id="faq-title" title="자주 묻는 질문" />
         <div className="mt-7 divide-y divide-border border-y border-border">

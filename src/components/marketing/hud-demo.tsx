@@ -50,13 +50,13 @@ const HOTKEY = "F3";
 // 실제 앱과 같은 방식: 마지막 누름 뒤 잠깐 기다렸다가 한 번만 검색
 const EXPANSION_DEBOUNCE_MS = 320;
 
-// 표제어 표기 → 띄어쓰기 판정
-//   공백 = 띄어 씀, ^ = 띄어 씀 원칙·붙여 씀 허용, 그 외 = 붙여 씀('-' 는 구성 경계 표시일 뿐)
-//   표제어가 없으면 = 한 단어가 아니므로 단어마다 띄어 씀 (한글 맞춤법 제2항)
+// 표제어 표기 → 띄어쓰기 판정 (2026-10-27 바다 감수: 허용이 있으면 허용 표기를 따른다)
+//   공백 = 띄어 씀, ^ = 붙여 씀 허용 → 붙여 씀, 그 외 = 붙여 씀('-' 는 구성 경계 표시일 뿐)
+//   표제어가 없으면 = 사전에 없는 말이므로 띄어 씀
 type Verdict = {
   kind: "space" | "allowed" | "attached" | "none";
   label: string;
-  forms: string[]; // 맞는 표기 (첫 번째가 원칙)
+  forms: string[]; // 맞는 표기
   explain: string;
 };
 
@@ -68,16 +68,16 @@ function judge(typed: string, result: Result, spaced?: string): Verdict {
       label: "검색되지 않음 → 띄어 씀",
       forms: [spaced ?? typed],
       explain:
-        "우리말샘에 한 단어로 올라 있지 않은 말입니다. 사전에 없는 말은 단어마다 띄어 쓰는 것이 원칙입니다(한글 맞춤법 제2항). 이 말이 들어간 표제어에서도 따로 띄어 쓰여 있습니다.",
+        "우리말샘에 한 단어로 올라 있지 않은 말입니다. 사전에 없는 말은 띄어 씁니다. 이 말이 들어간 표제어에서도 따로 띄어 쓰여 있습니다.",
     };
   }
   const word = entry.word;
   if (word.includes("^")) {
     return {
       kind: "allowed",
-      label: "띄어 씀 원칙 · 붙여 씀 허용",
-      forms: [word.replace(/\^/g, " "), word.replace(/\^/g, "")],
-      explain: "표제어의 ^ 표시는 띄어 쓰는 것이 원칙이고, 붙여 써도 된다는 뜻입니다.",
+      label: "붙여 씀 · 허용",
+      forms: [word.replace(/\^/g, "")],
+      explain: "표제어의 ^ 표시는 붙여 써도 된다(허용)는 뜻입니다. 허용 표기대로 붙여 씁니다.",
     };
   }
   if (word.includes(" ")) {

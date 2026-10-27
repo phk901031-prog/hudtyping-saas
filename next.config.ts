@@ -7,6 +7,12 @@ const nextConfig: NextConfig = {
   // 깨지지 않도록 permanent(308) 리다이렉트로 새 위치로 자동 이동.
   async redirects() {
     return [
+      // 2026-10-27: 표기 노트(/notes) 하루 공개 후 삭제 — 들어온 링크는 낱말지기 소개로
+      {
+        source: "/notes/:path*",
+        destination: "/wordkeeper",
+        permanent: true,
+      },
       {
         source: "/work/natmalgi",
         destination: "/",

@@ -8,7 +8,6 @@ const FOOTER_LINKS = [
   { href: "/download", label: "Windows 다운로드" },
   { href: "/help", label: "낱말지기 가이드" },
   { href: "/sog-player/help", label: "속플레이어 가이드" },
-  { href: "/notes", label: "표기 노트" },
   { href: "/updates", label: "업데이트 로그" },
   { href: "/install-help", label: "설치 도움말" },
   { href: "/terms", label: "이용약관" },
