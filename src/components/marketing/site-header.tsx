@@ -3,6 +3,7 @@ import { AccountActions } from "@/components/marketing/account-actions";
 
 const NAV_LINKS = [
   { href: "/download/windows", label: "다운로드" },
+  { href: "/api-keys", label: "프로그램 연결" },
   { href: "/help", label: "사용 가이드" },
   { href: "/updates", label: "업데이트" },
 ] as const;

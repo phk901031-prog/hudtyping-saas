@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
+import { ConnectionGuideVideo } from "@/components/guides/connection-guide-video";
 
 interface ConnectionCodeResponse {
   code: string;
@@ -52,13 +53,19 @@ export default function ApiKeysPage() {
       </header>
 
       <section className="rounded-lg border border-border bg-card p-6">
-        <p className="text-sm font-bold text-accent">계정 연결</p>
+        <p className="text-sm font-bold text-accent">처음 한 번만 연결하세요</p>
         <h1 className="mt-2 text-2xl font-bold">낱말지기 프로그램 연결</h1>
         <p className="mt-3 text-sm leading-7 text-muted">
           이메일 주소나 비밀번호를 프로그램에 입력하지 않습니다. 승인된 계정으로 연결 코드를 발급한 뒤,
           낱말지기 프로그램의 <strong className="text-foreground">계정 연결</strong> 칸에 그 코드를 입력하세요.
           연결 코드는 10분 동안 한 번만 사용할 수 있습니다.
         </p>
+
+        <ol className="mt-5 grid gap-3 text-sm sm:grid-cols-3">
+          <ConnectionStep number="1" text="아래 버튼으로 코드 발급" />
+          <ConnectionStep number="2" text="표시된 코드 복사" />
+          <ConnectionStep number="3" text="앱 설정에 붙여넣고 연결" />
+        </ol>
 
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <button
@@ -107,14 +114,27 @@ export default function ApiKeysPage() {
         </p>
       )}
 
-      <section className="rounded-lg border border-border bg-card p-5 text-sm leading-7 text-muted">
-        <h2 className="font-bold text-foreground">프로그램에서 입력하는 방법</h2>
-        <p className="mt-2">
-          낱말지기를 열고 설정에서 <strong className="text-foreground">계정 연결</strong> 영역에 위 연결 코드를 입력한 뒤
-          연결 버튼을 누르세요. 연결이 완료되면 이후에는 코드를 다시 입력하지 않아도 됩니다.
-          이메일 주소를 입력하는 방식이 아닙니다.
-        </p>
+      <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
+        <div className="mb-5">
+          <p className="text-sm font-bold text-accent">화면을 보며 따라 하기</p>
+          <h2 className="mt-2 text-xl font-bold">영상 21초부터 코드 입력 위치를 확인하세요</h2>
+          <p className="mt-2 text-sm leading-6 text-muted">
+            발급 버튼 위치, 낱말지기 설정 화면과 연결 완료 상태를 실제 화면으로 보여드립니다.
+          </p>
+        </div>
+        <ConnectionGuideVideo compact />
       </section>
     </main>
+  );
+}
+
+function ConnectionStep({ number, text }: { number: string; text: string }) {
+  return (
+    <li className="flex items-center gap-3 rounded-lg border border-border bg-muted-bg px-3 py-3">
+      <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-foreground text-xs font-bold text-background">
+        {number}
+      </span>
+      <span className="font-medium text-foreground">{text}</span>
+    </li>
   );
 }

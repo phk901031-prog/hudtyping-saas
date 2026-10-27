@@ -1,5 +1,5 @@
 // src/app/terms/page.tsx
-// 이용약관. 베타 단계의 최소 구성.
+// 이용약관.
 
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -22,7 +22,7 @@ export default function TermsPage() {
       </Link>
 
       <h1 className="font-display text-3xl sm:text-4xl mt-6 mb-2">이용약관</h1>
-      <p className="text-sm text-muted mb-8">최종 업데이트: 2026-08-07</p>
+      <p className="text-sm text-muted mb-8">최종 업데이트: 2026-10-27</p>
 
       <div className="flex flex-col gap-8 leading-relaxed">
         <section>
@@ -35,15 +35,11 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="font-display text-xl mb-3">2. 베타 운영 안내</h2>
+          <h2 className="font-display text-xl mb-3">2. 서비스 운영 안내</h2>
           <ul className="list-disc pl-5 flex flex-col gap-1.5">
-            <li>현재 낱말지기 온라인은 무료 베타로 운영합니다.</li>
-            <li>
-              유료화 전환은 최소 30일 전 이메일·웹사이트로 미리 안내해 드려요.
-            </li>
-            <li>
-              베타 단계에서는 예고 없는 다운타임·기능 변경이 있을 수 있어요.
-            </li>
+            <li>서비스 제공 범위와 운영 정책은 홈페이지 공지 또는 별도 안내에 따라 변경될 수 있어요</li>
+            <li>점검, 장애 대응 또는 기능 개선 과정에서 서비스가 일시 중단될 수 있어요</li>
+            <li>중요한 변경 사항은 홈페이지 또는 서비스 화면을 통해 안내해 드려요</li>
           </ul>
         </section>
 
@@ -88,7 +84,7 @@ export default function TermsPage() {
         <section>
           <h2 className="font-display text-xl mb-3">6. 책임의 한계</h2>
           <p>
-            서비스는 ‘있는 그대로(as-is)’ 제공돼요. 베타 단계의 특성상 데이터
+            서비스는 ‘있는 그대로(as-is)’ 제공돼요. 운영 과정에서 데이터
             손실·서비스 중단·검색 결과 부정확 등이 발생할 수 있고, 이에 따른 직간접
             손해에 대해서는 책임지지 않아요. 우리말샘 사전 데이터는{" "}
             <a

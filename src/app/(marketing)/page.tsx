@@ -4,22 +4,22 @@ import { auth } from "@/infrastructure/clerk";
 import { WINDOWS_RELEASE } from "@/config/release";
 import { OPENCHAT } from "@/config/community";
 import { fetchReleases } from "@/features/updates/releases";
-import { WorkStenoAnnouncement } from "@/components/marketing/work-steno-announcement";
+import { ConnectionGuideVideo } from "@/components/guides/connection-guide-video";
 
 const DOWNLOAD_URL = "/download/windows";
 
 export const metadata: Metadata = {
-  title: "낱말지기 온라인 — 한글 문서 위 우리말샘",
+  title: "낱말지기 온라인 — 가입부터 문서 검색까지",
   description:
-    "한글 문서에서 단어 뒤에 커서를 놓고 단축키를 누르면 우리말샘 뜻풀이와 예문이 작은 HUD에 표시됩니다.",
+    "낱말지기 설치, 연결 코드 발급, 프로그램 연결과 한글 문서 검색 방법을 영상과 단계별 안내로 확인하세요.",
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "ko_KR",
     url: "/",
     siteName: "PlaySteno",
-    title: "낱말지기 온라인 — 한글 문서 위 우리말샘",
-    description: "문서를 벗어나지 않고 커서 앞 단어의 우리말샘 뜻풀이와 예문을 확인하세요.",
+    title: "낱말지기 온라인 — 가입부터 문서 검색까지",
+    description: "가입, 설치, 프로그램 연결을 마치고 문서 안에서 우리말샘 뜻풀이와 예문을 확인하세요.",
   },
 };
 
@@ -32,8 +32,7 @@ export default async function HomePage() {
   const latestRelease = releases[0] ?? null;
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-5 pb-24 pt-14 sm:px-8 sm:pb-28 sm:pt-20">
-      <WorkStenoAnnouncement />
+    <main className="mx-auto w-full max-w-4xl px-5 pb-24 pt-14 sm:px-8 sm:pb-28 sm:pt-20">
       <section aria-labelledby="home-title">
         <p className="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-muted">
           낱말지기 온라인 · Windows {WINDOWS_RELEASE.version}
@@ -42,25 +41,40 @@ export default async function HomePage() {
           id="home-title"
           className="ko-heading mt-5 max-w-2xl text-[2.55rem] font-black leading-[1.12] tracking-[-0.035em] sm:text-[4rem]"
         >
-          한글에서 단어 뒤에 커서를 놓고 <span className="text-accent">지정한 키</span>를 누르세요.
+          가입부터 문서 검색까지, <span className="text-accent">보고 그대로</span> 따라 하세요.
         </h1>
         <p className="ko-copy mt-7 max-w-2xl text-lg leading-8 text-foreground/90 sm:text-xl sm:leading-9">
-          우리말샘 뜻풀이가 문서 위 작은 창에 뜹니다. 브라우저를 열거나 검색어를 다시
-          입력하지 않아도 됩니다.
+          한글 문서에서 단어 뒤에 커서를 놓고 지정한 키를 누르면 우리말샘 뜻풀이가 문서 위
+          작은 창에 뜹니다. 브라우저를 열거나 검색어를 다시 입력하지 않아도 됩니다.
         </p>
         <p className="ko-copy mt-4 max-w-xl text-[15px] leading-7 text-muted">
-          속기사와 회의록 작성자를 위한 Windows 도구입니다. 현재 무료로 운영하고 있습니다.
+          처음 사용하는 분도 가입, 설치, 연결 코드 입력 순서만 마치면 바로 시작할 수 있습니다.
         </p>
 
         <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
           <a href={DOWNLOAD_URL} className="editorial-button">Windows용 내려받기</a>
           <Link
-            href={isSignedIn ? "/dashboard" : "/sign-up"}
+            href={isSignedIn ? "/api-keys" : "/sign-up"}
             className="text-sm font-bold text-foreground underline decoration-border decoration-2 underline-offset-4 transition hover:decoration-accent"
           >
-            {isSignedIn ? "내 대시보드 열기" : "가입 승인 요청하기"}
+            {isSignedIn ? "연결 코드 발급하기" : "가입하고 시작하기"}
           </Link>
         </div>
+      </section>
+
+      <section aria-labelledby="video-title" className="mt-12 sm:mt-16">
+        <div className="mb-6 max-w-2xl">
+          <p className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-accent">
+            START HERE · 1분 25초
+          </p>
+          <h2 id="video-title" className="ko-heading mt-2 text-2xl font-black tracking-[-0.025em] sm:text-3xl">
+            연결 코드가 어디 있는지부터 보여드립니다
+          </h2>
+          <p className="ko-copy mt-3 text-[15px] leading-7 text-muted">
+            가입 승인, 대시보드의 프로그램 연결, 코드 입력 위치와 실제 검색 방법을 한 영상에 담았습니다.
+          </p>
+        </div>
+        <ConnectionGuideVideo showHelpLink />
       </section>
 
       <Link
@@ -146,6 +160,30 @@ export default async function HomePage() {
             link={{ href: isSignedIn ? "/api-keys" : "/sign-in", label: isSignedIn ? "연결 코드 발급" : "로그인" }}
           />
         </ol>
+      </section>
+
+      <section aria-labelledby="connect-title" className="editorial-section">
+        <SectionHeading
+          id="connect-title"
+          title="연결 코드는 대시보드의 ‘프로그램 연결’에 있습니다"
+          description="이메일이나 비밀번호를 앱에 입력하는 방식이 아닙니다. 10분 동안 한 번 사용할 수 있는 코드를 발급해 낱말지기 설정의 계정 연결 칸에 입력합니다."
+        />
+        <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          <ConnectionPoint label="웹사이트" value="대시보드 → 프로그램 연결" />
+          <ConnectionPoint label="낱말지기 앱" value="설정 → 계정 연결" />
+          <ConnectionPoint label="연결 완료 후" value="코드 재입력 없이 사용" />
+        </div>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link href={isSignedIn ? "/api-keys" : "/sign-in"} className="editorial-button">
+            {isSignedIn ? "연결 코드 발급 화면 열기" : "로그인해서 연결하기"}
+          </Link>
+          <Link
+            href="/help#program-connect"
+            className="inline-flex items-center justify-center rounded border border-border px-5 py-3 text-sm font-bold transition hover:border-accent"
+          >
+            단계별 설명 보기
+          </Link>
+        </div>
       </section>
 
       <section aria-labelledby="details-title" className="editorial-section">
@@ -241,9 +279,8 @@ export default async function HomePage() {
             HUD 설정에서 Insert나 Pause처럼 평소 잘 쓰지 않는 키로 바꿔 주세요. F4를 포함해 원하는
             키를 직접 지정할 수 있습니다.
           </Faq>
-          <Faq question="무료인가요?">
-            현재 무료로 운영하고 있습니다. 운영 정책이 바뀌면 홈페이지와 업데이트 로그에서 먼저
-            안내합니다.
+          <Faq question="연결 코드를 매번 입력해야 하나요?">
+            아닙니다. 최초 연결이 완료되면 다음 실행부터는 별도 입력 없이 사용할 수 있습니다.
           </Faq>
         </div>
       </section>
@@ -286,6 +323,15 @@ function Note({ title, body }: { title: string; body: string }) {
       <h3 className="ko-heading text-lg font-bold leading-7">{title}</h3>
       <p className="ko-copy text-[15px] leading-7 text-muted">{body}</p>
     </article>
+  );
+}
+
+function ConnectionPoint({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-border bg-card p-5">
+      <p className="font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-accent">{label}</p>
+      <p className="ko-copy mt-2 text-[15px] font-bold leading-6">{value}</p>
+    </div>
   );
 }
 

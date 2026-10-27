@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { OPENCHAT } from "@/config/community";
 import { NATMALGI_ONLINE } from "@/config/product";
+import { ConnectionGuideVideo } from "@/components/guides/connection-guide-video";
 
 export const metadata: Metadata = {
   title: "사용 가이드 — 낱말지기 온라인",
@@ -22,6 +23,17 @@ export default function HelpPage() {
           가입부터 Windows 앱 연결과 커서 앞 검색까지 필요한 내용을 정리했습니다.
         </p>
       </header>
+
+      <section aria-labelledby="guide-video-title" className="rounded-xl border border-border bg-card p-4 sm:p-6">
+        <div className="mb-5">
+          <p className="text-sm font-bold text-accent">영상으로 먼저 보기</p>
+          <h2 id="guide-video-title" className="mt-2 font-display text-2xl">가입부터 실제 검색까지</h2>
+          <p className="mt-2 text-sm leading-6 text-muted">
+            연결 코드가 있는 위치와 프로그램 설정에 입력하는 과정을 실제 화면으로 확인할 수 있습니다.
+          </p>
+        </div>
+        <ConnectionGuideVideo compact />
+      </section>
 
       <nav className="flex flex-col gap-2 rounded-lg border border-border bg-muted-bg p-4 text-sm">
         <a href="#approval" className="transition hover:text-accent">1. 가입 승인</a>
@@ -61,6 +73,12 @@ export default function HelpPage() {
         <p className="text-sm text-muted">
           연결 코드는 10분 동안 한 번만 사용할 수 있습니다. 시간이 지나면 새 코드를 다시 발급하세요.
         </p>
+        <Link
+          href="/api-keys"
+          className="mt-1 inline-flex w-fit items-center justify-center rounded-lg bg-foreground px-4 py-2.5 text-sm font-bold text-background transition hover:opacity-90"
+        >
+          연결 코드 발급 화면 열기
+        </Link>
       </section>
 
       <section id="install" className="flex flex-col gap-3">
