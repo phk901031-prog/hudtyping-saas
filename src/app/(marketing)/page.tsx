@@ -4,22 +4,26 @@ import { auth } from "@/infrastructure/clerk";
 import { WINDOWS_RELEASE } from "@/config/release";
 import { OPENCHAT } from "@/config/community";
 import { fetchReleases } from "@/features/updates/releases";
+import { NOTES } from "@/features/notes/notes";
 import { ConnectionGuideVideo } from "@/components/guides/connection-guide-video";
+import { HudDemo } from "@/components/marketing/hud-demo";
 
 const DOWNLOAD_URL = "/download/windows";
 
+// 2026-10-27 개편: 첫 화면을 "설치 설명서"에서 "제품 가치 + 바로 체험"으로.
+// 연결 방법 안내는 영상 하나 + 3단계로 합치고, 자세한 내용은 /help 로 보낸다.
 export const metadata: Metadata = {
-  title: "낱말지기 온라인 — 가입부터 문서 검색까지",
+  title: "낱말지기 — 단어 뒤에서 키 한 번, 우리말샘 뜻풀이",
   description:
-    "낱말지기 설치, 연결 코드 발급, 프로그램 연결과 한글 문서 검색 방법을 영상과 단계별 안내로 확인하세요.",
+    "한글 문서에서 단어 뒤에 커서를 두고 단축키를 누르면 국립국어원 우리말샘 뜻풀이가 문서 위 작은 창에 뜹니다. 속기사·회의록 작성자를 위한 Windows 도구.",
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "ko_KR",
     url: "/",
     siteName: "PlaySteno",
-    title: "낱말지기 온라인 — 가입부터 문서 검색까지",
-    description: "가입, 설치, 프로그램 연결을 마치고 문서 안에서 우리말샘 뜻풀이와 예문을 확인하세요.",
+    title: "낱말지기 — 단어 뒤에서 키 한 번, 우리말샘 뜻풀이",
+    description: "브라우저를 열지 않고 작업 중인 문서 위에서 우리말샘 뜻풀이를 확인하세요. 홈페이지에서 바로 체험할 수 있습니다.",
   },
 };
 
@@ -33,53 +37,163 @@ export default async function HomePage() {
 
   return (
     <main className="mx-auto w-full max-w-4xl px-5 pb-24 pt-14 sm:px-8 sm:pb-28 sm:pt-20">
+      {/* 1. 첫 화면 — 무엇을 해 주는 도구인지 */}
       <section aria-labelledby="home-title">
         <p className="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-muted">
-          낱말지기 온라인 · Windows {WINDOWS_RELEASE.version}
+          속기사·회의록 작성자를 위한 Windows 도구
         </p>
         <h1
           id="home-title"
-          className="ko-heading mt-5 max-w-2xl text-[2.55rem] font-black leading-[1.12] tracking-[-0.035em] sm:text-[4rem]"
+          className="ko-heading mt-5 max-w-3xl text-[2.55rem] font-black leading-[1.12] tracking-[-0.035em] sm:text-[4rem]"
         >
-          가입부터 문서 검색까지, <span className="text-accent">보고 그대로</span> 따라 하세요.
+          단어 뒤에서 키 한 번.
+          <br />
+          뜻풀이는 <span className="text-accent">문서 위에.</span>
         </h1>
         <p className="ko-copy mt-7 max-w-2xl text-lg leading-8 text-foreground/90 sm:text-xl sm:leading-9">
-          한글 문서에서 단어 뒤에 커서를 놓고 지정한 키를 누르면 우리말샘 뜻풀이가 문서 위
-          작은 창에 뜹니다. 브라우저를 열거나 검색어를 다시 입력하지 않아도 됩니다.
-        </p>
-        <p className="ko-copy mt-4 max-w-xl text-[15px] leading-7 text-muted">
-          처음 사용하는 분도 가입, 설치, 연결 코드 입력 순서만 마치면 바로 시작할 수 있습니다.
+          한글 문서에서 커서를 단어 뒤에 두고 지정한 키를 누르면, 국립국어원 우리말샘 뜻풀이가 작업 중인
+          문서 위 작은 창에 뜹니다. 브라우저를 열고 검색어를 다시 입력하는 일이 사라집니다.
         </p>
 
         <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
           <a href={DOWNLOAD_URL} className="editorial-button">Windows용 내려받기</a>
-          <Link
-            href={isSignedIn ? "/api-keys" : "/sign-up"}
+          <a
+            href="#try"
             className="text-sm font-bold text-foreground underline decoration-border decoration-2 underline-offset-4 transition hover:decoration-accent"
           >
-            {isSignedIn ? "연결 코드 발급하기" : "가입하고 시작하기"}
-          </Link>
+            지금 여기서 체험해 보기 ↓
+          </a>
         </div>
       </section>
 
-      <section aria-labelledby="video-title" className="mt-12 sm:mt-16">
-        <div className="mb-6 max-w-2xl">
-          <p className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-accent">
-            START HERE · 1분 25초
-          </p>
-          <h2 id="video-title" className="ko-heading mt-2 text-2xl font-black tracking-[-0.025em] sm:text-3xl">
-            연결 코드가 어디 있는지부터 보여드립니다
+      {/* 2. 브라우저 체험판 */}
+      <section id="try" aria-labelledby="try-title" className="mt-14 scroll-mt-8 sm:mt-16">
+        <h2 id="try-title" className="sr-only">브라우저 체험판</h2>
+        <HudDemo />
+        <p className="ko-copy mt-3 text-xs leading-5 text-muted">
+          체험용 화면입니다. 실제 앱은 한글(HWP)·Word·메모장에서 동작하며, 단축키와 HUD의 위치·색상·글자 크기를
+          원하는 대로 바꿀 수 있습니다.
+        </p>
+      </section>
+
+      {/* 3. 기존 방식과 비교 */}
+      <section aria-labelledby="compare-title" className="editorial-section">
+        <SectionHeading
+          id="compare-title"
+          title="사전 한 번 찾는 데 창을 몇 번 오가셨나요?"
+          description="받아 적는 흐름이 끊기는 건 검색 자체보다 창을 오가는 순간입니다."
+        />
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          <div className="rounded-xl border border-border p-6">
+            <p className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-muted">지금까지</p>
+            <ol className="mt-4 space-y-3">
+              {["브라우저로 창 전환", "사전 사이트 검색창 클릭", "단어를 다시 입력", "뜻풀이 확인", "문서 창으로 돌아와 커서 위치 찾기"].map(
+                (step, i) => (
+                  <li key={step} className="flex gap-3 text-[15px] leading-6 text-muted">
+                    <span className="font-mono text-xs leading-6 text-muted/70">{i + 1}</span>
+                    {step}
+                  </li>
+                )
+              )}
+            </ol>
+          </div>
+          <div className="rounded-xl bg-ink p-6 text-white">
+            <p className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-accent">낱말지기</p>
+            <ol className="mt-4 space-y-3">
+              <li className="flex gap-3 text-[15px] leading-6">
+                <span className="font-mono text-xs leading-6 text-white/50">1</span>
+                단어 뒤에서 지정한 키 누르기
+              </li>
+            </ol>
+            <p className="ko-copy mt-6 border-t border-white/10 pt-5 text-sm leading-6 text-white/65">
+              커서는 문서에 그대로 있습니다. 확인한 뒤 바로 이어서 입력하면 됩니다.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. 써 보면 알게 되는 것들 */}
+      <section aria-labelledby="details-title" className="editorial-section">
+        <SectionHeading
+          id="details-title"
+          title="써 보면 바로 알게 되는 것들"
+          description="기능 이름 대신 실제 작업에서 달라지는 점만 추렸습니다."
+        />
+        <div className="mt-8 space-y-8">
+          <Note
+            title="한 번 더 누르면 검색 범위가 넓어집니다"
+            body="‘국정 감사’ 뒤에서 지정한 키를 한 번 누르면 ‘감사’, 빠르게 두 번 누르면 ‘국정 감사’를 찾습니다. 위 체험판에서 마지막 줄로 해 볼 수 있습니다."
+          />
+          <Note
+            title="같은 글자의 다른 낱말을 함께 보여 줍니다"
+            body="‘감사’처럼 한자가 다른 낱말이 여럿이면 한자와 함께 나란히 보여 주므로 문맥에 맞는 뜻을 바로 고를 수 있습니다."
+          />
+          <Note
+            title="확인한 표기로 문서 안에서 바로 고칠 수 있습니다"
+            body="붙여넣기 대신 글자를 직접 입력하는 방식이라 작업 중인 문서의 글꼴과 서식이 그대로 이어집니다."
+          />
+          <Note
+            title="HUD는 필요한 자리에 둘 수 있습니다"
+            body="화면 위·아래·좌·우에 붙이고 배경색, 투명도, 글자 크기를 조절할 수 있습니다. 단축키는 F3, Insert, Pause 등 원하는 키로 직접 정할 수 있습니다."
+          />
+        </div>
+      </section>
+
+      {/* 5. 시작 준비 — 영상 + 3단계 (연결 안내는 여기 한 곳에만) */}
+      <section id="start" aria-labelledby="start-title" className="editorial-section">
+        <SectionHeading
+          id="start-title"
+          title="처음 한 번만 준비하면 됩니다"
+          description="가입 승인, 설치, 프로그램 연결 순서로 진행합니다. 1분 25초 영상으로 먼저 보셔도 됩니다."
+        />
+        <div className="mt-8">
+          <ConnectionGuideVideo showHelpLink />
+        </div>
+        <ol className="mt-10 divide-y divide-border border-y border-border">
+          <Instruction
+            number="01"
+            title="계정을 만들고 승인을 기다립니다"
+            body="이메일과 실명으로 가입해 주세요. 빠른 승인이 필요하면 가입한 이메일을 카카오톡 문의 채널로 보내면 됩니다."
+            link={{ href: isSignedIn ? "/dashboard" : "/sign-up", label: isSignedIn ? "대시보드" : "가입하기" }}
+          />
+          <Instruction
+            number="02"
+            title="Windows 앱을 설치합니다"
+            body={`Windows 10·11에서 사용할 수 있습니다. 현재 배포 버전은 ${WINDOWS_RELEASE.version}입니다.`}
+            link={{ href: DOWNLOAD_URL, label: "설치 파일 받기" }}
+          />
+          <Instruction
+            number="03"
+            title="연결 코드를 앱에 입력합니다"
+            body="대시보드의 ‘프로그램 연결’에서 10분짜리 일회용 코드를 발급해 낱말지기 설정의 ‘계정 연결’ 칸에 입력합니다. 이메일이나 비밀번호를 앱에 넣지 않으며, 한 번 연결하면 다시 입력할 필요가 없습니다."
+            link={{ href: isSignedIn ? "/api-keys" : "/help#program-connect", label: isSignedIn ? "연결 코드 발급" : "자세히 보기" }}
+          />
+        </ol>
+      </section>
+
+      {/* 6. 내려받기 — 어두운 블록으로 흐름에 리듬 */}
+      <section id="download" aria-labelledby="download-title" className="mt-20 sm:mt-24">
+        <div className="rounded-2xl bg-ink px-6 py-10 text-white sm:px-10 sm:py-12">
+          <p className="font-mono text-xs font-semibold text-white/50">WINDOWS {WINDOWS_RELEASE.version} · Windows 10·11</p>
+          <h2 id="download-title" className="ko-heading mt-3 text-2xl font-black tracking-[-0.02em] sm:text-3xl">
+            다음 문서부터 바로 써 보세요.
           </h2>
-          <p className="ko-copy mt-3 text-[15px] leading-7 text-muted">
-            가입 승인, 대시보드의 프로그램 연결, 코드 입력 위치와 실제 검색 방법을 한 영상에 담았습니다.
+          <p className="ko-copy mt-3 max-w-xl text-[15px] leading-7 text-white/65">
+            설치하다 막히면 설치 도움말을 보거나 카카오톡으로 물어보세요.
           </p>
+          <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3">
+            <a href={DOWNLOAD_URL} className="editorial-button">Windows용 내려받기</a>
+            <Link href="/install-help" className="text-sm font-bold text-white underline decoration-white/30 decoration-2 underline-offset-4 hover:decoration-white">
+              설치 도움말
+            </Link>
+          </div>
         </div>
-        <ConnectionGuideVideo showHelpLink />
       </section>
 
+      {/* 7. WORK STENO 베타 */}
       <Link
         href="/work-steno"
-        className="group mt-12 grid gap-4 border-y border-border py-6 transition hover:border-accent sm:grid-cols-[1fr_auto] sm:items-center sm:py-7"
+        className="group mt-6 grid gap-4 rounded-2xl border border-border bg-card p-6 transition hover:border-accent sm:grid-cols-[1fr_auto] sm:items-center sm:p-8"
       >
         <div>
           <p className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-accent">
@@ -97,142 +211,34 @@ export default async function HomePage() {
         </span>
       </Link>
 
-      <section aria-labelledby="example-title" className="editorial-section">
-        <SectionHeading
-          id="example-title"
-          title="한 문장으로 보는 사용법"
-          description="검색하려는 단어를 드래그할 필요가 없습니다. 커서 위치와 단축키만 기억하면 됩니다."
-        />
-
-        <figure className="mt-8">
-          <div className="overflow-hidden rounded-[0.9rem] bg-ink text-white">
-            <div className="border-b border-white/12 px-5 py-3 font-mono text-[11px] uppercase tracking-[0.16em] text-white/55">
-              한글 문서
-            </div>
-            <div className="px-5 py-7 sm:px-8 sm:py-9">
-              <p className="text-lg leading-8 text-white/85 sm:text-xl">
-                다음 회의에서 안건을 다시 <strong className="text-white">정리</strong>
-                <span className="ml-0.5 inline-block h-5 w-[2px] translate-y-1 bg-accent" />합니다.
-              </p>
-              <div className="mt-7 border-l-2 border-accent pl-4 sm:pl-5">
-                <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/45">
-                  지정한 키를 한 번 누른 결과
-                </p>
-                <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  <strong className="text-2xl">정리</strong>
-                  <span className="text-xs text-white/45">명사</span>
-                </div>
-                <p className="ko-copy mt-2 max-w-lg text-sm leading-6 text-white/72 sm:text-[15px]">
-                  일정한 기준에 따라 내용을 가지런히 바로잡음.
-                </p>
-              </div>
-            </div>
-          </div>
-          <figcaption className="mt-3 text-xs leading-5 text-muted">
-            사용 예시입니다. 실제 HUD의 색상·투명도·글자 크기는 설정에서 바꿀 수 있습니다.
-          </figcaption>
-        </figure>
-      </section>
-
-      <section id="start" aria-labelledby="start-title" className="editorial-section">
-        <SectionHeading
-          id="start-title"
-          title="처음 한 번만 준비하면 됩니다"
-          description="가입 승인, 설치, 프로그램 연결 순서로 진행합니다."
-        />
-        <ol className="mt-8 divide-y divide-border border-y border-border">
-          <Instruction
-            number="01"
-            title="계정을 만들고 승인을 기다립니다"
-            body="이메일과 실명으로 가입해 주세요. 빠른 승인이 필요하면 가입한 이메일을 카카오톡 문의 채널로 보내면 됩니다."
-            link={{ href: isSignedIn ? "/dashboard" : "/sign-up", label: isSignedIn ? "대시보드" : "가입하기" }}
+      {/* 8. 표기 노트 — 읽을거리 */}
+      <section aria-labelledby="notes-title" className="editorial-section">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <SectionHeading
+            id="notes-title"
+            title="표기 노트"
+            description="받아 적을 때 자주 헷갈리는 맞춤법과 띄어쓰기를 짧게 정리합니다."
           />
-          <Instruction
-            number="02"
-            title="Windows 앱을 설치합니다"
-            body={`Windows 10·11에서 사용할 수 있습니다. 현재 배포 버전은 ${WINDOWS_RELEASE.version}입니다.`}
-            link={{ href: DOWNLOAD_URL, label: "설치 파일 받기" }}
-          />
-          <Instruction
-            number="03"
-            title="연결 코드를 앱에 붙여넣습니다"
-            body="대시보드에서 발급한 10분짜리 일회용 코드를 HUD 설정에 입력하면 바로 검색할 수 있습니다."
-            link={{ href: isSignedIn ? "/api-keys" : "/sign-in", label: isSignedIn ? "연결 코드 발급" : "로그인" }}
-          />
-        </ol>
-      </section>
-
-      <section aria-labelledby="connect-title" className="editorial-section">
-        <SectionHeading
-          id="connect-title"
-          title="연결 코드는 대시보드의 ‘프로그램 연결’에 있습니다"
-          description="이메일이나 비밀번호를 앱에 입력하는 방식이 아닙니다. 10분 동안 한 번 사용할 수 있는 코드를 발급해 낱말지기 설정의 계정 연결 칸에 입력합니다."
-        />
+          <Link href="/notes" className="text-sm font-bold text-accent underline underline-offset-4">
+            전체 보기 →
+          </Link>
+        </div>
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
-          <ConnectionPoint label="웹사이트" value="대시보드 → 프로그램 연결" />
-          <ConnectionPoint label="낱말지기 앱" value="설정 → 계정 연결" />
-          <ConnectionPoint label="연결 완료 후" value="코드 재입력 없이 사용" />
-        </div>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link href={isSignedIn ? "/api-keys" : "/sign-in"} className="editorial-button">
-            {isSignedIn ? "연결 코드 발급 화면 열기" : "로그인해서 연결하기"}
-          </Link>
-          <Link
-            href="/help#program-connect"
-            className="inline-flex items-center justify-center rounded border border-border px-5 py-3 text-sm font-bold transition hover:border-accent"
-          >
-            단계별 설명 보기
-          </Link>
-        </div>
-      </section>
-
-      <section aria-labelledby="details-title" className="editorial-section">
-        <SectionHeading
-          id="details-title"
-          title="써 보면 바로 알게 되는 것들"
-          description="기능 이름 대신 실제 작업에서 달라지는 점만 추렸습니다."
-        />
-        <div className="mt-8 space-y-8">
-          <Note
-            title="한 번 더 누르면 검색 범위가 넓어집니다"
-            body="‘회의 안건 정리’ 뒤에서 지정한 키를 한 번 누르면 ‘정리’, 두 번 누르면 ‘안건 정리’, 세 번 누르면 ‘회의 안건 정리’를 찾습니다."
-          />
-          <Note
-            title="확인한 표기로 문서 안에서 바로 고칠 수 있습니다"
-            body="붙여넣기 대신 글자를 직접 입력하는 방식이라 작업 중인 문서의 글꼴과 서식이 그대로 이어집니다."
-          />
-          <Note
-            title="HUD는 필요한 자리에 둘 수 있습니다"
-            body="화면 위·아래·좌·우에 붙이고 배경색, 투명도, 글자 크기를 조절할 수 있습니다. 단축키는 F3, Insert, Pause 등 원하는 키로 직접 정할 수 있습니다."
-          />
-        </div>
-        <Link
-          href="/help"
-          className="mt-8 inline-block text-sm font-bold text-accent underline decoration-accent/35 underline-offset-4 hover:decoration-accent"
-        >
-          전체 사용 가이드 읽기 →
-        </Link>
-      </section>
-
-      <section id="download" aria-labelledby="download-title" className="editorial-section">
-        <div className="border-y border-border py-8 sm:py-10">
-          <p className="font-mono text-xs font-semibold text-muted">WINDOWS {WINDOWS_RELEASE.version}</p>
-          <h2 id="download-title" className="ko-heading mt-3 text-2xl font-black tracking-[-0.02em] sm:text-3xl">
-            설치해 보고, 막히면 바로 물어보세요.
-          </h2>
-          <p className="ko-copy mt-3 max-w-xl text-[15px] leading-7 text-muted">
-            코드 서명 인증서 확보 전이라 Windows SmartScreen이나 일부 백신에서 경고가 표시될 수
-            있습니다. 설치 도움말에 확인 절차를 적어 두었습니다.
-          </p>
-          <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
-            <a href={DOWNLOAD_URL} className="editorial-button">Windows용 내려받기</a>
-            <Link href="/install-help" className="text-sm font-bold text-foreground underline decoration-border decoration-2 underline-offset-4">
-              설치 문제 해결
+          {NOTES.slice(0, 3).map((note) => (
+            <Link
+              key={note.slug}
+              href={`/notes/${note.slug}`}
+              className="feature-card flex flex-col rounded-xl border border-border bg-card p-5"
+            >
+              <h3 className="ko-heading text-base font-bold leading-6">{note.title}</h3>
+              <p className="ko-copy mt-2 flex-1 text-sm leading-6 text-muted">{note.summary}</p>
+              <span className="mt-4 text-xs font-bold text-accent">읽기 →</span>
             </Link>
-          </div>
+          ))}
         </div>
       </section>
 
+      {/* 9. 최근 소식 */}
       <section aria-labelledby="news-title" className="editorial-section">
         <SectionHeading id="news-title" title="최근 소식" />
         <div className="mt-7 grid gap-8 sm:grid-cols-2">
@@ -268,6 +274,7 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* 10. 자주 묻는 질문 — 접었다 펴는 방식 */}
       <section aria-labelledby="faq-title" className="editorial-section">
         <SectionHeading id="faq-title" title="자주 묻는 질문" />
         <div className="mt-7 divide-y divide-border border-y border-border">
@@ -275,12 +282,26 @@ export default async function HomePage() {
             아닙니다. 한글(HWP), MS Word, 메모장처럼 커서 앞 텍스트를 복사할 수 있는 Windows
             프로그램에서 사용할 수 있습니다. 프로그램의 보안 설정에 따라 캡처가 제한될 수 있습니다.
           </Faq>
+          <Faq question="Mac이나 휴대폰에서도 쓸 수 있나요?">
+            현재는 Windows 10·11용 앱만 제공합니다.
+          </Faq>
+          <Faq question="인터넷 연결이 필요한가요?">
+            네. 뜻풀이는 국립국어원 우리말샘 데이터를 낱말지기 서버를 거쳐 가져오기 때문에 인터넷 연결이 필요합니다.
+          </Faq>
           <Faq question="단축키가 다른 프로그램과 겹치면 어떻게 하나요?">
             HUD 설정에서 Insert나 Pause처럼 평소 잘 쓰지 않는 키로 바꿔 주세요. F4를 포함해 원하는
             키를 직접 지정할 수 있습니다.
           </Faq>
           <Faq question="연결 코드를 매번 입력해야 하나요?">
             아닙니다. 최초 연결이 완료되면 다음 실행부터는 별도 입력 없이 사용할 수 있습니다.
+          </Faq>
+          <Faq question="설치할 때 Windows 경고가 표시돼요.">
+            아직 코드 서명 인증서를 적용하기 전이라 Windows SmartScreen이나 일부 백신에서 경고가 표시될 수
+            있습니다.{" "}
+            <Link href="/install-help" className="font-bold text-accent underline underline-offset-4">
+              설치 도움말
+            </Link>
+            에 확인 절차를 적어 두었습니다.
           </Faq>
         </div>
       </section>
@@ -326,21 +347,16 @@ function Note({ title, body }: { title: string; body: string }) {
   );
 }
 
-function ConnectionPoint({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-xl border border-border bg-card p-5">
-      <p className="font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-accent">{label}</p>
-      <p className="ko-copy mt-2 text-[15px] font-bold leading-6">{value}</p>
-    </div>
-  );
-}
-
+// <details> 로 접었다 펴기 — JS 없이 동작
 function Faq({ question, children }: { question: string; children: React.ReactNode }) {
   return (
-    <article className="py-6">
-      <h3 className="ko-heading text-lg font-bold">Q. {question}</h3>
+    <details className="group py-5">
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 [&::-webkit-details-marker]:hidden">
+        <h3 className="ko-heading text-lg font-bold">Q. {question}</h3>
+        <span aria-hidden="true" className="font-mono text-lg text-accent transition group-open:rotate-45">+</span>
+      </summary>
       <p className="ko-copy mt-3 text-[15px] leading-7 text-muted">{children}</p>
-    </article>
+    </details>
   );
 }
 

@@ -5,6 +5,7 @@ const FOOTER_LINKS = [
   { href: "/work-steno", label: "WORK STENO" },
   { href: "/download/windows", label: "Windows 다운로드" },
   { href: "/help", label: "사용 가이드" },
+  { href: "/notes", label: "표기 노트" },
   { href: "/updates", label: "업데이트 로그" },
   { href: "/install-help", label: "설치 도움말" },
   { href: "/terms", label: "이용약관" },
@@ -14,7 +15,7 @@ const FOOTER_LINKS = [
 export function SiteFooter() {
   return (
     <footer className="border-t border-border bg-background">
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-5 py-10 sm:px-8">
+      <div className="mx-auto flex w-full max-w-4xl flex-col gap-8 px-5 py-10 sm:px-8">
         <div>
           <p className="text-base font-black tracking-[-0.025em]">
             PLAYSTENO<span className="text-accent">.</span>

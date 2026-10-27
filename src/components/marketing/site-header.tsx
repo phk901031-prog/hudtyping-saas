@@ -11,7 +11,7 @@ const NAV_LINKS = [
 export function SiteHeader() {
   return (
     <header className="border-b border-border bg-background">
-      <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-5 py-5 sm:gap-5 sm:px-8 sm:py-6">
+      <div className="mx-auto flex w-full max-w-4xl items-center justify-between gap-3 px-5 py-5 sm:gap-5 sm:px-8 sm:py-6">
         <Link href="/" className="inline-flex items-baseline gap-2" aria-label="PlaySteno 홈">
           <span className="text-lg font-black tracking-[-0.035em] sm:text-xl">
             PLAYSTENO<span className="text-accent">.</span>

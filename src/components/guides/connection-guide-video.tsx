@@ -17,7 +17,8 @@ export function ConnectionGuideVideo({
           controls
           playsInline
           preload="none"
-          poster="/media/wordkeeper-connection-guide-poster.webp"
+          // ?v=2: 2026-10-27 포스터를 'STEP 3' 장면 → 'START HERE 회원가입' 장면으로 교체 (캐시 무효화)
+          poster="/media/wordkeeper-connection-guide-poster.webp?v=2"
           aria-label="낱말지기 가입, 연결 코드 발급, 프로그램 연결과 검색 방법 안내 영상"
         >
           <source src="/media/wordkeeper-connection-guide.mp4" type="video/mp4" />

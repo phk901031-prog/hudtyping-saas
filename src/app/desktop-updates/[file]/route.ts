@@ -1,7 +1,7 @@
 // src/app/desktop-updates/[file]/route.ts
 // GET /desktop-updates/:file — 데스크톱 앱 자동 업데이트(electron-updater generic provider) 창구.
 //
-// 앱은 https://www.playsteno.com/desktop-updates/ 만 알고 있다 (GitHub 계정명 노출 없음).
+// 앱은 https://playsteno.com/desktop-updates/ 만 알고 있다 (GitHub 계정명 노출 없음).
 // - latest.yml           : 최신 릴리스의 메타파일을 서버가 읽어 그대로 내려준다
 // - hudtyping-Setup-X.Y.Z.exe(.blockmap) : 해당 버전 릴리스 첨부파일의 서명 URL 로 302
 // 저장소를 private 으로 돌려도 서버의 GITHUB_TOKEN 으로 계속 동작한다.
