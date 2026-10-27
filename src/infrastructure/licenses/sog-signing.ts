@@ -4,6 +4,7 @@ import {
   createECDH,
   createHash,
   createPrivateKey,
+  createPublicKey,
   sign,
   type KeyObject,
 } from "node:crypto";
@@ -63,4 +64,11 @@ export function signSogLicenseToken(payload: LicenseTokenPayload): string {
     dsaEncoding: "ieee-p1363",
   });
   return `${base64urlEncode(data)}.${base64urlEncode(signature)}`;
+}
+
+/** 배포 환경과 설치 파일의 내장 공개키가 일치하는지 확인할 때 사용하는 공개 정보. */
+export function getSogLicensePublicKeySpkiBase64(): string {
+  return createPublicKey(getPrivateKey())
+    .export({ type: "spki", format: "der" })
+    .toString("base64");
 }

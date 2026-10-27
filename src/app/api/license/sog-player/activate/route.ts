@@ -1,5 +1,6 @@
 import { activateLicense } from "@/features/licenses/service";
 import { checkRateLimit, getRequestSubject } from "@/features/security/rate-limit";
+import { getSogLicensePublicKeySpkiBase64 } from "@/infrastructure/licenses/sog-signing";
 
 const ERROR_MESSAGES: Record<string, string> = {
   INVALID_KEY: "속플레이어용 라이선스 키가 아니거나 존재하지 않습니다.",
@@ -7,6 +8,21 @@ const ERROR_MESSAGES: Record<string, string> = {
   EXPIRED: "사용기간이 만료된 라이선스입니다. 관리자에게 문의해주세요.",
   SLOT_FULL: "이미 다른 PC에서 활성화 중입니다. 관리자에게 문의해주세요.",
 };
+
+export function GET() {
+  try {
+    return Response.json(
+      {
+        algorithm: "ECDSA-P256-SHA256",
+        publicKey: getSogLicensePublicKeySpkiBase64(),
+      },
+      { headers: { "Cache-Control": "public, max-age=3600" } }
+    );
+  } catch (error) {
+    console.error("[sog-license] Signing key is unavailable:", error);
+    return Response.json({ error: "라이선스 서비스를 준비하고 있습니다." }, { status: 503 });
+  }
+}
 
 export async function POST(req: Request) {
   const rateLimit = await checkRateLimit({
@@ -36,6 +52,14 @@ export async function POST(req: Request) {
   const deviceName = body.deviceName?.trim();
   if (deviceName && deviceName.length > 100) {
     return Response.json({ error: "기기 이름이 너무 깁니다." }, { status: 400 });
+  }
+
+  // 서명 키가 없으면 DB 활성화 상태를 변경하기 전에 중단한다.
+  try {
+    getSogLicensePublicKeySpkiBase64();
+  } catch (error) {
+    console.error("[sog-license] Signing key is unavailable:", error);
+    return Response.json({ error: "라이선스 서비스를 준비하고 있습니다." }, { status: 503 });
   }
 
   const result = await activateLicense(
