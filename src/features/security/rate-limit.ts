@@ -23,6 +23,7 @@ export async function checkRateLimit(input: {
     | "api-key-write"
     | "admin-write"
     | "license-activate"
+    | "sog-license-activate"
     | "license-checkin"
     | "license-deactivate"
     | "game-session-create"

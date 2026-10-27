@@ -6,6 +6,7 @@
 // (hudtyping-local)가 하드코드된 공개키로 오프라인에서 수행한다.
 
 export interface LicenseTokenPayload {
+  product?: "wordkeeper" | "sog_player";
   licenseKey: string;
   fingerprint: string;
   plan: string;

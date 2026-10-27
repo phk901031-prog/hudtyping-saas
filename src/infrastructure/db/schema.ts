@@ -347,11 +347,18 @@ export const licensePlanEnum = pgEnum("license_plan", [
   "trial",
 ]);
 
+export const licenseProductEnum = pgEnum("license_product", [
+  "wordkeeper",
+  "sog_player",
+]);
+
 export const licenses = pgTable(
   "licenses",
   {
     // 사람이 직접 입력하는 키. 예: HDTP-A3F9-B7E2-C1D8
     key: text("key").primaryKey(),
+    // 제품 간 키 교차 사용을 막는다. 기존 행은 migration default로 wordkeeper가 된다.
+    product: licenseProductEnum("product").notNull().default("wordkeeper"),
     plan: licensePlanEnum("plan").notNull(),
     // lifetime 이면 NULL. annual/trial 이면 발급 시 부여할 기간(일).
     durationDays: integer("duration_days"),
@@ -374,6 +381,7 @@ export const licenses = pgTable(
   },
   (table) => [
     index("licenses_plan_idx").on(table.plan),
+    index("licenses_product_idx").on(table.product),
     index("licenses_issued_to_email_idx").on(table.issuedToEmail),
   ]
 );
@@ -381,6 +389,7 @@ export const licenses = pgTable(
 export type License = typeof licenses.$inferSelect;
 export type NewLicense = typeof licenses.$inferInsert;
 export type LicensePlan = (typeof licensePlanEnum.enumValues)[number];
+export type LicenseProduct = (typeof licenseProductEnum.enumValues)[number];
 
 // licenseActivations — 라이선스 키가 실제로 활성화된 기기(지문) 목록.
 // 한 라이선스에 여러 활성화 이력이 쌓일 수 있고(비활성화 후 재활성화 등),

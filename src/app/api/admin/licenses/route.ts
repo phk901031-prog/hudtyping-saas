@@ -6,10 +6,11 @@
 import { getOrCreateCurrentUser } from "@/features/users/service";
 import { AdminPermissionError, assertAdmin } from "@/features/admin/permissions";
 import { issueLicense, listLicenses } from "@/features/licenses/service";
-import type { LicensePlan } from "@/infrastructure/db/schema";
+import type { LicensePlan, LicenseProduct } from "@/infrastructure/db/schema";
 import { checkRateLimit } from "@/features/security/rate-limit";
 
 const VALID_PLANS: LicensePlan[] = ["lifetime", "annual", "trial"];
+const VALID_PRODUCTS: LicenseProduct[] = ["wordkeeper", "sog_player"];
 
 export async function GET() {
   const me = await getOrCreateCurrentUser();
@@ -51,11 +52,19 @@ export async function POST(req: Request) {
 
   const body = (await req.json().catch(() => ({}))) as {
     plan?: string;
+    product?: string;
     durationDays?: number;
     issuedToEmail?: string;
     notes?: string;
     maxActivations?: number;
   };
+
+  if (!body.product || !VALID_PRODUCTS.includes(body.product as LicenseProduct)) {
+    return Response.json(
+      { error: `product는 ${VALID_PRODUCTS.join("/")} 중 하나여야 해요.` },
+      { status: 400 }
+    );
+  }
 
   if (!body.plan || !VALID_PLANS.includes(body.plan as LicensePlan)) {
     return Response.json(
@@ -79,6 +88,7 @@ export async function POST(req: Request) {
 
   try {
     const license = await issueLicense({
+      product: body.product as LicenseProduct,
       plan: body.plan as LicensePlan,
       durationDays: body.durationDays,
       issuedToEmail: body.issuedToEmail,

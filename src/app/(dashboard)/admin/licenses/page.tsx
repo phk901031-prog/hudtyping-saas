@@ -4,12 +4,17 @@ import { getOrCreateCurrentUser } from "@/features/users/service";
 import { listLicenses } from "@/features/licenses/service";
 import { LicenseIssueForm } from "@/components/admin/license-issue-form";
 import { LicenseRowActions } from "@/components/admin/license-row-actions";
-import type { LicensePlan } from "@/infrastructure/db/schema";
+import type { LicensePlan, LicenseProduct } from "@/infrastructure/db/schema";
 
 const PLAN_LABELS: Record<LicensePlan, string> = {
   lifetime: "평생판",
   annual: "연간판",
   trial: "체험판",
+};
+
+const PRODUCT_LABELS: Record<LicenseProduct, string> = {
+  wordkeeper: "낱말지기",
+  sog_player: "속플레이어",
 };
 
 export default async function AdminLicensesPage() {
@@ -31,7 +36,7 @@ export default async function AdminLicensesPage() {
       </header>
 
       <div>
-        <p className="text-sm font-semibold text-accent">낱말지기 정품 라이선스</p>
+        <p className="text-sm font-semibold text-accent">PlaySteno 데스크톱 제품</p>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">라이선스 발급·관리</h1>
       </div>
 
@@ -56,6 +61,7 @@ export default async function AdminLicensesPage() {
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <code className="select-all text-sm font-bold">{license.key}</code>
+                      <ProductBadge product={license.product} />
                       <PlanBadge plan={license.plan} />
                       {isRevoked && <StatusBadge tone="rose">회수됨</StatusBadge>}
                       {!isRevoked && isExpired && <StatusBadge tone="amber">만료됨</StatusBadge>}
@@ -87,6 +93,14 @@ export default async function AdminLicensesPage() {
         </section>
       )}
     </main>
+  );
+}
+
+function ProductBadge({ product }: { product: LicenseProduct }) {
+  return (
+    <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300">
+      {PRODUCT_LABELS[product]}
+    </span>
   );
 }
 

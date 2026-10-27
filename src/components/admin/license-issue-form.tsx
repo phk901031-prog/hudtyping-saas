@@ -5,7 +5,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { LicensePlan } from "@/infrastructure/db/schema";
+import type { LicensePlan, LicenseProduct } from "@/infrastructure/db/schema";
 
 const PLAN_OPTIONS: Array<{ value: LicensePlan; label: string }> = [
   { value: "trial", label: "체험판 (기간제)" },
@@ -15,6 +15,7 @@ const PLAN_OPTIONS: Array<{ value: LicensePlan; label: string }> = [
 
 export function LicenseIssueForm() {
   const router = useRouter();
+  const [product, setProduct] = useState<LicenseProduct>("sog_player");
   const [plan, setPlan] = useState<LicensePlan>("trial");
   const [durationDays, setDurationDays] = useState("7");
   const [issuedToEmail, setIssuedToEmail] = useState("");
@@ -35,6 +36,7 @@ export function LicenseIssueForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          product,
           plan,
           durationDays: plan === "lifetime" ? undefined : parseInt(durationDays, 10),
           issuedToEmail: issuedToEmail.trim() || undefined,
@@ -64,6 +66,18 @@ export function LicenseIssueForm() {
       <h2 className="text-base font-bold">새 라이선스 발급</h2>
 
       <div className="grid gap-3 sm:grid-cols-2">
+        <label className="flex flex-col gap-1 text-sm">
+          <span className="font-medium text-zinc-600 dark:text-zinc-400">제품</span>
+          <select
+            value={product}
+            onChange={(e) => setProduct(e.target.value as LicenseProduct)}
+            className="rounded-md border border-zinc-300 bg-white px-2 py-1.5 dark:border-zinc-700 dark:bg-zinc-900"
+          >
+            <option value="sog_player">속플레이어</option>
+            <option value="wordkeeper">낱말지기 로컬판</option>
+          </select>
+        </label>
+
         <label className="flex flex-col gap-1 text-sm">
           <span className="font-medium text-zinc-600 dark:text-zinc-400">플랜</span>
           <select

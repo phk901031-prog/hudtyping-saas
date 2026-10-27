@@ -13,35 +13,44 @@ import {
   licenseActivations,
   type License,
   type LicensePlan,
+  type LicenseProduct,
 } from "@/infrastructure/db/schema";
 import { signLicenseToken } from "./signing";
+import { signSogLicenseToken } from "@/infrastructure/licenses/sog-signing";
 
 const KEY_ALPHABET = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ"; // 0/1/I/O 등 혼동 문자 제외
-const KEY_PREFIX = "HDTP";
+const KEY_PREFIXES: Record<LicenseProduct, string> = {
+  wordkeeper: "HDTP",
+  sog_player: "SOGP",
+};
 
 export type LicenseErrorCode = "INVALID_KEY" | "REVOKED" | "EXPIRED" | "SLOT_FULL";
 
 export interface LicenseActionResult {
   token: string;
+  product: LicenseProduct;
   plan: LicensePlan;
   expiresAt: string | null;
 }
 
-function generateLicenseKey(): string {
+function generateLicenseKey(product: LicenseProduct): string {
   const bytes = new Uint8Array(12);
   globalThis.crypto.getRandomValues(bytes);
   let body = "";
   for (const b of bytes) body += KEY_ALPHABET[b % KEY_ALPHABET.length];
   const grouped = body.match(/.{1,4}/g)!.join("-");
-  return `${KEY_PREFIX}-${grouped}`;
+  return `${KEY_PREFIXES[product]}-${grouped}`;
 }
 
 /** 사용자가 대소문자·공백·하이픈을 다르게 입력해도 같은 키로 인식하게 정규화 */
 export function normalizeLicenseKey(input: string): string {
   const cleaned = input.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
-  if (cleaned.startsWith(KEY_PREFIX) && cleaned.length === KEY_PREFIX.length + 12) {
-    const body = cleaned.slice(KEY_PREFIX.length);
-    return `${KEY_PREFIX}-${body.match(/.{1,4}/g)!.join("-")}`;
+  const prefix = Object.values(KEY_PREFIXES).find(
+    (candidate) => cleaned.startsWith(candidate) && cleaned.length === candidate.length + 12
+  );
+  if (prefix) {
+    const body = cleaned.slice(prefix.length);
+    return `${prefix}-${body.match(/.{1,4}/g)!.join("-")}`;
   }
   return cleaned;
 }
@@ -67,12 +76,17 @@ function isExpired(license: Pick<License, "expiresAt">): boolean {
 export async function activateLicense(
   keyInput: string,
   fingerprint: string,
-  deviceName?: string
+  deviceName?: string,
+  product: LicenseProduct = "wordkeeper"
 ): Promise<LicenseActionResult | { error: LicenseErrorCode }> {
   const key = normalizeLicenseKey(keyInput);
   if (!key) return { error: "INVALID_KEY" };
 
-  const [license] = await db.select().from(licenses).where(eq(licenses.key, key)).limit(1);
+  const [license] = await db
+    .select()
+    .from(licenses)
+    .where(and(eq(licenses.key, key), eq(licenses.product, product)))
+    .limit(1);
   if (!license) return { error: "INVALID_KEY" };
   if (license.revokedAt) return { error: "REVOKED" };
 
@@ -133,25 +147,34 @@ export async function activateLicense(
       .where(eq(licenseActivations.id, existingActivation.id));
   }
 
-  const token = await signLicenseToken({
+  const payload = {
+    ...(license.product === "sog_player" ? { product: license.product } : {}),
     licenseKey: key,
     fingerprint,
     plan: license.plan,
     activatedAt: (activatedAt ?? now).toISOString(),
     expiresAt: expiresAt ? expiresAt.toISOString() : null,
     activationId: activation.id,
-  });
+  };
+  const token = license.product === "sog_player"
+    ? signSogLicenseToken(payload)
+    : await signLicenseToken(payload);
 
-  return { token, plan: license.plan, expiresAt: expiresAt ? expiresAt.toISOString() : null };
+  return { token, product: license.product, plan: license.plan, expiresAt: expiresAt ? expiresAt.toISOString() : null };
 }
 
 /** 선택적 주기 재확인 — 회수·만료 여부를 다시 확인하고 신선한 토큰을 재발급한다. */
 export async function checkinLicense(
   keyInput: string,
-  fingerprint: string
+  fingerprint: string,
+  product: LicenseProduct = "wordkeeper"
 ): Promise<LicenseActionResult | { error: LicenseErrorCode }> {
   const key = normalizeLicenseKey(keyInput);
-  const [license] = await db.select().from(licenses).where(eq(licenses.key, key)).limit(1);
+  const [license] = await db
+    .select()
+    .from(licenses)
+    .where(and(eq(licenses.key, key), eq(licenses.product, product)))
+    .limit(1);
   if (!license) return { error: "INVALID_KEY" };
   if (license.revokedAt) return { error: "REVOKED" };
   if (isExpired(license)) return { error: "EXPIRED" };
@@ -174,17 +197,22 @@ export async function checkinLicense(
     .set({ lastSeenAt: new Date() })
     .where(eq(licenseActivations.id, activation.id));
 
-  const token = await signLicenseToken({
+  const payload = {
+    ...(license.product === "sog_player" ? { product: license.product } : {}),
     licenseKey: key,
     fingerprint,
     plan: license.plan,
     activatedAt: (license.activatedAt ?? new Date()).toISOString(),
     expiresAt: license.expiresAt ? license.expiresAt.toISOString() : null,
     activationId: activation.id,
-  });
+  };
+  const token = license.product === "sog_player"
+    ? signSogLicenseToken(payload)
+    : await signLicenseToken(payload);
 
   return {
     token,
+    product: license.product,
     plan: license.plan,
     expiresAt: license.expiresAt ? license.expiresAt.toISOString() : null,
   };
@@ -215,6 +243,7 @@ export async function deactivateLicenseSlot(
 // ──────────────────────────────────────────────────────────────────────
 
 export interface IssueLicenseInput {
+  product: LicenseProduct;
   plan: LicensePlan;
   durationDays?: number;
   issuedToEmail?: string;
@@ -229,12 +258,13 @@ export async function issueLicense(input: IssueLicenseInput): Promise<License> {
   }
 
   for (let attempt = 0; attempt < 5; attempt++) {
-    const key = generateLicenseKey();
+    const key = generateLicenseKey(input.product);
     try {
       const [inserted] = await db
         .insert(licenses)
         .values({
           key,
+          product: input.product,
           plan: input.plan,
           durationDays: input.plan === "lifetime" ? null : (input.durationDays ?? null),
           issuedToEmail: input.issuedToEmail?.trim() || null,
