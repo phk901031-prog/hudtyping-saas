@@ -12,18 +12,19 @@ const DOWNLOAD_URL = "/download/windows";
 
 // 2026-10-27 개편: 첫 화면을 "설치 설명서"에서 "제품 가치 + 바로 체험"으로.
 // 연결 방법 안내는 영상 하나 + 3단계로 합치고, 자세한 내용은 /help 로 보낸다.
+// 2026-10-27 재정의: 낱말지기의 핵심은 뜻 검색이 아니라 "띄어쓰기 확인". 문구 전체를 그 기준으로.
 export const metadata: Metadata = {
-  title: "낱말지기 — 단어 뒤에서 키 한 번, 우리말샘 뜻풀이",
+  title: "낱말지기 — 띄어 쓸까, 붙여 쓸까. 문서 위에서 우리말샘으로 확인",
   description:
-    "한글 문서에서 단어 뒤에 커서를 두고 단축키를 누르면 국립국어원 우리말샘 뜻풀이가 문서 위 작은 창에 뜹니다. 속기사·회의록 작성자를 위한 Windows 도구.",
+    "한글 문서에서 헷갈리는 단어 뒤에 커서를 두고 단축키를 누르면 국립국어원 우리말샘 표제어가 문서 위 작은 창에 떠 띄어쓰기를 바로 확인할 수 있습니다. 속기사·회의록 작성자를 위한 Windows 도구.",
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "ko_KR",
     url: "/",
     siteName: "PlaySteno",
-    title: "낱말지기 — 단어 뒤에서 키 한 번, 우리말샘 뜻풀이",
-    description: "브라우저를 열지 않고 작업 중인 문서 위에서 우리말샘 뜻풀이를 확인하세요. 홈페이지에서 바로 체험할 수 있습니다.",
+    title: "낱말지기 — 띄어 쓸까, 붙여 쓸까. 문서 위에서 우리말샘으로 확인",
+    description: "음 소거, 가해^학생, 회의록 — 브라우저를 열지 않고 작업 중인 문서 위에서 우리말샘 표기로 띄어쓰기를 확인하세요. 홈페이지에서 바로 체험할 수 있습니다.",
   },
 };
 
@@ -46,13 +47,13 @@ export default async function HomePage() {
           id="home-title"
           className="ko-heading mt-5 max-w-3xl text-[2.55rem] font-black leading-[1.12] tracking-[-0.035em] sm:text-[4rem]"
         >
-          단어 뒤에서 키 한 번.
+          띄어 쓸까, 붙여 쓸까.
           <br />
-          뜻풀이는 <span className="text-accent">문서 위에.</span>
+          키 한 번이면 <span className="text-accent">문서 위에서.</span>
         </h1>
         <p className="ko-copy mt-7 max-w-2xl text-lg leading-8 text-foreground/90 sm:text-xl sm:leading-9">
-          한글 문서에서 커서를 단어 뒤에 두고 지정한 키를 누르면, 국립국어원 우리말샘 뜻풀이가 작업 중인
-          문서 위 작은 창에 뜹니다. 브라우저를 열고 검색어를 다시 입력하는 일이 사라집니다.
+          ‘음소거’일까 ‘음 소거’일까. 헷갈리는 단어 뒤에서 지정한 키를 누르면 국립국어원 우리말샘 표제어가
+          작업 중인 문서 위 작은 창에 떠, 띄어 쓰는지·붙여 쓰는지·둘 다 되는지 바로 보입니다.
         </p>
 
         <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
@@ -71,7 +72,8 @@ export default async function HomePage() {
         <h2 id="try-title" className="sr-only">브라우저 체험판</h2>
         <HudDemo />
         <p className="ko-copy mt-3 text-xs leading-5 text-muted">
-          체험용 화면입니다. 실제 앱은 한글(HWP)·Word·메모장에서 동작하며, 단축키와 HUD의 위치·색상·글자 크기를
+          체험용 화면입니다. 실제 HUD에는 우리말샘 표제어가 표기 그대로 뜨고, 아래 판정 카드는 그 표기를 읽는 법을
+          풀어 쓴 체험판 설명입니다. 실제 앱은 한글(HWP)·Word·메모장에서 동작하며, 단축키와 HUD의 위치·색상·글자 크기를
           원하는 대로 바꿀 수 있습니다.
         </p>
       </section>
@@ -80,14 +82,14 @@ export default async function HomePage() {
       <section aria-labelledby="compare-title" className="editorial-section">
         <SectionHeading
           id="compare-title"
-          title="사전 한 번 찾는 데 창을 몇 번 오가셨나요?"
+          title="띄어쓰기 하나 확인하는 데 창을 몇 번 오가셨나요?"
           description="받아 적는 흐름이 끊기는 건 검색 자체보다 창을 오가는 순간입니다."
         />
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
           <div className="rounded-xl border border-border p-6">
             <p className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-muted">지금까지</p>
             <ol className="mt-4 space-y-3">
-              {["브라우저로 창 전환", "사전 사이트 검색창 클릭", "단어를 다시 입력", "뜻풀이 확인", "문서 창으로 돌아와 커서 위치 찾기"].map(
+              {["브라우저로 창 전환", "사전 사이트 검색창 클릭", "단어를 다시 입력", "표제어의 띄어쓰기 확인", "문서 창으로 돌아와 커서 위치 찾기"].map(
                 (step, i) => (
                   <li key={step} className="flex gap-3 text-[15px] leading-6 text-muted">
                     <span className="font-mono text-xs leading-6 text-muted/70">{i + 1}</span>
@@ -121,16 +123,20 @@ export default async function HomePage() {
         />
         <div className="mt-8 space-y-8">
           <Note
-            title="한 번 더 누르면 검색 범위가 넓어집니다"
-            body="‘국정 감사’ 뒤에서 지정한 키를 한 번 누르면 ‘감사’, 빠르게 두 번 누르면 ‘국정 감사’를 찾습니다. 위 체험판에서 마지막 줄로 해 볼 수 있습니다."
+            title="붙여 치든 띄어 치든 같은 표제어가 잡힙니다"
+            body="‘음소거’로 쳐도 ‘음 소거’가, ‘가해 학생’으로 쳐도 ‘가해^학생’이 나옵니다. 문서에 쓴 표기와 사전 표기를 바로 비교할 수 있습니다."
           />
           <Note
-            title="같은 글자의 다른 낱말을 함께 보여 줍니다"
-            body="‘감사’처럼 한자가 다른 낱말이 여럿이면 한자와 함께 나란히 보여 주므로 문맥에 맞는 뜻을 바로 고를 수 있습니다."
+            title="표제어 표기가 곧 띄어쓰기 답입니다"
+            body="띄어 쓴 표제어는 띄어 쓰고, ^ 표시는 띄어 쓰는 것이 원칙이되 붙여 써도 된다는 뜻입니다. - 표시는 한 단어의 짜임을 보여 줄 뿐이라 붙여 씁니다."
           />
           <Note
-            title="확인한 표기로 문서 안에서 바로 고칠 수 있습니다"
-            body="붙여넣기 대신 글자를 직접 입력하는 방식이라 작업 중인 문서의 글꼴과 서식이 그대로 이어집니다."
+            title="검색되지 않으면 띄어 쓰는 것이 원칙입니다"
+            body="‘사실확인’처럼 우리말샘에 한 단어로 오르지 않은 말은 단어마다 띄어 씁니다(한글 맞춤법 제2항). 결과가 없다는 것도 판단 근거가 됩니다. 다만 전문 용어는 붙여 쓰는 것도 허용됩니다(제50항)."
+          />
+          <Note
+            title="한 번 더 누르면 앞말까지 넓혀 찾습니다"
+            body="‘국정 감사’ 뒤에서 지정한 키를 한 번 누르면 ‘감사’, 빠르게 두 번 누르면 ‘국정 감사’를 찾습니다. 띄어 쓴 말이 한 표제어인지 확인할 때 씁니다."
           />
           <Note
             title="HUD는 필요한 자리에 둘 수 있습니다"
@@ -286,7 +292,7 @@ export default async function HomePage() {
             현재는 Windows 10·11용 앱만 제공합니다.
           </Faq>
           <Faq question="인터넷 연결이 필요한가요?">
-            네. 뜻풀이는 국립국어원 우리말샘 데이터를 낱말지기 서버를 거쳐 가져오기 때문에 인터넷 연결이 필요합니다.
+            네. 검색 결과는 국립국어원 우리말샘 데이터를 낱말지기 서버를 거쳐 가져오기 때문에 인터넷 연결이 필요합니다.
           </Faq>
           <Faq question="단축키가 다른 프로그램과 겹치면 어떻게 하나요?">
             HUD 설정에서 Insert나 Pause처럼 평소 잘 쓰지 않는 키로 바꿔 주세요. F4를 포함해 원하는
