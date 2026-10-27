@@ -40,3 +40,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 로컬 작업물 — 공개 저장소에 올리지 않음 (영상 원본·검토용 캡처·속플레이어 소스 등)
+/tmp/
+/output/
+/sample.mp4
+/홈페이지 디자인*.jpg
