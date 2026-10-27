@@ -33,7 +33,17 @@ function getPrivateKey(): KeyObject {
   const pem = process.env[PRIVATE_KEY_ENV];
   if (!pem) throw new Error(`${PRIVATE_KEY_ENV} 환경변수가 설정되지 않았습니다.`);
 
-  const sourceJwk = createPrivateKey(pem).export({ format: "jwk" });
+  // 낱말지기 서명(features/licenses/signing.ts)과 같은 방식으로 PEM 머리·꼬리와 공백을 걷어내고 DER 로 읽는다.
+  // Vercel 환경변수에 줄바꿈 없이 한 줄로 저장되거나 \n 이 글자로 들어가도 동작하게 하기 위함.
+  const der = Buffer.from(
+    pem
+      .replace(/\\n/g, "")
+      .replace(/-----BEGIN[^-]*-----/, "")
+      .replace(/-----END[^-]*-----/, "")
+      .replace(/\s+/g, ""),
+    "base64"
+  );
+  const sourceJwk = createPrivateKey({ key: der, format: "der", type: "pkcs8" }).export({ format: "jwk" });
   if (!sourceJwk.d) throw new Error("라이선스 개인키에서 키 재료를 읽을 수 없습니다.");
   const seed = Buffer.from(sourceJwk.d, "base64url");
   const digest = createHash("sha256").update(DOMAIN).update(seed).digest();
